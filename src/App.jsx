@@ -1,6 +1,8 @@
 import Header from './components/Header.jsx';
 import Hero from './components/Hero.jsx';
+import Marquee from './components/Marquee.jsx';
 import Soluciones from './components/Soluciones.jsx';
+import Proceso from './components/Proceso.jsx';
 import Nosotros from './components/Nosotros.jsx';
 import PorQue from './components/PorQue.jsx';
 import Marcas from './components/Marcas.jsx';
@@ -17,7 +19,9 @@ export default function App() {
       <Header />
       <main>
         <Hero />
+        <Marquee />
         <Soluciones />
+        <Proceso />
         <Nosotros />
         <PorQue />
         <Marcas />
