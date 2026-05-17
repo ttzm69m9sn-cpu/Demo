@@ -261,30 +261,48 @@ footer{background:#060606;border-top:1px solid var(--border);padding:48px 5% 26p
 .reveal{opacity:1;transform:none}
 
 /* ── 3D CABINET (Nosotros) ── */
-:root{--cd:56px}
-.op-scene{width:100%;height:560px;display:flex;align-items:center;justify-content:center;perspective:1300px;perspective-origin:50% 38%;position:relative}
-.op-cabinet{width:320px;height:450px;position:relative;transform-style:preserve-3d;transform:rotateX(5deg) rotateY(18deg);will-change:transform}
-/* Back wall — real interior photo */
-.op-back{position:absolute;inset:0;background:#080808;border:2px solid #1e1e1e;overflow:hidden;transform:translateZ(calc(-1 * var(--cd)))}
-.op-back img{width:100%;height:100%;object-fit:cover;filter:brightness(.78) saturate(.9)}
-.op-int-glow{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 48%,rgba(201,162,39,.38) 0%,rgba(255,90,0,.15) 38%,transparent 72%);opacity:0;pointer-events:none;mix-blend-mode:screen}
-/* LED indicators */
-.op-leds{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);display:flex;gap:9px}
+:root{--cd:52px}
+.op-scene{width:100%;height:560px;display:flex;align-items:center;justify-content:center;perspective:1200px;perspective-origin:50% 38%;position:relative}
+.op-cabinet{width:310px;height:440px;position:relative;transform-style:preserve-3d;transform:rotateX(5deg) rotateY(18deg)}
+/* Back wall — CSS-built interior, no photo */
+.op-back{position:absolute;inset:0;background:#0b0b0b;border:2px solid #1e1e1e;overflow:hidden;transform:translateZ(calc(-1 * var(--cd)));contain:layout paint}
+/* Busbar */
+.op-int-bus{position:absolute;left:8%;right:8%;top:9%;height:9px;background:linear-gradient(90deg,#7a5600,#c9a227,#f2cc40,#c9a227,#7a5600);border-radius:3px;box-shadow:0 0 22px rgba(201,162,39,.75),0 2px 6px rgba(0,0,0,.8)}
+/* Component zone */
+.op-int-zone{position:absolute;left:8%;right:8%}
+/* DIN rail */
+.op-int-din{height:7px;background:linear-gradient(90deg,#1e1e1e,#606060,#1e1e1e);border-radius:2px;margin-bottom:3px}
+/* Circuit breakers */
+.op-int-brs{display:flex;gap:4px}
+.op-int-br{flex:1;height:70px;background:linear-gradient(175deg,#2c2c2c,#1c1c1c);border:1px solid #424242;border-radius:2px;position:relative;overflow:hidden}
+.op-int-br::before{content:'';position:absolute;top:0;left:0;right:0;height:6px;border-radius:2px 2px 0 0;background:#484848}
+.op-int-br.b3::before{background:linear-gradient(90deg,#9a7400,#c9a227,#9a7400)}
+.op-int-br::after{content:'';position:absolute;top:18px;left:50%;transform:translateX(-50%);width:55%;height:26px;background:linear-gradient(180deg,#383838,#252525);border:1px solid #525252;border-radius:3px}
+/* Contactors */
+.op-int-ctrs{display:flex;gap:5px}
+.op-int-ctr{flex:1;height:88px;background:linear-gradient(175deg,#222,#151515);border:1px solid #3a3a3a;border-radius:3px;position:relative;overflow:hidden;max-width:90px}
+.op-int-ctr::before{content:'';position:absolute;top:7px;left:50%;transform:translateX(-50%);width:68%;height:22px;background:linear-gradient(180deg,#2e2e2e,#1e1e1e);border:1px solid #484848;border-radius:2px}
+.op-int-ctr::after{content:'';position:absolute;bottom:5px;left:8%;right:8%;height:14px;background:repeating-linear-gradient(90deg,#181818 0,#181818 8px,#404040 8px,#404040 11px);border-radius:1px}
+.op-int-ctr.orn{background:linear-gradient(175deg,#5a2800,#381a00);border-color:#7a3c00}
+.op-int-ctr.orn::before{background:linear-gradient(180deg,#7a3800,#582600);border-color:#9a4c00}
+/* Wire bundle at bottom */
+.op-int-wires{position:absolute;bottom:0;left:0;right:0;height:26%;display:flex;gap:3px;align-items:flex-end;padding:0 6px;overflow:hidden}
+.op-int-wire{flex-shrink:0;width:7px;border-radius:2px 2px 0 0}
+/* Glow overlay */
+.op-int-glow{position:absolute;inset:0;background:linear-gradient(90deg,rgba(201,162,39,.25) 0%,transparent 55%),radial-gradient(ellipse at 42% 44%,rgba(255,140,0,.22) 0%,transparent 68%);opacity:0;pointer-events:none;mix-blend-mode:screen}
+/* LEDs */
+.op-leds{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);display:flex;gap:9px}
 .op-led{width:9px;height:9px;border-radius:50%}
 .op-led.g{background:#22ff55;box-shadow:0 0 12px #22ff55,0 0 5px #22ff55}
 .op-led.r{background:#ff3322;box-shadow:0 0 12px #ff3322,0 0 5px #ff3322}
 .op-led.y{background:#ffcc00;box-shadow:0 0 12px #ffcc00,0 0 5px #ffcc00}
-/* Side faces — give the box physical depth */
-.op-right{position:absolute;top:0;right:0;width:var(--cd);height:100%;background:linear-gradient(90deg,#1e1e1e,#121212);border:1px solid #252525;transform-origin:right center;transform:rotateY(90deg)}
-.op-top{position:absolute;top:0;left:0;width:100%;height:var(--cd);background:linear-gradient(180deg,#1e1e1e,#121212);border:1px solid #252525;transform-origin:top center;transform:rotateX(-90deg)}
-.op-bottom{position:absolute;bottom:0;left:0;width:100%;height:var(--cd);background:linear-gradient(0deg,#1e1e1e,#121212);border:1px solid #252525;transform-origin:bottom center;transform:rotateX(90deg)}
-.op-hleft{position:absolute;top:0;left:0;width:var(--cd);height:100%;background:linear-gradient(90deg,#121212,#1e1e1e);border:1px solid #252525;transform-origin:left center;transform:rotateY(-90deg)}
-/* Door */
+/* ONE side face — right (the only visible one at rotateY 18°) */
+.op-right{position:absolute;top:0;right:0;width:var(--cd);height:100%;background:linear-gradient(90deg,#1c1c1c,#111);border:1px solid #222;transform-origin:right center;transform:rotateY(90deg)}
+/* Door — only animated element, gets will-change */
 .op-door{position:absolute;inset:0;transform-origin:left center;transform-style:preserve-3d;transform:rotateY(0deg);will-change:transform}
 .op-door-face{position:absolute;inset:0;background:linear-gradient(148deg,#2d2d2d 0%,#202020 55%,#1a1a1a 100%);border:2px solid #454545;backface-visibility:hidden;overflow:hidden}
 .op-door-face::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 28px,rgba(255,255,255,.017) 28px,rgba(255,255,255,.017) 29px)}
 .op-door-inner{position:absolute;inset:0;background:linear-gradient(135deg,#1c1c1c,#131313);transform:rotateY(180deg);backface-visibility:hidden}
-.op-door-thickness{position:absolute;top:0;right:-10px;width:10px;height:100%;background:linear-gradient(90deg,#3c3c3c,#181818);transform-origin:left center;transform:rotateY(90deg);backface-visibility:hidden}
 /* Door hardware */
 .op-bolt{position:absolute;width:10px;height:10px;border-radius:50%;background:radial-gradient(circle at 33% 33%,#5a5a5a,#222);border:1px solid #464646}
 .op-bolt.tl{top:14px;left:14px}.op-bolt.tr{top:14px;right:14px}
@@ -295,8 +313,8 @@ footer{background:#060606;border-top:1px solid var(--border);padding:48px 5% 26p
 .op-vent-slits{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;gap:4px}
 .op-vent-slits span{display:block;width:44px;height:2px;background:rgba(255,255,255,.06);border-radius:1px}
 .op-door-lines{position:absolute;inset:0;pointer-events:none}
-/* Gold light leak at hinge as door opens */
-.op-leak{position:absolute;left:-2px;top:8%;bottom:8%;width:7px;background:linear-gradient(180deg,transparent,rgba(201,162,39,.95),rgba(255,120,0,.8),rgba(201,162,39,.95),transparent);filter:blur(6px);opacity:0;border-radius:3px;pointer-events:none;z-index:2}
+/* Light leak — no blur (avoids extra composite layer) */
+.op-leak{position:absolute;left:-1px;top:6%;bottom:6%;width:10px;background:linear-gradient(180deg,transparent,rgba(201,162,39,.95),rgba(255,120,0,.85),rgba(201,162,39,.95),transparent);opacity:0;border-radius:3px;pointer-events:none;z-index:2}
 /* Nosotros two-col grid */
 #nosotros .nos-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
 
@@ -348,6 +366,47 @@ footer{background:#060606;border-top:1px solid var(--border);padding:48px 5% 26p
 @media(max-width:900px){.anatomy-grid-new{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:580px){.anatomy-grid-new{grid-template-columns:1fr}.asm-wrap{transform:scale(.72);transform-origin:top center;margin-bottom:24px}}
 @media(max-width:768px){#nosotros .nos-grid{grid-template-columns:1fr;gap:40px}.op-scene{height:400px}}
+
+/* ── MINI 3D COMPONENT ICONS (anatomy grid) ── */
+.agn-icon{margin-bottom:18px;perspective:280px;perspective-origin:50% 55%}
+.agn-icon-inner{transition:transform .55s cubic-bezier(.25,.46,.45,.94),box-shadow .55s;transform:rotateX(7deg) rotateY(-5deg)}
+.agn-point:hover .agn-icon-inner{transform:rotateX(-5deg) rotateY(7deg) translateZ(14px)}
+/* Wire bundle */
+.i-wires{display:flex;align-items:flex-end;gap:3px;height:52px;padding:4px 10px 0;background:linear-gradient(180deg,#181818,#0f0f0f);border:1px solid #2a2a2a;border-radius:2px 2px 0 0;border-bottom:5px solid #252525;overflow:hidden}
+.i-w{width:7px;border-radius:2px 2px 0 0;flex-shrink:0}
+/* Breaker */
+.i-breaker{width:58px;height:56px;background:linear-gradient(175deg,#2e2e2e,#1c1c1c);border:1px solid #424242;border-radius:2px;position:relative;margin:0 auto;overflow:hidden;transition:box-shadow .4s}
+.i-br-top{position:absolute;top:0;left:0;right:0;height:7px;background:linear-gradient(90deg,#9a7400,#c9a227,#9a7400);border-radius:2px 2px 0 0;transition:box-shadow .4s,background .4s}
+.i-br-sw{position:absolute;top:17px;left:50%;transform:translateX(-50%);width:54%;height:24px;background:linear-gradient(180deg,#3a3a3a,#252525);border:1px solid #525252;border-radius:3px}
+.agn-point:hover .i-breaker{box-shadow:0 0 24px rgba(201,162,39,.4)}
+.agn-point:hover .i-br-top{background:linear-gradient(90deg,#c9a227,#f2cc40,#c9a227);box-shadow:0 0 12px rgba(201,162,39,.7)}
+/* Terminal block */
+.i-terms{display:flex;gap:0}
+.i-term{flex:1;height:50px;background:linear-gradient(180deg,#242424,#181818);border:1px solid #303030;border-right:none;position:relative;min-width:0}
+.i-term:last-child{border-right:1px solid #303030}
+.i-term::before{content:'';position:absolute;top:8px;left:50%;transform:translateX(-50%);width:9px;height:9px;border-radius:50%;background:#2a2a2a;border:1px solid #444}
+.i-term.lit::before{border-color:rgba(201,162,39,.7);box-shadow:0 0 5px rgba(201,162,39,.4)}
+.i-term::after{content:'';position:absolute;bottom:6px;left:50%;transform:translateX(-50%);width:7px;height:9px;background:#1e1e1e;border:1px solid #3a3a3a}
+.agn-point:hover .i-term.lit::before{box-shadow:0 0 12px rgba(201,162,39,.75)}
+/* Contactor */
+.i-ctr{width:54px;height:56px;background:linear-gradient(175deg,#5a2800,#381a00);border:1px solid #7a3c00;border-radius:3px;position:relative;margin:0 auto;overflow:hidden;transition:box-shadow .4s,border-color .4s}
+.i-ctr::before{content:'';position:absolute;top:7px;left:50%;transform:translateX(-50%);width:68%;height:18px;background:linear-gradient(180deg,#7a3800,#582600);border:1px solid #9a4c00;border-radius:2px}
+.i-ctr::after{content:'';position:absolute;bottom:6px;left:10%;right:10%;height:11px;background:repeating-linear-gradient(90deg,#1a1a1a 0,#1a1a1a 7px,#553300 7px,#553300 10px);border-radius:1px}
+.agn-point:hover .i-ctr{box-shadow:0 0 24px rgba(200,80,0,.45);border-color:#b05500}
+/* LED test panel */
+.i-meter{background:linear-gradient(180deg,#181818,#111);border:1px solid #2a2a2a;border-radius:2px;display:flex;gap:10px;justify-content:center;align-items:center;height:56px;padding:0 14px}
+.i-led{width:13px;height:13px;border-radius:50%;transition:background .4s,box-shadow .4s}
+.i-led.g{background:#22ff55;box-shadow:0 0 10px #22ff55}
+.i-led.r{background:#ff3322;box-shadow:0 0 10px #ff3322}
+.i-led.y{background:#ffcc00;box-shadow:0 0 10px #ffcc00}
+.agn-point:hover .i-led.r,.agn-point:hover .i-led.y{background:#22ff55;box-shadow:0 0 18px #22ff55}
+/* DIN rail assembly */
+.i-din-assy{display:flex;flex-direction:column;gap:3px}
+.i-din{height:5px;background:linear-gradient(90deg,#2a2a2a,#606060,#2a2a2a);border-radius:1px}
+.i-din-row{display:flex;gap:3px}
+.i-dc{flex:1;height:42px;background:linear-gradient(180deg,#252525,#181818);border:1px solid #333;border-radius:2px;transition:border-color .3s,box-shadow .3s}
+.i-dc.focus{border-color:rgba(201,162,39,.25)}
+.agn-point:hover .i-dc.focus{border-color:var(--gold);box-shadow:0 0 12px rgba(201,162,39,.28)}
 #porque{padding:0;overflow:hidden;background:var(--bg2)}
 .porque-pin{height:100vh;overflow:hidden;display:flex;align-items:center;position:relative}
 .porque-track{display:flex;gap:0;will-change:transform;padding:0 5vw}
@@ -574,13 +633,47 @@ footer{background:#060606;border-top:1px solid var(--border);padding:48px 5% 26p
         </div>
       </div>
     </div>
-    <!-- 3D Cabinet — proper 5-face box that opens -->
+    <!-- 3D Cabinet — CSS interior, 3 layers only (no lag) -->
     <div class="op-scene" id="opScene">
       <div class="op-cabinet" id="opCabinet">
-        <!-- Back wall: real interior photo, revealed when door opens -->
+        <!-- Back wall: CSS-built electrical components -->
         <div class="op-back">
-          <img src="public/images/06dee9ac-f14e-5aba-8125-661fd9d9e9c5.jpg" alt="Interior tablero eléctrico"/>
+          <!-- Gold busbar at top -->
+          <div class="op-int-bus"></div>
+          <!-- DIN Rail 1: circuit breakers -->
+          <div class="op-int-zone" style="top:20%">
+            <div class="op-int-din"></div>
+            <div class="op-int-brs">
+              <div class="op-int-br b3"></div>
+              <div class="op-int-br b3"></div>
+              <div class="op-int-br b1"></div>
+              <div class="op-int-br b1"></div>
+            </div>
+          </div>
+          <!-- DIN Rail 2: contactors (orange = Lovato/Siemens style) -->
+          <div class="op-int-zone" style="top:54%">
+            <div class="op-int-din"></div>
+            <div class="op-int-ctrs">
+              <div class="op-int-ctr orn"></div>
+              <div class="op-int-ctr orn"></div>
+              <div class="op-int-ctr"></div>
+            </div>
+          </div>
+          <!-- Wire bundle at bottom -->
+          <div class="op-int-wires">
+            <div class="op-int-wire" style="height:82%;background:#c86000"></div>
+            <div class="op-int-wire" style="height:92%;background:#cc6a00"></div>
+            <div class="op-int-wire" style="height:68%;background:#1144aa"></div>
+            <div class="op-int-wire" style="height:75%;background:#1155cc"></div>
+            <div class="op-int-wire" style="height:86%;background:#22aa44"></div>
+            <div class="op-int-wire" style="height:78%;background:#229944"></div>
+            <div class="op-int-wire" style="height:70%;background:#cc2222"></div>
+            <div class="op-int-wire" style="height:62%;background:#1a1a1a;border:1px solid #444"></div>
+            <div class="op-int-wire" style="height:79%;background:#1a1a1a;border:1px solid #444"></div>
+          </div>
+          <!-- Glow overlay (animate on scroll) -->
           <div class="op-int-glow" id="opIntGlow"></div>
+          <!-- Status LEDs -->
           <div class="op-leds">
             <span class="op-led g"></span>
             <span class="op-led g"></span>
@@ -588,12 +681,9 @@ footer{background:#060606;border-top:1px solid var(--border);padding:48px 5% 26p
             <span class="op-led y"></span>
           </div>
         </div>
-        <!-- Enclosure depth faces -->
+        <!-- Right side face (only one needed at 18° rotation) -->
         <div class="op-right"></div>
-        <div class="op-top"></div>
-        <div class="op-bottom"></div>
-        <div class="op-hleft"></div>
-        <!-- Front door — hinges on left, swings open on scroll -->
+        <!-- Door hinges on left, scrolls open to 110° -->
         <div class="op-door" id="opDoor">
           <div class="op-door-face">
             <span class="op-bolt tl"></span>
@@ -607,9 +697,7 @@ footer{background:#060606;border-top:1px solid var(--border);padding:48px 5% 26p
               </svg>
             </div>
             <div class="op-handle"></div>
-            <div class="op-vent-slits">
-              <span></span><span></span><span></span>
-            </div>
+            <div class="op-vent-slits"><span></span><span></span><span></span></div>
             <svg class="op-door-lines" viewBox="0 0 320 450" xmlns="http://www.w3.org/2000/svg">
               <g stroke="#c9a227" stroke-width=".65" fill="none" opacity=".26">
                 <path d="M26,80 L78,80 L78,100 L205,100"/><circle cx="78" cy="80" r="2.5" fill="#c9a227"/>
@@ -620,7 +708,6 @@ footer{background:#060606;border-top:1px solid var(--border);padding:48px 5% 26p
             </svg>
           </div>
           <div class="op-door-inner"></div>
-          <div class="op-door-thickness"></div>
         </div>
         <!-- Gold light leak at hinge -->
         <div class="op-leak" id="opLeak"></div>
@@ -870,14 +957,99 @@ footer{background:#060606;border-top:1px solid var(--border);padding:48px 5% 26p
     </div>
   </div>
 
-  <!-- 6-point grid -->
+  <!-- 6-point grid — hover lifts 3D component toward viewer -->
   <div class="anatomy-grid-new">
-    <div class="agn-point"><div class="agn-num">01</div><h4 class="agn-title">Cableado ordenado</h4><p class="agn-body">Cada conductor en su canaleta, sin cruces ni tensión excesiva. Reduce fallas y facilita el mantenimiento.</p></div>
-    <div class="agn-point"><div class="agn-num">02</div><h4 class="agn-title">Identificación de circuitos</h4><p class="agn-body">Rotulación clara en bornes, cables y dispositivos. Permite diagnóstico rápido y trabajos seguros.</p></div>
-    <div class="agn-point"><div class="agn-num">03</div><h4 class="agn-title">Protecciones adecuadas</h4><p class="agn-body">Calibres correctos, coordinación entre protecciones. El tablero protege el sistema y al personal ante fallas.</p></div>
-    <div class="agn-point"><div class="agn-num">04</div><h4 class="agn-title">Componentes confiables</h4><p class="agn-body">Marcas reconocidas con trazabilidad y garantía de fabricante. Sin componentes de dudosa procedencia.</p></div>
-    <div class="agn-point"><div class="agn-num">05</div><h4 class="agn-title">Pruebas de funcionamiento</h4><p class="agn-body">Verificación completa de maniobra, lógica de control y protecciones antes de cada entrega.</p></div>
-    <div class="agn-point"><div class="agn-num">06</div><h4 class="agn-title">Facilidad de mantenimiento</h4><p class="agn-body">Distribución interna pensada para acceso técnico. Fácil de revisar, corregir o ampliar.</p></div>
+    <!-- 01 Wire bundle — cableado ordenado -->
+    <div class="agn-point">
+      <div class="agn-icon">
+        <div class="agn-icon-inner">
+          <div class="i-wires">
+            <div class="i-w" style="height:38px;background:#c86000"></div>
+            <div class="i-w" style="height:44px;background:#cc6a00"></div>
+            <div class="i-w" style="height:30px;background:#1144aa"></div>
+            <div class="i-w" style="height:36px;background:#1155cc"></div>
+            <div class="i-w" style="height:42px;background:#22aa44"></div>
+            <div class="i-w" style="height:28px;background:#cc2222"></div>
+            <div class="i-w" style="height:34px;background:#555;border:1px solid #666"></div>
+          </div>
+        </div>
+      </div>
+      <h4 class="agn-title">Cableado ordenado</h4>
+      <p class="agn-body">Cada conductor en su canaleta, sin cruces ni tensión excesiva. Reduce fallas y facilita el mantenimiento.</p>
+    </div>
+    <!-- 02 Terminal block — identificación -->
+    <div class="agn-point">
+      <div class="agn-icon">
+        <div class="agn-icon-inner">
+          <div class="i-terms">
+            <div class="i-term lit"></div>
+            <div class="i-term"></div>
+            <div class="i-term lit"></div>
+            <div class="i-term"></div>
+            <div class="i-term lit"></div>
+            <div class="i-term"></div>
+            <div class="i-term lit"></div>
+          </div>
+        </div>
+      </div>
+      <h4 class="agn-title">Identificación de circuitos</h4>
+      <p class="agn-body">Rotulación clara en bornes, cables y dispositivos. Permite diagnóstico rápido y trabajos seguros.</p>
+    </div>
+    <!-- 03 Circuit breaker — protecciones -->
+    <div class="agn-point">
+      <div class="agn-icon">
+        <div class="agn-icon-inner">
+          <div class="i-breaker">
+            <div class="i-br-top"></div>
+            <div class="i-br-sw"></div>
+          </div>
+        </div>
+      </div>
+      <h4 class="agn-title">Protecciones adecuadas</h4>
+      <p class="agn-body">Calibres correctos, coordinación entre protecciones. El tablero protege el sistema y al personal ante fallas.</p>
+    </div>
+    <!-- 04 Contactor — componentes confiables -->
+    <div class="agn-point">
+      <div class="agn-icon">
+        <div class="agn-icon-inner">
+          <div class="i-ctr"></div>
+        </div>
+      </div>
+      <h4 class="agn-title">Componentes confiables</h4>
+      <p class="agn-body">Marcas reconocidas con trazabilidad y garantía de fabricante. Sin componentes de dudosa procedencia.</p>
+    </div>
+    <!-- 05 LED test panel — pruebas -->
+    <div class="agn-point">
+      <div class="agn-icon">
+        <div class="agn-icon-inner">
+          <div class="i-meter">
+            <div class="i-led g"></div>
+            <div class="i-led r"></div>
+            <div class="i-led y"></div>
+          </div>
+        </div>
+      </div>
+      <h4 class="agn-title">Pruebas de funcionamiento</h4>
+      <p class="agn-body">Verificación completa de maniobra, lógica de control y protecciones antes de cada entrega.</p>
+    </div>
+    <!-- 06 DIN rail with highlighted component — mantenimiento -->
+    <div class="agn-point">
+      <div class="agn-icon">
+        <div class="agn-icon-inner">
+          <div class="i-din-assy">
+            <div class="i-din"></div>
+            <div class="i-din-row">
+              <div class="i-dc"></div>
+              <div class="i-dc focus"></div>
+              <div class="i-dc"></div>
+              <div class="i-dc"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <h4 class="agn-title">Facilidad de mantenimiento</h4>
+      <p class="agn-body">Distribución interna pensada para acceso técnico. Fácil de revisar, corregir o ampliar.</p>
+    </div>
   </div>
 </section>
 
