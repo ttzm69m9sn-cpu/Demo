@@ -257,9 +257,8 @@ footer{background:#060606;border-top:1px solid var(--border);padding:48px 5% 26p
 .wa-label{background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:5px 11px;border-radius:3px;font-size:.73rem;font-weight:600;white-space:nowrap;opacity:0;transform:translateX(8px);transition:opacity .2s,transform .2s;pointer-events:none}
 #wa-float:hover .wa-label{opacity:1;transform:translateX(0)}
 
-/* SCROLL REVEAL */
-.reveal{opacity:0;transform:translateY(28px);transition:opacity .65s ease,transform .65s ease}
-.reveal.visible{opacity:1;transform:none}
+/* SCROLL REVEAL — visibility guaranteed; GSAP handles animation */
+.reveal{opacity:1;transform:none}
 
 /* RESPONSIVE */
 @media(max-width:1100px){
@@ -819,13 +818,19 @@ function animateCircuits(){
 }
 
 /* ── HERO ANIMATION ── */
+/* Ocultamos hero content SOLO vía JS (no CSS) para que nunca quede
+   permanentemente invisible si algo falla en la cadena de animación */
+gsap.set(['.hero-tag','.hero-h1','.hero-sub','.hero-btns','.hero-meta'],{opacity:0,y:20});
 function animateHero(){
-  var tl=gsap.timeline();
-  tl.from('.hero-tag',{opacity:0,y:20,duration:0.6,ease:'power2.out'})
-    .from('.hero-h1',{opacity:0,y:32,duration:0.8,ease:'power2.out'},'-=0.2')
-    .from('.hero-sub',{opacity:0,y:20,duration:0.7,ease:'power2.out'},'-=0.4')
-    .from('.hero-btns',{opacity:0,y:20,duration:0.6,ease:'power2.out'},'-=0.3')
-    .from('.hero-meta',{opacity:0,duration:0.5},'-=0.2');
+  var tl=gsap.timeline({onComplete:function(){
+    /* Fallback: garantiza visibilidad aunque algo falle */
+    gsap.set(['.hero-tag','.hero-h1','.hero-sub','.hero-btns','.hero-meta'],{clearProps:'all'});
+  }});
+  tl.to('.hero-tag',{opacity:1,y:0,duration:0.6,ease:'power2.out'})
+    .to('.hero-h1',{opacity:1,y:0,duration:0.8,ease:'power2.out'},'-=0.2')
+    .to('.hero-sub',{opacity:1,y:0,duration:0.7,ease:'power2.out'},'-=0.4')
+    .to('.hero-btns',{opacity:1,y:0,duration:0.6,ease:'power2.out'},'-=0.3')
+    .to('.hero-meta',{opacity:1,y:0,duration:0.5},'-=0.2');
 }
 
 /* ── CURSOR ── */
@@ -893,29 +898,34 @@ document.querySelectorAll('.faq-q').forEach(function(btn){
   });
 });
 
-/* ── SCROLL REVEAL ── */
-var ro=new IntersectionObserver(function(entries){
-  entries.forEach(function(e){
-    if(e.isIntersecting)e.target.classList.add('visible');
-  });
-},{threshold:0.1,rootMargin:'0px 0px -30px 0px'});
-document.querySelectorAll('.reveal').forEach(function(el){ro.observe(el);});
+/* ── SCROLL REVEAL — handled entirely by GSAP ScrollTrigger below ── */
 
-/* ── GSAP STAGGER ANIMATIONS ── */
+/* ── GSAP SCROLL ANIMATIONS ── */
+/* Usamos autoAlpha (maneja opacity + visibility juntos) y once:true
+   para que nunca queden elementos en estado invisible */
 gsap.utils.toArray('.why-card').forEach(function(c,i){
-  gsap.from(c,{scrollTrigger:{trigger:c,start:'top 88%'},opacity:0,y:36,duration:0.65,delay:(i%3)*0.1,ease:'power2.out'});
+  gsap.from(c,{scrollTrigger:{trigger:c,start:'top 90%',once:true},autoAlpha:0,y:32,duration:0.65,delay:(i%3)*0.1,ease:'power2.out'});
 });
 gsap.utils.toArray('.process-step').forEach(function(s,i){
-  gsap.from(s,{scrollTrigger:{trigger:s,start:'top 88%'},opacity:0,y:28,duration:0.65,delay:i*0.12,ease:'power2.out'});
+  gsap.from(s,{scrollTrigger:{trigger:s,start:'top 90%',once:true},autoAlpha:0,y:24,duration:0.65,delay:i*0.12,ease:'power2.out'});
 });
 gsap.utils.toArray('.service-card').forEach(function(c,i){
-  gsap.from(c,{scrollTrigger:{trigger:c,start:'top 92%'},opacity:0,y:28,duration:0.55,delay:(i%4)*0.08,ease:'power2.out'});
+  gsap.from(c,{scrollTrigger:{trigger:c,start:'top 93%',once:true},autoAlpha:0,y:24,duration:0.55,delay:(i%4)*0.08,ease:'power2.out'});
 });
 gsap.utils.toArray('.anatomy-point').forEach(function(p,i){
-  gsap.from(p,{scrollTrigger:{trigger:p,start:'top 90%'},opacity:0,x:20,duration:0.6,delay:i*0.08,ease:'power2.out'});
+  gsap.from(p,{scrollTrigger:{trigger:p,start:'top 92%',once:true},autoAlpha:0,x:18,duration:0.6,delay:i*0.08,ease:'power2.out'});
 });
 gsap.utils.toArray('.gallery-item').forEach(function(g,i){
-  gsap.from(g,{scrollTrigger:{trigger:g,start:'top 92%'},opacity:0,y:20,duration:0.55,delay:(i%3)*0.08,ease:'power2.out'});
+  gsap.from(g,{scrollTrigger:{trigger:g,start:'top 93%',once:true},autoAlpha:0,y:18,duration:0.5,delay:(i%3)*0.07,ease:'power2.out'});
+});
+/* Secciones generales — about, why, brands, FAQ, contact */
+gsap.utils.toArray('.reveal').forEach(function(el){
+  /* Solo anima si no es un elemento ya manejado arriba */
+  var skip=['.why-card','.process-step','.service-card','.anatomy-point','.gallery-item'];
+  var isHandled=skip.some(function(s){return el.matches(s);});
+  if(!isHandled){
+    gsap.from(el,{scrollTrigger:{trigger:el,start:'top 88%',once:true},autoAlpha:0,y:24,duration:0.7,ease:'power2.out'});
+  }
 });
 
 /* ── CONTACT FORM → WHATSAPP ── */
