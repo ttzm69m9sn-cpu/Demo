@@ -260,52 +260,94 @@ footer{background:#060606;border-top:1px solid var(--border);padding:48px 5% 26p
 /* SCROLL REVEAL */
 .reveal{opacity:1;transform:none}
 
-/* ── OPENING PANEL (Nosotros) ── */
-.opening-scene{width:100%;height:500px;display:flex;align-items:center;justify-content:center;perspective:1100px;perspective-origin:50% 45%;position:relative}
-.opening-cabinet{width:300px;height:400px;position:relative;transform-style:preserve-3d;transform:rotateX(3deg) rotateY(15deg);will-change:transform}
-/* Cabinet body — always visible behind the door */
-.op-body{position:absolute;inset:0;background:#111;border:2px solid #2a2a2a;border-radius:2px;overflow:hidden}
-.op-body img{width:100%;height:100%;object-fit:cover;filter:brightness(.65) saturate(.75)}
-.op-glow{position:absolute;inset:0;background:radial-gradient(ellipse at 35% 50%,rgba(201,162,39,.4) 0%,rgba(200,80,0,.2) 40%,transparent 70%);opacity:0;pointer-events:none;mix-blend-mode:screen}
+/* ── 3D CABINET (Nosotros) ── */
+:root{--cd:56px}
+.op-scene{width:100%;height:560px;display:flex;align-items:center;justify-content:center;perspective:1300px;perspective-origin:50% 38%;position:relative}
+.op-cabinet{width:320px;height:450px;position:relative;transform-style:preserve-3d;transform:rotateX(5deg) rotateY(18deg);will-change:transform}
+/* Back wall — real interior photo */
+.op-back{position:absolute;inset:0;background:#080808;border:2px solid #1e1e1e;overflow:hidden;transform:translateZ(calc(-1 * var(--cd)))}
+.op-back img{width:100%;height:100%;object-fit:cover;filter:brightness(.78) saturate(.9)}
+.op-int-glow{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 48%,rgba(201,162,39,.38) 0%,rgba(255,90,0,.15) 38%,transparent 72%);opacity:0;pointer-events:none;mix-blend-mode:screen}
+/* LED indicators */
+.op-leds{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);display:flex;gap:9px}
+.op-led{width:9px;height:9px;border-radius:50%}
+.op-led.g{background:#22ff55;box-shadow:0 0 12px #22ff55,0 0 5px #22ff55}
+.op-led.r{background:#ff3322;box-shadow:0 0 12px #ff3322,0 0 5px #ff3322}
+.op-led.y{background:#ffcc00;box-shadow:0 0 12px #ffcc00,0 0 5px #ffcc00}
+/* Side faces — give the box physical depth */
+.op-right{position:absolute;top:0;right:0;width:var(--cd);height:100%;background:linear-gradient(90deg,#1e1e1e,#121212);border:1px solid #252525;transform-origin:right center;transform:rotateY(90deg)}
+.op-top{position:absolute;top:0;left:0;width:100%;height:var(--cd);background:linear-gradient(180deg,#1e1e1e,#121212);border:1px solid #252525;transform-origin:top center;transform:rotateX(-90deg)}
+.op-bottom{position:absolute;bottom:0;left:0;width:100%;height:var(--cd);background:linear-gradient(0deg,#1e1e1e,#121212);border:1px solid #252525;transform-origin:bottom center;transform:rotateX(90deg)}
+.op-hleft{position:absolute;top:0;left:0;width:var(--cd);height:100%;background:linear-gradient(90deg,#121212,#1e1e1e);border:1px solid #252525;transform-origin:left center;transform:rotateY(-90deg)}
 /* Door */
 .op-door{position:absolute;inset:0;transform-origin:left center;transform-style:preserve-3d;transform:rotateY(0deg);will-change:transform}
-.op-door-front{position:absolute;inset:0;background:linear-gradient(160deg,#222 0%,#1c1c1c 60%,#181818 100%);border:2px solid #3a3a3a;border-radius:2px;backface-visibility:hidden;overflow:hidden}
-.op-door-front::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 30px,rgba(255,255,255,.016) 30px,rgba(255,255,255,.016) 31px)}
-.op-door-back{position:absolute;inset:0;background:linear-gradient(135deg,#1e1e1e,#161616);border:1px solid #2a2a2a;border-radius:2px;transform:rotateY(180deg);backface-visibility:hidden}
-/* Door edge — gives it thickness in 3D */
-.op-door-edge{position:absolute;top:0;right:-16px;width:16px;height:100%;background:linear-gradient(90deg,#2e2e2e,#1a1a1a);border-top:1px solid #333;border-bottom:1px solid #333;transform:rotateY(90deg);transform-origin:left center;backface-visibility:hidden}
-/* Bolts */
-.op-bolt{position:absolute;width:11px;height:11px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#555,#1e1e1e);border:1px solid #444}
-.op-bolt.tl{top:12px;left:12px}.op-bolt.tr{top:12px;right:12px}
-.op-bolt.bl{bottom:12px;left:12px}.op-bolt.br{bottom:12px;right:12px}
-.op-handle{position:absolute;right:16px;top:50%;transform:translateY(-50%);width:7px;height:52px;background:linear-gradient(180deg,#666,#3a3a3a,#666);border-radius:3px;border:1px solid #666}
-.op-label{position:absolute;top:18px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.6);border:1px solid #3a3a3a;padding:4px 12px;font-family:var(--font-head);font-size:.52rem;letter-spacing:.15em;color:var(--muted);text-transform:uppercase;white-space:nowrap}
-.op-logo{position:absolute;top:50%;left:50%;transform:translate(-50%,-52%)}
-.op-circuit-svg{position:absolute;inset:0;pointer-events:none;opacity:.5}
-.op-vent{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;gap:3px}
-.op-vent span{display:block;width:38px;height:1.5px;background:rgba(255,255,255,.06)}
-/* Light leak — golden sliver at hinge when opening */
-.op-lightleak{position:absolute;left:-1px;top:10%;bottom:10%;width:4px;background:linear-gradient(180deg,transparent,rgba(201,162,39,.9),rgba(255,140,0,.7),rgba(201,162,39,.9),transparent);opacity:0;filter:blur(3px);pointer-events:none;border-radius:2px}
-/* Nosotros grid */
+.op-door-face{position:absolute;inset:0;background:linear-gradient(148deg,#2d2d2d 0%,#202020 55%,#1a1a1a 100%);border:2px solid #454545;backface-visibility:hidden;overflow:hidden}
+.op-door-face::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 28px,rgba(255,255,255,.017) 28px,rgba(255,255,255,.017) 29px)}
+.op-door-inner{position:absolute;inset:0;background:linear-gradient(135deg,#1c1c1c,#131313);transform:rotateY(180deg);backface-visibility:hidden}
+.op-door-thickness{position:absolute;top:0;right:-10px;width:10px;height:100%;background:linear-gradient(90deg,#3c3c3c,#181818);transform-origin:left center;transform:rotateY(90deg);backface-visibility:hidden}
+/* Door hardware */
+.op-bolt{position:absolute;width:10px;height:10px;border-radius:50%;background:radial-gradient(circle at 33% 33%,#5a5a5a,#222);border:1px solid #464646}
+.op-bolt.tl{top:14px;left:14px}.op-bolt.tr{top:14px;right:14px}
+.op-bolt.bl{bottom:14px;left:14px}.op-bolt.br{bottom:14px;right:14px}
+.op-handle{position:absolute;right:18px;top:50%;transform:translateY(-50%);width:8px;height:58px;background:linear-gradient(180deg,#5a5a5a,#8a8a8a,#5a5a5a);border-radius:4px;border:1px solid #777;box-shadow:inset 0 0 8px rgba(0,0,0,.6)}
+.op-nameplate{position:absolute;top:18px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.62);border:1px solid #3c3c3c;padding:4px 14px;font-family:var(--font-head);font-size:.5rem;letter-spacing:.16em;color:var(--muted);text-transform:uppercase;white-space:nowrap}
+.op-logo-mark{position:absolute;top:50%;left:50%;transform:translate(-50%,-56%)}
+.op-vent-slits{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;gap:4px}
+.op-vent-slits span{display:block;width:44px;height:2px;background:rgba(255,255,255,.06);border-radius:1px}
+.op-door-lines{position:absolute;inset:0;pointer-events:none}
+/* Gold light leak at hinge as door opens */
+.op-leak{position:absolute;left:-2px;top:8%;bottom:8%;width:7px;background:linear-gradient(180deg,transparent,rgba(201,162,39,.95),rgba(255,120,0,.8),rgba(201,162,39,.95),transparent);filter:blur(6px);opacity:0;border-radius:3px;pointer-events:none;z-index:2}
+/* Nosotros two-col grid */
 #nosotros .nos-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
 
-/* ── ANATOMY (nueva — imagen grande centrada + grid abajo) ── */
+/* ── ASSEMBLY DIAGRAM (Anatomía) ── */
 #anatomia{background:var(--bg);padding:100px 5% 80px}
 .anatomy-header{text-align:center;max-width:640px;margin:0 auto 64px}
-.anatomy-3d-wrap{position:relative;max-width:820px;margin:0 auto 72px;perspective:1400px}
-.anatomy-3d-img{width:100%;border-radius:6px;display:block;transform:perspective(1400px) rotateX(10deg) rotateY(-3deg) scale(.97);filter:saturate(.8) brightness(.9);box-shadow:0 48px 140px rgba(0,0,0,.85),0 0 80px rgba(201,162,39,.1),inset 0 0 0 1px rgba(201,162,39,.12);will-change:transform;transition:transform .9s cubic-bezier(.25,.46,.45,.94),box-shadow .9s ease}
-.anatomy-3d-wrap:hover .anatomy-3d-img{transform:perspective(1400px) rotateX(4deg) rotateY(0deg) scale(1);box-shadow:0 64px 180px rgba(0,0,0,.75),0 0 120px rgba(201,162,39,.2)}
-.anatomy-3d-wrap::after{content:'';position:absolute;bottom:-32px;left:10%;right:10%;height:32px;background:radial-gradient(ellipse,rgba(201,162,39,.15) 0%,transparent 70%);filter:blur(14px)}
+.asm-wrap{position:relative;max-width:700px;height:510px;margin:0 auto 80px;overflow:hidden}
+/* Frame (enclosure outline) */
+.asm-frame{position:absolute;left:7%;right:7%;top:5%;bottom:4%;border:1.5px solid rgba(201,162,39,.3);border-radius:2px}
+.asm-frame::before{content:'';position:absolute;top:-2px;left:-2px;width:14px;height:14px;border-top:2px solid var(--gold);border-left:2px solid var(--gold)}
+.asm-frame::after{content:'';position:absolute;bottom:-2px;right:-2px;width:14px;height:14px;border-bottom:2px solid var(--gold);border-right:2px solid var(--gold)}
+/* Busbar */
+.asm-busbar{position:absolute;left:10%;right:10%;top:14%;height:5px;background:linear-gradient(90deg,#8a6600,#c9a227,#f0c040,#c9a227,#8a6600);border-radius:2px;box-shadow:0 0 16px rgba(201,162,39,.55)}
+/* Main switch */
+.asm-main-sw{position:absolute;left:50%;top:5.5%;transform:translateX(-50%);width:56px;height:40px;background:linear-gradient(180deg,#2e2e2e,#1e1e1e);border:1.5px solid #4e4e4e;border-radius:2px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:6px;z-index:2}
+.asm-msw-top,.asm-msw-bot{display:block;width:18px;height:3px;background:#888;border-radius:1px}
+.asm-msw-lbl{font-family:var(--font-head);font-size:.46rem;font-weight:700;color:var(--gold);letter-spacing:.08em}
+/* Component rows */
+.asm-row{position:absolute;left:10%;right:10%}
+.asm-row-1{top:31%}.asm-row-2{top:56%}.asm-row-3{top:78%}
+.asm-din-rail{height:5px;background:linear-gradient(90deg,#2a2a2a,#525252,#2a2a2a);border-radius:1px}
+/* Breakers */
+.asm-brs{display:flex;gap:3px;margin-top:3px}
+.asm-br{flex:1;height:52px;max-width:86px;background:linear-gradient(180deg,#303030,#1e1e1e);border:1px solid #484848;border-radius:2px;display:flex;align-items:center;justify-content:center;font-family:var(--font-head);font-size:.48rem;font-weight:700;color:var(--muted);position:relative;overflow:hidden}
+.asm-br::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:#444;border-radius:2px 2px 0 0}
+.asm-br.gd::before{background:var(--gold)}.asm-br.or::before{background:#e06400}
+/* Terminals */
+.asm-terms{display:flex;gap:0;margin-top:3px}
+.asm-term{flex:1;height:30px;max-width:46px;background:linear-gradient(180deg,#262626,#1a1a1a);border:1px solid #333;border-right:none;position:relative}
+.asm-term:last-child{border-right:1px solid #333}
+.asm-term::before{content:'';position:absolute;top:5px;left:50%;transform:translateX(-50%);width:9px;height:9px;border-radius:50%;background:#2e2e2e;border:1px solid #555}
+/* Wires SVG overlay */
+.asm-wires{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+/* Row labels */
+.asm-row-label{position:absolute;top:calc(100% + 7px);left:0;font-size:.54rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.asm-bar-label{position:absolute;top:calc(100% + 7px);left:0;font-size:.54rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(201,162,39,.6)}
+/* Status badge */
+.asm-status{position:absolute;bottom:0;left:50%;transform:translateX(-50%);background:rgba(201,162,39,.07);border:1px solid rgba(201,162,39,.22);padding:6px 20px;border-radius:2px;font-family:var(--font-head);font-size:.6rem;letter-spacing:.1em;color:var(--gold);white-space:nowrap;display:flex;align-items:center;gap:9px;opacity:0}
+.asm-status-dot{width:6px;height:6px;background:#22ff55;border-radius:50%;box-shadow:0 0 7px #22ff55;flex-shrink:0;animation:ledPulse 1.6s ease-in-out infinite}
+@keyframes ledPulse{0%,100%{opacity:1}50%{opacity:.25}}
+/* Grid */
 .anatomy-grid-new{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;max-width:1020px;margin:0 auto}
 .agn-point{padding:30px 26px;background:var(--card);border:1px solid var(--border);position:relative;overflow:hidden}
 .agn-point::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--gold),transparent);opacity:0;transition:opacity .3s}
 .agn-point:hover::before{opacity:1}
-.agn-num{font-family:var(--font-head);font-size:2.6rem;font-weight:700;color:rgba(201,162,39,.14);line-height:1;margin-bottom:12px;display:block;transition:color .3s}
+.agn-num{font-family:var(--font-head);font-size:2.6rem;font-weight:700;color:rgba(201,162,39,.13);line-height:1;margin-bottom:12px;display:block}
 .agn-title{font-family:var(--font-head);font-size:1rem;font-weight:700;color:#fff;margin-bottom:7px}
 .agn-body{font-size:.83rem;color:var(--muted);line-height:1.65}
 @media(max-width:900px){.anatomy-grid-new{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:580px){.anatomy-grid-new{grid-template-columns:1fr}.anatomy-3d-img{transform:perspective(800px) rotateX(5deg) rotateY(0) scale(.98)}}
-@media(max-width:768px){#nosotros .nos-grid{grid-template-columns:1fr;gap:40px}.opening-scene{height:360px}}
+@media(max-width:580px){.anatomy-grid-new{grid-template-columns:1fr}.asm-wrap{transform:scale(.72);transform-origin:top center;margin-bottom:24px}}
+@media(max-width:768px){#nosotros .nos-grid{grid-template-columns:1fr;gap:40px}.op-scene{height:400px}}
 #porque{padding:0;overflow:hidden;background:var(--bg2)}
 .porque-pin{height:100vh;overflow:hidden;display:flex;align-items:center;position:relative}
 .porque-track{display:flex;gap:0;will-change:transform;padding:0 5vw}
@@ -532,46 +574,56 @@ footer{background:#060606;border-top:1px solid var(--border);padding:48px 5% 26p
         </div>
       </div>
     </div>
-    <!-- Opening Panel 3D -->
-    <div class="opening-scene" id="openingScene">
-      <div class="opening-cabinet" id="openingCabinet">
-        <!-- Body interior — revealed as door opens -->
-        <div class="op-body">
-          <img src="public/images/06dee9ac-f14e-5aba-8125-661fd9d9e9c5.jpg" alt="Interior de tablero eléctrico"/>
+    <!-- 3D Cabinet — proper 5-face box that opens -->
+    <div class="op-scene" id="opScene">
+      <div class="op-cabinet" id="opCabinet">
+        <!-- Back wall: real interior photo, revealed when door opens -->
+        <div class="op-back">
+          <img src="public/images/06dee9ac-f14e-5aba-8125-661fd9d9e9c5.jpg" alt="Interior tablero eléctrico"/>
+          <div class="op-int-glow" id="opIntGlow"></div>
+          <div class="op-leds">
+            <span class="op-led g"></span>
+            <span class="op-led g"></span>
+            <span class="op-led r"></span>
+            <span class="op-led y"></span>
+          </div>
         </div>
-        <div class="op-glow" id="opGlow"></div>
-        <!-- Door -->
+        <!-- Enclosure depth faces -->
+        <div class="op-right"></div>
+        <div class="op-top"></div>
+        <div class="op-bottom"></div>
+        <div class="op-hleft"></div>
+        <!-- Front door — hinges on left, swings open on scroll -->
         <div class="op-door" id="opDoor">
-          <div class="op-door-front">
+          <div class="op-door-face">
             <span class="op-bolt tl"></span>
             <span class="op-bolt tr"></span>
             <span class="op-bolt bl"></span>
             <span class="op-bolt br"></span>
-            <div class="op-label">S&amp;M · Tablero Industrial</div>
-            <div class="op-logo">
-              <svg viewBox="0 0 60 60" style="width:48px;height:48px" xmlns="http://www.w3.org/2000/svg">
-                <polygon points="30,4 33,19 46,11 37,25 49,36 33,28 30,44 27,28 11,36 23,25 14,11 27,19" fill="rgba(201,162,39,0.28)" stroke="rgba(201,162,39,0.55)" stroke-width="0.8"/>
+            <div class="op-nameplate">S&amp;M · Tablero Industrial</div>
+            <div class="op-logo-mark">
+              <svg viewBox="0 0 50 50" width="46" height="46" xmlns="http://www.w3.org/2000/svg">
+                <polygon points="25,3 27.5,15 38,9 31,20 41,29 27.5,22 25,36 22.5,22 9,29 19,20 12,9 22.5,15" fill="rgba(201,162,39,.2)" stroke="rgba(201,162,39,.52)" stroke-width="0.9"/>
               </svg>
             </div>
             <div class="op-handle"></div>
-            <div class="op-vent">
+            <div class="op-vent-slits">
               <span></span><span></span><span></span>
             </div>
-            <!-- Circuit lines -->
-            <svg class="op-circuit-svg" viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg">
-              <g stroke="#c9a227" stroke-width=".7" fill="none" opacity=".3">
-                <path d="M24,70 L70,70 L70,90 L190,90"/><circle cx="70" cy="70" r="2.5" fill="#c9a227"/>
-                <path d="M24,330 L65,330 L65,310 L175,310"/><circle cx="65" cy="330" r="2.5" fill="#c9a227"/>
-                <path d="M276,130 L230,130 L230,110 L150,110"/><circle cx="230" cy="130" r="2.5" fill="#c9a227"/>
-                <path d="M276,260 L220,260 L220,280 L160,280"/><circle cx="220" cy="260" r="2.5" fill="#c9a227"/>
+            <svg class="op-door-lines" viewBox="0 0 320 450" xmlns="http://www.w3.org/2000/svg">
+              <g stroke="#c9a227" stroke-width=".65" fill="none" opacity=".26">
+                <path d="M26,80 L78,80 L78,100 L205,100"/><circle cx="78" cy="80" r="2.5" fill="#c9a227"/>
+                <path d="M26,370 L74,370 L74,348 L190,348"/><circle cx="74" cy="370" r="2.5" fill="#c9a227"/>
+                <path d="M294,152 L242,152 L242,130 L158,130"/><circle cx="242" cy="152" r="2.5" fill="#c9a227"/>
+                <path d="M294,292 L236,292 L236,314 L182,314"/><circle cx="236" cy="292" r="2.5" fill="#c9a227"/>
               </g>
             </svg>
           </div>
-          <div class="op-door-back"></div>
-          <div class="op-door-edge"></div>
+          <div class="op-door-inner"></div>
+          <div class="op-door-thickness"></div>
         </div>
-        <!-- Gold light leak at hinge when door opens -->
-        <div class="op-lightleak" id="opLeak"></div>
+        <!-- Gold light leak at hinge -->
+        <div class="op-leak" id="opLeak"></div>
       </div>
     </div>
   </div>
@@ -741,13 +793,84 @@ footer{background:#060606;border-top:1px solid var(--border);padding:48px 5% 26p
   <div class="anatomy-header reveal">
     <div class="section-label">Anatomía de un tablero bien hecho</div>
     <h2 class="sh">Lo que diferencia un tablero de <em>calidad real</em></h2>
-    <p class="section-intro">Orden, protección y funcionalidad. No es solo estética: es seguridad operativa y facilidad de mantenimiento.</p>
+    <p class="section-intro">Cada componente tiene su lugar exacto. Así se construye un tablero que dura, protege y opera sin fallas.</p>
   </div>
-  <!-- Large centered 3D image -->
-  <div class="anatomy-3d-wrap" id="anatomy3dWrap">
-    <img class="anatomy-3d-img" id="anatomy3dImg" src="public/images/06dee9ac-f14e-5aba-8125-661fd9d9e9c5.jpg" alt="Interior de tablero eléctrico ordenado TDN-2P.1" loading="lazy"/>
+
+  <!-- Exploded assembly diagram — components fly in and assemble on scroll -->
+  <div class="asm-wrap" id="asmWrap">
+    <!-- Enclosure frame outline -->
+    <div class="asm-frame" id="asmFrame"></div>
+    <!-- Gold busbar (main conductor) -->
+    <div class="asm-busbar" id="asmBusbar">
+      <div class="asm-bar-label">Barra colectora (busbar)</div>
+    </div>
+    <!-- Main circuit breaker (top center, above busbar) -->
+    <div class="asm-main-sw" id="asmMainSw">
+      <span class="asm-msw-top"></span>
+      <span class="asm-msw-lbl">MAIN</span>
+      <span class="asm-msw-bot"></span>
+    </div>
+    <!-- Row 1: DIN rail + thermomagnetic breakers -->
+    <div class="asm-row asm-row-1" id="asmRow1">
+      <div class="asm-din-rail"></div>
+      <div class="asm-brs">
+        <div class="asm-br gd">3P</div>
+        <div class="asm-br gd">3P</div>
+        <div class="asm-br">1P</div>
+        <div class="asm-br">1P</div>
+        <div class="asm-br">1P</div>
+        <div class="asm-br">1P</div>
+      </div>
+      <div class="asm-row-label">Interruptores termomagnéticos</div>
+    </div>
+    <!-- Row 2: DIN rail + contactors / relays -->
+    <div class="asm-row asm-row-2" id="asmRow2">
+      <div class="asm-din-rail"></div>
+      <div class="asm-brs">
+        <div class="asm-br or" style="max-width:100px">CTR</div>
+        <div class="asm-br or" style="max-width:100px">CTR</div>
+        <div class="asm-br" style="max-width:100px">RLY</div>
+        <div class="asm-br" style="max-width:100px">RLY</div>
+      </div>
+      <div class="asm-row-label">Contactores · Relés de protección</div>
+    </div>
+    <!-- Row 3: DIN rail + terminal blocks -->
+    <div class="asm-row asm-row-3" id="asmRow3">
+      <div class="asm-din-rail"></div>
+      <div class="asm-terms">
+        <div class="asm-term"></div><div class="asm-term"></div>
+        <div class="asm-term"></div><div class="asm-term"></div>
+        <div class="asm-term"></div><div class="asm-term"></div>
+        <div class="asm-term"></div><div class="asm-term"></div>
+        <div class="asm-term"></div><div class="asm-term"></div>
+        <div class="asm-term"></div><div class="asm-term"></div>
+      </div>
+      <div class="asm-row-label">Bornes terminales</div>
+    </div>
+    <!-- Wiring overlay SVG — paths draw themselves on scroll -->
+    <svg class="asm-wires" id="asmWiresSvg" viewBox="0 0 700 510" xmlns="http://www.w3.org/2000/svg">
+      <!-- Phase L1 (red) busbar → row1 breaker 1 -->
+      <path id="wL1" d="M196,74 L196,162" stroke="#cc3322" stroke-width="2" fill="none"/>
+      <!-- Phase L2 (yellow) busbar → row1 breaker 2 -->
+      <path id="wL2" d="M285,74 L285,162" stroke="#cc8800" stroke-width="2" fill="none"/>
+      <!-- Phase L3 (blue) busbar → row1 breaker 3 -->
+      <path id="wL3" d="M374,74 L374,162" stroke="#2266cc" stroke-width="2" fill="none"/>
+      <!-- Earth/PE bus (green), right side vertical -->
+      <path id="wGnd" d="M600,72 L600,405" stroke="#22aa44" stroke-width="2.5" fill="none"/>
+      <path d="M585,405 L615,405" stroke="#22aa44" stroke-width="1.8" fill="none"/>
+      <path d="M591,412 L609,412" stroke="#22aa44" stroke-width="1.8" fill="none"/>
+      <path d="M598,419 L602,419" stroke="#22aa44" stroke-width="1.8" fill="none"/>
+      <!-- Inter-row jumper wires (dashed) -->
+      <path id="wConn1" d="M210,222 C210,248 175,248 175,285" stroke="#555" stroke-width="1.5" fill="none" stroke-dasharray="4,3"/>
+      <path id="wConn2" d="M440,222 C440,248 478,248 478,285" stroke="#555" stroke-width="1.5" fill="none" stroke-dasharray="4,3"/>
+    </svg>
+    <!-- Status badge — appears when fully assembled -->
+    <div class="asm-status" id="asmStatus">
+      <span class="asm-status-dot"></span>Sistema ensamblado · Listo para pruebas
+    </div>
   </div>
-  <!-- 6-point premium grid -->
+
+  <!-- 6-point grid -->
   <div class="anatomy-grid-new">
     <div class="agn-point"><div class="agn-num">01</div><h4 class="agn-title">Cableado ordenado</h4><p class="agn-body">Cada conductor en su canaleta, sin cruces ni tensión excesiva. Reduce fallas y facilita el mantenimiento.</p></div>
     <div class="agn-point"><div class="agn-num">02</div><h4 class="agn-title">Identificación de circuitos</h4><p class="agn-body">Rotulación clara en bornes, cables y dispositivos. Permite diagnóstico rápido y trabajos seguros.</p></div>
@@ -1039,39 +1162,44 @@ document.querySelectorAll('.faq-q').forEach(function(btn){
   });
 });
 
-/* ── OPENING PANEL ANIMATION (Nosotros) ── */
+/* ── 3D CABINET ANIMATION (Nosotros) ── */
 (function(){
   var door=document.getElementById('opDoor');
-  var glow=document.getElementById('opGlow');
+  var glow=document.getElementById('opIntGlow');
   var leak=document.getElementById('opLeak');
-  var cab=document.getElementById('openingCabinet');
-  var scene=document.getElementById('openingScene');
+  var cab=document.getElementById('opCabinet');
+  var scene=document.getElementById('opScene');
   if(!door||!cab)return;
 
-  /* Entrance: cabinet tilts in from flat */
+  /* Entrance: cabinet materializes in from flat angle */
   gsap.from(cab,{
-    scrollTrigger:{trigger:'#nosotros',start:'top 75%',once:true},
-    autoAlpha:0,rotateY:40,rotateX:-10,duration:1.5,ease:'power3.out'
+    scrollTrigger:{trigger:'#nosotros',start:'top 76%',once:true},
+    autoAlpha:0,rotateY:55,rotateX:-10,duration:1.7,ease:'power3.out'
   });
 
-  /* Scroll-driven door open: door swings open, glow + leak appear */
+  /* Scroll-driven door open: swings to ~108° so interior is fully visible */
   gsap.timeline({
-    scrollTrigger:{trigger:'#nosotros',start:'top 55%',end:'bottom 30%',scrub:1.4}
+    scrollTrigger:{trigger:'#nosotros',start:'top 50%',end:'bottom 18%',scrub:1.5}
   })
-  .to(door,{rotateY:-84,ease:'none'},0)
+  .to(door,{rotateY:-108,ease:'none'},0)
   .to(glow,{opacity:1,ease:'none'},0)
-  .to(leak,{opacity:1,ease:'none'},'<0.1');
+  .to(leak,{opacity:1,ease:'none'},'<0.08');
 
-  /* Subtle mouse parallax */
+  /* LED blink on LEDs inside back wall */
+  document.querySelectorAll('.op-led.g').forEach(function(led){
+    gsap.to(led,{opacity:.3,repeat:-1,yoyo:true,duration:1.1+Math.random()*.9,ease:'sine.inOut',delay:Math.random()*1.2});
+  });
+
+  /* Mouse parallax on cabinet */
   if(scene){
     scene.addEventListener('mousemove',function(e){
       var r=scene.getBoundingClientRect();
       var nx=((e.clientX-r.left)/r.width-0.5)*2;
       var ny=((e.clientY-r.top)/r.height-0.5)*2;
-      gsap.to(cab,{rotateY:15+nx*7,rotateX:3-ny*5,duration:0.7,ease:'power2.out',overwrite:'auto'});
+      gsap.to(cab,{rotateY:18+nx*8,rotateX:5-ny*6,duration:0.75,ease:'power2.out',overwrite:'auto'});
     });
     scene.addEventListener('mouseleave',function(){
-      gsap.to(cab,{rotateY:15,rotateX:3,duration:1.2,ease:'elastic.out(1,.4)',overwrite:'auto'});
+      gsap.to(cab,{rotateY:18,rotateX:5,duration:1.3,ease:'elastic.out(1,.4)',overwrite:'auto'});
     });
   }
 })();
@@ -1128,17 +1256,48 @@ gsap.utils.toArray('.process-step').forEach(function(s,i){
 gsap.utils.toArray('.service-card').forEach(function(c,i){
   gsap.from(c,{scrollTrigger:{trigger:c,start:'top 93%',once:true},autoAlpha:0,y:24,duration:0.55,delay:(i%4)*0.08,ease:'power2.out'});
 });
-/* ── ANATOMY IMAGE ENTRANCE ── */
+/* ── ASSEMBLY ANIMATION (Anatomía) ── */
 (function(){
-  var img=document.getElementById('anatomy3dImg');
-  if(!img)return;
-  gsap.from(img,{
-    scrollTrigger:{trigger:'#anatomia',start:'top 72%',once:true},
-    autoAlpha:0,rotateX:20,scale:.93,duration:1.3,ease:'power3.out'
+  var wrap=document.getElementById('asmWrap');
+  if(!wrap)return;
+
+  /* Exploded starting positions — all outside the canvas bounds */
+  gsap.set('#asmFrame',{autoAlpha:0,scale:.88});
+  gsap.set('#asmBusbar',{x:260,autoAlpha:0});
+  gsap.set('#asmMainSw',{y:-160,autoAlpha:0});
+  gsap.set('#asmRow1',{x:-300,autoAlpha:0});
+  gsap.set('#asmRow2',{x:300,autoAlpha:0});
+  gsap.set('#asmRow3',{y:200,autoAlpha:0});
+  gsap.set('#asmStatus',{autoAlpha:0,y:16});
+
+  /* Wire paths: set up stroke-dashoffset for drawing animation */
+  var wirePaths=wrap.querySelectorAll('#asmWiresSvg path');
+  wirePaths.forEach(function(p){
+    try{
+      var len=p.getTotalLength();
+      p.style.strokeDasharray=len;
+      p.style.strokeDashoffset=len;
+    }catch(e){}
   });
+  gsap.set(wirePaths,{autoAlpha:0});
+
+  /* Main assembly timeline — scrubbed with scroll */
+  var tl=gsap.timeline({
+    scrollTrigger:{trigger:'#anatomia',start:'top 65%',end:'center 22%',scrub:1.8}
+  });
+
+  tl
+    .to('#asmFrame',{autoAlpha:1,scale:1,duration:.22,ease:'power2.out'},0)
+    .to('#asmMainSw',{y:0,autoAlpha:1,duration:.28,ease:'power3.out'},0.1)
+    .to('#asmBusbar',{x:0,autoAlpha:1,duration:.28,ease:'power3.out'},0.16)
+    .to('#asmRow1',{x:0,autoAlpha:1,duration:.32,ease:'power3.out'},0.26)
+    .to('#asmRow2',{x:0,autoAlpha:1,duration:.32,ease:'power3.out'},0.37)
+    .to('#asmRow3',{y:0,autoAlpha:1,duration:.32,ease:'power3.out'},0.48)
+    .to(wirePaths,{autoAlpha:1,strokeDashoffset:0,duration:.3,stagger:.04,ease:'none'},0.58)
+    .to('#asmStatus',{autoAlpha:1,y:0,duration:.22},0.82);
 })();
 gsap.utils.toArray('.agn-point').forEach(function(p,i){
-  gsap.from(p,{scrollTrigger:{trigger:p,start:'top 92%',once:true},autoAlpha:0,y:30,duration:0.7,delay:i*0.07,ease:'power2.out'});
+  gsap.from(p,{scrollTrigger:{trigger:p,start:'top 92%',once:true},autoAlpha:0,y:28,duration:0.65,delay:i*0.07,ease:'power2.out'});
 });
 /* Reveal general */
 gsap.utils.toArray('.reveal').forEach(function(el){
