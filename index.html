@@ -260,48 +260,52 @@ footer{background:#060606;border-top:1px solid var(--border);padding:48px 5% 26p
 /* SCROLL REVEAL */
 .reveal{opacity:1;transform:none}
 
-/* ── 3D CABINET (Nosotros) ── */
-.cabinet-scene{width:100%;height:500px;display:flex;align-items:center;justify-content:center;position:relative;perspective:900px;perspective-origin:52% 44%}
-.cabinet-wrap{position:relative;width:280px;height:360px;transform-style:preserve-3d}
-.cabinet-3d{width:100%;height:100%;transform-style:preserve-3d;transform:rotateX(6deg) rotateY(-24deg);will-change:transform}
-.cab-face{position:absolute;backface-visibility:hidden}
-/* Front */
-.cab-front{width:280px;height:360px;background:linear-gradient(160deg,#242424 0%,#1c1c1c 60%,#181818 100%);border:1.5px solid #383838;transform:translateZ(44px);overflow:hidden}
-.cab-front::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 28px,rgba(255,255,255,.018) 28px,rgba(255,255,255,.018) 29px)}
-/* Back */
-.cab-back{width:280px;height:360px;background:#131313;border:1px solid #2a2a2a;transform:rotateY(180deg) translateZ(44px)}
-/* Left side */
-.cab-left{width:88px;height:360px;background:linear-gradient(90deg,#111,#161616);border:1px solid #2a2a2a;transform:rotateY(-90deg) translateZ(44px);left:0;transform-origin:left center}
-/* Right side */
-.cab-right{width:88px;height:360px;background:linear-gradient(90deg,#161616,#111);border:1px solid #2a2a2a;transform:rotateY(90deg) translateZ(236px);left:0;transform-origin:left center}
-/* Top */
-.cab-top{width:280px;height:88px;background:linear-gradient(180deg,#222,#1a1a1a);border:1px solid #333;transform:rotateX(90deg) translateZ(0px);top:0;transform-origin:top center}
-/* Bottom */
-.cab-bottom{width:280px;height:88px;background:#111;border:1px solid #2a2a2a;transform:rotateX(-90deg) translateZ(0px);bottom:0;transform-origin:bottom center}
-/* Front decoration */
-.cab-logo-area{position:absolute;top:50%;left:50%;transform:translate(-50%,-52%);text-align:center}
-.cab-label{position:absolute;top:18px;left:50%;transform:translateX(-50%);background:#111;border:1px solid #3a3a3a;padding:4px 12px;font-family:var(--font-head);font-size:.55rem;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;white-space:nowrap}
-.cab-circuit{position:absolute;inset:0;pointer-events:none;opacity:.6}
-.cab-bolts{position:absolute;inset:0;pointer-events:none}
-.cab-bolt{position:absolute;width:10px;height:10px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#444,#1e1e1e);border:1px solid #3a3a3a}
-.cab-bolt.tl{top:10px;left:10px}.cab-bolt.tr{top:10px;right:10px}
-.cab-bolt.bl{bottom:10px;left:10px}.cab-bolt.br{bottom:10px;right:10px}
-.cab-handle{position:absolute;right:14px;top:50%;transform:translateY(-50%);width:6px;height:44px;background:linear-gradient(180deg,#555,#333,#555);border-radius:3px;border:1px solid #555}
-.cab-vent{position:absolute;bottom:30px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;gap:3px}
-.cab-vent span{display:block;width:36px;height:1.5px;background:rgba(255,255,255,.06)}
-/* Floating stat badges */
-.stat-badge{position:absolute;background:rgba(10,10,10,.9);border:1px solid var(--gold-border);padding:7px 14px;border-radius:2px;font-family:var(--font-head);font-size:.68rem;font-weight:600;color:var(--text);white-space:nowrap;letter-spacing:.04em;pointer-events:none;backdrop-filter:blur(8px)}
-.stat-badge .sb-dot{display:inline-block;width:5px;height:5px;background:var(--gold);border-radius:50%;margin-right:6px;vertical-align:middle}
-.sb1{top:-18px;left:-40px;animation:floatBadge1 4s ease-in-out infinite}
-.sb2{top:30px;right:-60px;animation:floatBadge2 5s ease-in-out infinite .8s}
-.sb3{bottom:50px;right:-50px;animation:floatBadge1 4.5s ease-in-out infinite 1.2s}
-.sb4{bottom:-10px;left:-30px;animation:floatBadge2 5.5s ease-in-out infinite .4s}
-@keyframes floatBadge1{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
-@keyframes floatBadge2{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
-/* Nosotros section layout */
+/* ── OPENING PANEL (Nosotros) ── */
+.opening-scene{width:100%;height:500px;display:flex;align-items:center;justify-content:center;perspective:1100px;perspective-origin:50% 45%;position:relative}
+.opening-cabinet{width:300px;height:400px;position:relative;transform-style:preserve-3d;transform:rotateX(3deg) rotateY(15deg);will-change:transform}
+/* Cabinet body — always visible behind the door */
+.op-body{position:absolute;inset:0;background:#111;border:2px solid #2a2a2a;border-radius:2px;overflow:hidden}
+.op-body img{width:100%;height:100%;object-fit:cover;filter:brightness(.65) saturate(.75)}
+.op-glow{position:absolute;inset:0;background:radial-gradient(ellipse at 35% 50%,rgba(201,162,39,.4) 0%,rgba(200,80,0,.2) 40%,transparent 70%);opacity:0;pointer-events:none;mix-blend-mode:screen}
+/* Door */
+.op-door{position:absolute;inset:0;transform-origin:left center;transform-style:preserve-3d;transform:rotateY(0deg);will-change:transform}
+.op-door-front{position:absolute;inset:0;background:linear-gradient(160deg,#222 0%,#1c1c1c 60%,#181818 100%);border:2px solid #3a3a3a;border-radius:2px;backface-visibility:hidden;overflow:hidden}
+.op-door-front::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 30px,rgba(255,255,255,.016) 30px,rgba(255,255,255,.016) 31px)}
+.op-door-back{position:absolute;inset:0;background:linear-gradient(135deg,#1e1e1e,#161616);border:1px solid #2a2a2a;border-radius:2px;transform:rotateY(180deg);backface-visibility:hidden}
+/* Door edge — gives it thickness in 3D */
+.op-door-edge{position:absolute;top:0;right:-16px;width:16px;height:100%;background:linear-gradient(90deg,#2e2e2e,#1a1a1a);border-top:1px solid #333;border-bottom:1px solid #333;transform:rotateY(90deg);transform-origin:left center;backface-visibility:hidden}
+/* Bolts */
+.op-bolt{position:absolute;width:11px;height:11px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#555,#1e1e1e);border:1px solid #444}
+.op-bolt.tl{top:12px;left:12px}.op-bolt.tr{top:12px;right:12px}
+.op-bolt.bl{bottom:12px;left:12px}.op-bolt.br{bottom:12px;right:12px}
+.op-handle{position:absolute;right:16px;top:50%;transform:translateY(-50%);width:7px;height:52px;background:linear-gradient(180deg,#666,#3a3a3a,#666);border-radius:3px;border:1px solid #666}
+.op-label{position:absolute;top:18px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.6);border:1px solid #3a3a3a;padding:4px 12px;font-family:var(--font-head);font-size:.52rem;letter-spacing:.15em;color:var(--muted);text-transform:uppercase;white-space:nowrap}
+.op-logo{position:absolute;top:50%;left:50%;transform:translate(-50%,-52%)}
+.op-circuit-svg{position:absolute;inset:0;pointer-events:none;opacity:.5}
+.op-vent{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;gap:3px}
+.op-vent span{display:block;width:38px;height:1.5px;background:rgba(255,255,255,.06)}
+/* Light leak — golden sliver at hinge when opening */
+.op-lightleak{position:absolute;left:-1px;top:10%;bottom:10%;width:4px;background:linear-gradient(180deg,transparent,rgba(201,162,39,.9),rgba(255,140,0,.7),rgba(201,162,39,.9),transparent);opacity:0;filter:blur(3px);pointer-events:none;border-radius:2px}
+/* Nosotros grid */
 #nosotros .nos-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
 
-/* ── HORIZONTAL SCROLL (Por qué elegirnos) ── */
+/* ── ANATOMY (nueva — imagen grande centrada + grid abajo) ── */
+#anatomia{background:var(--bg);padding:100px 5% 80px}
+.anatomy-header{text-align:center;max-width:640px;margin:0 auto 64px}
+.anatomy-3d-wrap{position:relative;max-width:820px;margin:0 auto 72px;perspective:1400px}
+.anatomy-3d-img{width:100%;border-radius:6px;display:block;transform:perspective(1400px) rotateX(10deg) rotateY(-3deg) scale(.97);filter:saturate(.8) brightness(.9);box-shadow:0 48px 140px rgba(0,0,0,.85),0 0 80px rgba(201,162,39,.1),inset 0 0 0 1px rgba(201,162,39,.12);will-change:transform;transition:transform .9s cubic-bezier(.25,.46,.45,.94),box-shadow .9s ease}
+.anatomy-3d-wrap:hover .anatomy-3d-img{transform:perspective(1400px) rotateX(4deg) rotateY(0deg) scale(1);box-shadow:0 64px 180px rgba(0,0,0,.75),0 0 120px rgba(201,162,39,.2)}
+.anatomy-3d-wrap::after{content:'';position:absolute;bottom:-32px;left:10%;right:10%;height:32px;background:radial-gradient(ellipse,rgba(201,162,39,.15) 0%,transparent 70%);filter:blur(14px)}
+.anatomy-grid-new{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;max-width:1020px;margin:0 auto}
+.agn-point{padding:30px 26px;background:var(--card);border:1px solid var(--border);position:relative;overflow:hidden}
+.agn-point::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--gold),transparent);opacity:0;transition:opacity .3s}
+.agn-point:hover::before{opacity:1}
+.agn-num{font-family:var(--font-head);font-size:2.6rem;font-weight:700;color:rgba(201,162,39,.14);line-height:1;margin-bottom:12px;display:block;transition:color .3s}
+.agn-title{font-family:var(--font-head);font-size:1rem;font-weight:700;color:#fff;margin-bottom:7px}
+.agn-body{font-size:.83rem;color:var(--muted);line-height:1.65}
+@media(max-width:900px){.anatomy-grid-new{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:580px){.anatomy-grid-new{grid-template-columns:1fr}.anatomy-3d-img{transform:perspective(800px) rotateX(5deg) rotateY(0) scale(.98)}}
+@media(max-width:768px){#nosotros .nos-grid{grid-template-columns:1fr;gap:40px}.opening-scene{height:360px}}
 #porque{padding:0;overflow:hidden;background:var(--bg2)}
 .porque-pin{height:100vh;overflow:hidden;display:flex;align-items:center;position:relative}
 .porque-track{display:flex;gap:0;will-change:transform;padding:0 5vw}
@@ -528,54 +532,46 @@ footer{background:#060606;border-top:1px solid var(--border);padding:48px 5% 26p
         </div>
       </div>
     </div>
-    <!-- 3D Cabinet -->
-    <div class="cabinet-scene" id="cabinetScene">
-      <div class="cabinet-wrap" id="cabinetWrap">
-        <!-- Floating badges -->
-        <div class="stat-badge sb1"><span class="sb-dot"></span>Schneider · ABB · Siemens</div>
-        <div class="stat-badge sb2"><span class="sb-dot"></span>Lima y todo el Perú</div>
-        <div class="stat-badge sb3"><span class="sb-dot"></span>PLC · Variadores · Contactores</div>
-        <div class="stat-badge sb4"><span class="sb-dot"></span>Tableros a medida</div>
-        <!-- 3D Box -->
-        <div class="cabinet-3d" id="cabinet3d">
-          <!-- Front face -->
-          <div class="cab-face cab-front">
-            <span class="cab-bolt tl"></span><span class="cab-bolt tr"></span>
-            <span class="cab-bolt bl"></span><span class="cab-bolt br"></span>
-            <div class="cab-label">Tablero eléctrico industrial</div>
-            <!-- Circuit lines SVG -->
-            <svg class="cab-circuit" viewBox="0 0 280 360" xmlns="http://www.w3.org/2000/svg">
-              <g stroke="#c9a227" stroke-width=".8" fill="none" opacity=".5">
-                <path d="M20,60 L80,60 L80,80 L200,80"/><circle cx="80" cy="60" r="3" fill="#c9a227"/>
-                <path d="M20,300 L70,300 L70,280 L180,280"/><circle cx="70" cy="300" r="3" fill="#c9a227"/>
-                <path d="M260,120 L220,120 L220,100 L140,100"/><circle cx="220" cy="120" r="3" fill="#c9a227"/>
-                <path d="M260,240 L210,240 L210,260 L150,260"/><circle cx="210" cy="240" r="3" fill="#c9a227"/>
-                <line x1="20" y1="160" x2="80" y2="160" opacity=".3"/>
-                <line x1="200" y1="200" x2="260" y2="200" opacity=".3"/>
-              </g>
-            </svg>
-            <!-- Logo centered -->
-            <div class="cab-logo-area">
-              <svg viewBox="0 0 120 90" style="height:64px;width:auto" xmlns="http://www.w3.org/2000/svg">
-                <text x="2" y="78" font-family="Space Grotesk,sans-serif" font-weight="700" font-size="80" fill="#2a2a2a" stroke="#484848" stroke-width="1.5">S</text>
-                <text x="60" y="78" font-family="Space Grotesk,sans-serif" font-weight="700" font-size="80" fill="#2a2a2a" stroke="#484848" stroke-width="1.5">M</text>
-                <polygon points="60,6 63.5,26 80,15 67,30 82,44 63,34 60,54 57,34 38,44 53,30 40,15 56.5,26" fill="#c9a227"/>
+    <!-- Opening Panel 3D -->
+    <div class="opening-scene" id="openingScene">
+      <div class="opening-cabinet" id="openingCabinet">
+        <!-- Body interior — revealed as door opens -->
+        <div class="op-body">
+          <img src="public/images/06dee9ac-f14e-5aba-8125-661fd9d9e9c5.jpg" alt="Interior de tablero eléctrico"/>
+        </div>
+        <div class="op-glow" id="opGlow"></div>
+        <!-- Door -->
+        <div class="op-door" id="opDoor">
+          <div class="op-door-front">
+            <span class="op-bolt tl"></span>
+            <span class="op-bolt tr"></span>
+            <span class="op-bolt bl"></span>
+            <span class="op-bolt br"></span>
+            <div class="op-label">S&amp;M · Tablero Industrial</div>
+            <div class="op-logo">
+              <svg viewBox="0 0 60 60" style="width:48px;height:48px" xmlns="http://www.w3.org/2000/svg">
+                <polygon points="30,4 33,19 46,11 37,25 49,36 33,28 30,44 27,28 11,36 23,25 14,11 27,19" fill="rgba(201,162,39,0.28)" stroke="rgba(201,162,39,0.55)" stroke-width="0.8"/>
               </svg>
             </div>
-            <div class="cab-handle"></div>
-            <div class="cab-vent"><span></span><span></span><span></span><span></span></div>
+            <div class="op-handle"></div>
+            <div class="op-vent">
+              <span></span><span></span><span></span>
+            </div>
+            <!-- Circuit lines -->
+            <svg class="op-circuit-svg" viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg">
+              <g stroke="#c9a227" stroke-width=".7" fill="none" opacity=".3">
+                <path d="M24,70 L70,70 L70,90 L190,90"/><circle cx="70" cy="70" r="2.5" fill="#c9a227"/>
+                <path d="M24,330 L65,330 L65,310 L175,310"/><circle cx="65" cy="330" r="2.5" fill="#c9a227"/>
+                <path d="M276,130 L230,130 L230,110 L150,110"/><circle cx="230" cy="130" r="2.5" fill="#c9a227"/>
+                <path d="M276,260 L220,260 L220,280 L160,280"/><circle cx="220" cy="260" r="2.5" fill="#c9a227"/>
+              </g>
+            </svg>
           </div>
-          <!-- Back face -->
-          <div class="cab-face cab-back"></div>
-          <!-- Left side -->
-          <div class="cab-face cab-left"></div>
-          <!-- Right side -->
-          <div class="cab-face cab-right"></div>
-          <!-- Top -->
-          <div class="cab-face cab-top"></div>
-          <!-- Bottom -->
-          <div class="cab-face cab-bottom"></div>
+          <div class="op-door-back"></div>
+          <div class="op-door-edge"></div>
         </div>
+        <!-- Gold light leak at hinge when door opens -->
+        <div class="op-lightleak" id="opLeak"></div>
       </div>
     </div>
   </div>
@@ -742,23 +738,23 @@ footer{background:#060606;border-top:1px solid var(--border);padding:48px 5% 26p
 
 <!-- ANATOMÍA -->
 <section id="anatomia">
-  <div class="reveal" style="max-width:620px">
+  <div class="anatomy-header reveal">
     <div class="section-label">Anatomía de un tablero bien hecho</div>
     <h2 class="sh">Lo que diferencia un tablero de <em>calidad real</em></h2>
     <p class="section-intro">Orden, protección y funcionalidad. No es solo estética: es seguridad operativa y facilidad de mantenimiento.</p>
   </div>
-  <div class="anatomy-wrap">
-    <div class="reveal anatomy-img">
-      <img src="public/images/06dee9ac-f14e-5aba-8125-661fd9d9e9c5.jpg" alt="Interior de tablero eléctrico ordenado" loading="lazy"/>
-    </div>
-    <div class="anatomy-points">
-      <div class="anatomy-point reveal"><div class="ap-num">01</div><div class="ap-text"><h4>Cableado ordenado</h4><p>Cada conductor en su canaleta, sin cruces ni tensión excesiva. Reduce fallas y facilita el mantenimiento.</p></div></div>
-      <div class="anatomy-point reveal"><div class="ap-num">02</div><div class="ap-text"><h4>Identificación de circuitos</h4><p>Rotulación clara en bornes, cables y dispositivos. Permite diagnóstico rápido y trabajos seguros.</p></div></div>
-      <div class="anatomy-point reveal"><div class="ap-num">03</div><div class="ap-text"><h4>Protecciones adecuadas</h4><p>Calibres correctos, coordinación entre protecciones. El tablero protege el sistema y al personal ante fallas.</p></div></div>
-      <div class="anatomy-point reveal"><div class="ap-num">04</div><div class="ap-text"><h4>Componentes confiables</h4><p>Marcas reconocidas con trazabilidad y garantía de fabricante. Sin componentes de dudosa procedencia.</p></div></div>
-      <div class="anatomy-point reveal"><div class="ap-num">05</div><div class="ap-text"><h4>Pruebas de funcionamiento</h4><p>Verificación completa de maniobra, lógica de control y protecciones antes de cada entrega.</p></div></div>
-      <div class="anatomy-point reveal"><div class="ap-num">06</div><div class="ap-text"><h4>Facilidad de mantenimiento</h4><p>Distribución interna pensada para acceso técnico. Fácil de revisar, corregir o ampliar.</p></div></div>
-    </div>
+  <!-- Large centered 3D image -->
+  <div class="anatomy-3d-wrap" id="anatomy3dWrap">
+    <img class="anatomy-3d-img" id="anatomy3dImg" src="public/images/06dee9ac-f14e-5aba-8125-661fd9d9e9c5.jpg" alt="Interior de tablero eléctrico ordenado TDN-2P.1" loading="lazy"/>
+  </div>
+  <!-- 6-point premium grid -->
+  <div class="anatomy-grid-new">
+    <div class="agn-point"><div class="agn-num">01</div><h4 class="agn-title">Cableado ordenado</h4><p class="agn-body">Cada conductor en su canaleta, sin cruces ni tensión excesiva. Reduce fallas y facilita el mantenimiento.</p></div>
+    <div class="agn-point"><div class="agn-num">02</div><h4 class="agn-title">Identificación de circuitos</h4><p class="agn-body">Rotulación clara en bornes, cables y dispositivos. Permite diagnóstico rápido y trabajos seguros.</p></div>
+    <div class="agn-point"><div class="agn-num">03</div><h4 class="agn-title">Protecciones adecuadas</h4><p class="agn-body">Calibres correctos, coordinación entre protecciones. El tablero protege el sistema y al personal ante fallas.</p></div>
+    <div class="agn-point"><div class="agn-num">04</div><h4 class="agn-title">Componentes confiables</h4><p class="agn-body">Marcas reconocidas con trazabilidad y garantía de fabricante. Sin componentes de dudosa procedencia.</p></div>
+    <div class="agn-point"><div class="agn-num">05</div><h4 class="agn-title">Pruebas de funcionamiento</h4><p class="agn-body">Verificación completa de maniobra, lógica de control y protecciones antes de cada entrega.</p></div>
+    <div class="agn-point"><div class="agn-num">06</div><h4 class="agn-title">Facilidad de mantenimiento</h4><p class="agn-body">Distribución interna pensada para acceso técnico. Fácil de revisar, corregir o ampliar.</p></div>
   </div>
 </section>
 
@@ -1043,39 +1039,41 @@ document.querySelectorAll('.faq-q').forEach(function(btn){
   });
 });
 
-/* ── 3D CABINET ANIMATION (Nosotros) ── */
+/* ── OPENING PANEL ANIMATION (Nosotros) ── */
 (function(){
-  var cab=document.getElementById('cabinet3d');
-  var wrap=document.getElementById('cabinetWrap');
-  var scene=document.getElementById('cabinetScene');
-  if(!cab)return;
+  var door=document.getElementById('opDoor');
+  var glow=document.getElementById('opGlow');
+  var leak=document.getElementById('opLeak');
+  var cab=document.getElementById('openingCabinet');
+  var scene=document.getElementById('openingScene');
+  if(!door||!cab)return;
 
-  /* Entrada: rota desde plano a perspectiva con scroll */
+  /* Entrance: cabinet tilts in from flat */
   gsap.from(cab,{
-    scrollTrigger:{trigger:'#nosotros',start:'top 80%',once:true},
-    rotateY:90,rotateX:0,autoAlpha:0,duration:1.4,ease:'power3.out'
+    scrollTrigger:{trigger:'#nosotros',start:'top 75%',once:true},
+    autoAlpha:0,rotateY:40,rotateX:-10,duration:1.5,ease:'power3.out'
   });
 
-  /* Mouse tilt en la escena */
-  scene.addEventListener('mousemove',function(e){
-    var r=scene.getBoundingClientRect();
-    var nx=((e.clientX-r.left)/r.width-0.5)*2;   /* -1 a 1 */
-    var ny=((e.clientY-r.top)/r.height-0.5)*2;
-    gsap.to(cab,{
-      rotateY:-24+nx*12,
-      rotateX:6-ny*8,
-      duration:0.6,ease:'power2.out',overwrite:'auto'
+  /* Scroll-driven door open: door swings open, glow + leak appear */
+  gsap.timeline({
+    scrollTrigger:{trigger:'#nosotros',start:'top 55%',end:'bottom 30%',scrub:1.4}
+  })
+  .to(door,{rotateY:-84,ease:'none'},0)
+  .to(glow,{opacity:1,ease:'none'},0)
+  .to(leak,{opacity:1,ease:'none'},'<0.1');
+
+  /* Subtle mouse parallax */
+  if(scene){
+    scene.addEventListener('mousemove',function(e){
+      var r=scene.getBoundingClientRect();
+      var nx=((e.clientX-r.left)/r.width-0.5)*2;
+      var ny=((e.clientY-r.top)/r.height-0.5)*2;
+      gsap.to(cab,{rotateY:15+nx*7,rotateX:3-ny*5,duration:0.7,ease:'power2.out',overwrite:'auto'});
     });
-  });
-  scene.addEventListener('mouseleave',function(){
-    gsap.to(cab,{rotateY:-24,rotateX:6,duration:1,ease:'elastic.out(1,.5)',overwrite:'auto'});
-  });
-
-  /* Parallax suave al scroll */
-  gsap.to(cab,{
-    rotateY:-18,
-    scrollTrigger:{trigger:'#nosotros',start:'top bottom',end:'bottom top',scrub:2}
-  });
+    scene.addEventListener('mouseleave',function(){
+      gsap.to(cab,{rotateY:15,rotateX:3,duration:1.2,ease:'elastic.out(1,.4)',overwrite:'auto'});
+    });
+  }
 })();
 
 /* ── HORIZONTAL SCROLL (Por qué elegirnos) ── */
@@ -1130,8 +1128,17 @@ gsap.utils.toArray('.process-step').forEach(function(s,i){
 gsap.utils.toArray('.service-card').forEach(function(c,i){
   gsap.from(c,{scrollTrigger:{trigger:c,start:'top 93%',once:true},autoAlpha:0,y:24,duration:0.55,delay:(i%4)*0.08,ease:'power2.out'});
 });
-gsap.utils.toArray('.anatomy-point').forEach(function(p,i){
-  gsap.from(p,{scrollTrigger:{trigger:p,start:'top 92%',once:true},autoAlpha:0,x:18,duration:0.6,delay:i*0.08,ease:'power2.out'});
+/* ── ANATOMY IMAGE ENTRANCE ── */
+(function(){
+  var img=document.getElementById('anatomy3dImg');
+  if(!img)return;
+  gsap.from(img,{
+    scrollTrigger:{trigger:'#anatomia',start:'top 72%',once:true},
+    autoAlpha:0,rotateX:20,scale:.93,duration:1.3,ease:'power3.out'
+  });
+})();
+gsap.utils.toArray('.agn-point').forEach(function(p,i){
+  gsap.from(p,{scrollTrigger:{trigger:p,start:'top 92%',once:true},autoAlpha:0,y:30,duration:0.7,delay:i*0.07,ease:'power2.out'});
 });
 /* Reveal general */
 gsap.utils.toArray('.reveal').forEach(function(el){
