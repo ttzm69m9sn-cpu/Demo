@@ -257,8 +257,81 @@ footer{background:#060606;border-top:1px solid var(--border);padding:48px 5% 26p
 .wa-label{background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:5px 11px;border-radius:3px;font-size:.73rem;font-weight:600;white-space:nowrap;opacity:0;transform:translateX(8px);transition:opacity .2s,transform .2s;pointer-events:none}
 #wa-float:hover .wa-label{opacity:1;transform:translateX(0)}
 
-/* SCROLL REVEAL — visibility guaranteed; GSAP handles animation */
+/* SCROLL REVEAL */
 .reveal{opacity:1;transform:none}
+
+/* ── 3D CABINET (Nosotros) ── */
+.cabinet-scene{width:100%;height:500px;display:flex;align-items:center;justify-content:center;position:relative;perspective:900px;perspective-origin:52% 44%}
+.cabinet-wrap{position:relative;width:280px;height:360px;transform-style:preserve-3d}
+.cabinet-3d{width:100%;height:100%;transform-style:preserve-3d;transform:rotateX(6deg) rotateY(-24deg);will-change:transform}
+.cab-face{position:absolute;backface-visibility:hidden}
+/* Front */
+.cab-front{width:280px;height:360px;background:linear-gradient(160deg,#242424 0%,#1c1c1c 60%,#181818 100%);border:1.5px solid #383838;transform:translateZ(44px);overflow:hidden}
+.cab-front::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 28px,rgba(255,255,255,.018) 28px,rgba(255,255,255,.018) 29px)}
+/* Back */
+.cab-back{width:280px;height:360px;background:#131313;border:1px solid #2a2a2a;transform:rotateY(180deg) translateZ(44px)}
+/* Left side */
+.cab-left{width:88px;height:360px;background:linear-gradient(90deg,#111,#161616);border:1px solid #2a2a2a;transform:rotateY(-90deg) translateZ(44px);left:0;transform-origin:left center}
+/* Right side */
+.cab-right{width:88px;height:360px;background:linear-gradient(90deg,#161616,#111);border:1px solid #2a2a2a;transform:rotateY(90deg) translateZ(236px);left:0;transform-origin:left center}
+/* Top */
+.cab-top{width:280px;height:88px;background:linear-gradient(180deg,#222,#1a1a1a);border:1px solid #333;transform:rotateX(90deg) translateZ(0px);top:0;transform-origin:top center}
+/* Bottom */
+.cab-bottom{width:280px;height:88px;background:#111;border:1px solid #2a2a2a;transform:rotateX(-90deg) translateZ(0px);bottom:0;transform-origin:bottom center}
+/* Front decoration */
+.cab-logo-area{position:absolute;top:50%;left:50%;transform:translate(-50%,-52%);text-align:center}
+.cab-label{position:absolute;top:18px;left:50%;transform:translateX(-50%);background:#111;border:1px solid #3a3a3a;padding:4px 12px;font-family:var(--font-head);font-size:.55rem;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;white-space:nowrap}
+.cab-circuit{position:absolute;inset:0;pointer-events:none;opacity:.6}
+.cab-bolts{position:absolute;inset:0;pointer-events:none}
+.cab-bolt{position:absolute;width:10px;height:10px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#444,#1e1e1e);border:1px solid #3a3a3a}
+.cab-bolt.tl{top:10px;left:10px}.cab-bolt.tr{top:10px;right:10px}
+.cab-bolt.bl{bottom:10px;left:10px}.cab-bolt.br{bottom:10px;right:10px}
+.cab-handle{position:absolute;right:14px;top:50%;transform:translateY(-50%);width:6px;height:44px;background:linear-gradient(180deg,#555,#333,#555);border-radius:3px;border:1px solid #555}
+.cab-vent{position:absolute;bottom:30px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;gap:3px}
+.cab-vent span{display:block;width:36px;height:1.5px;background:rgba(255,255,255,.06)}
+/* Floating stat badges */
+.stat-badge{position:absolute;background:rgba(10,10,10,.9);border:1px solid var(--gold-border);padding:7px 14px;border-radius:2px;font-family:var(--font-head);font-size:.68rem;font-weight:600;color:var(--text);white-space:nowrap;letter-spacing:.04em;pointer-events:none;backdrop-filter:blur(8px)}
+.stat-badge .sb-dot{display:inline-block;width:5px;height:5px;background:var(--gold);border-radius:50%;margin-right:6px;vertical-align:middle}
+.sb1{top:-18px;left:-40px;animation:floatBadge1 4s ease-in-out infinite}
+.sb2{top:30px;right:-60px;animation:floatBadge2 5s ease-in-out infinite .8s}
+.sb3{bottom:50px;right:-50px;animation:floatBadge1 4.5s ease-in-out infinite 1.2s}
+.sb4{bottom:-10px;left:-30px;animation:floatBadge2 5.5s ease-in-out infinite .4s}
+@keyframes floatBadge1{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes floatBadge2{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
+/* Nosotros section layout */
+#nosotros .nos-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
+
+/* ── HORIZONTAL SCROLL (Por qué elegirnos) ── */
+#porque{padding:0;overflow:hidden;background:var(--bg2)}
+.porque-pin{height:100vh;overflow:hidden;display:flex;align-items:center;position:relative}
+.porque-track{display:flex;gap:0;will-change:transform;padding:0 5vw}
+.porque-intro-slide{min-width:520px;padding-right:80px;flex-shrink:0;display:flex;flex-direction:column;justify-content:center}
+.porque-intro-slide .section-label{margin-bottom:14px}
+.porque-intro-slide h2{margin-bottom:16px}
+.porque-intro-slide p{font-size:.95rem;color:var(--muted);line-height:1.8;max-width:400px}
+.porque-intro-slide .scroll-hint{display:flex;align-items:center;gap:8px;margin-top:28px;font-size:.72rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.scroll-hint-arrow{width:32px;height:1px;background:var(--gold);position:relative}
+.scroll-hint-arrow::after{content:'';position:absolute;right:-1px;top:-3px;width:0;height:0;border-left:6px solid var(--gold);border-top:3px solid transparent;border-bottom:3px solid transparent}
+.porque-slide{min-width:380px;height:340px;flex-shrink:0;margin-right:16px;background:var(--card);border:1px solid var(--border);padding:40px 36px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden;transform-style:preserve-3d;transition:border-color .3s}
+.porque-slide::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:linear-gradient(180deg,var(--gold),transparent)}
+.porque-slide::after{content:'';position:absolute;top:-60px;right:-60px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(201,162,39,.06),transparent 70%);pointer-events:none}
+.ps-num{font-family:var(--font-head);font-size:4rem;font-weight:700;color:rgba(201,162,39,.1);line-height:1;margin-bottom:8px}
+.ps-title{font-family:var(--font-head);font-size:1.2rem;font-weight:700;color:#fff;margin-bottom:12px}
+.ps-body{font-size:.86rem;color:var(--muted);line-height:1.7;flex:1}
+.ps-tag{display:inline-flex;align-items:center;gap:6px;font-size:.65rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-top:16px}
+.ps-tag::before{content:'';width:14px;height:1px;background:var(--gold)}
+/* Progress bar */
+.porque-progress{position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--border)}
+.porque-progress-bar{height:100%;background:var(--gold);width:0%;transition:width .1s}
+@media(max-width:768px){
+  #porque{overflow-x:auto}
+  .porque-pin{height:auto;padding:72px 0}
+  .porque-track{padding:0 5%;gap:14px;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .porque-intro-slide{min-width:85vw}
+  .porque-slide{min-width:280px;height:auto;min-height:280px}
+  #nosotros .nos-grid{grid-template-columns:1fr;gap:40px}
+  .cabinet-scene{height:360px}
+}
 
 /* RESPONSIVE */
 @media(max-width:1100px){
@@ -350,7 +423,6 @@ footer{background:#060606;border-top:1px solid var(--border);padding:48px 5% 26p
       <li><a href="#inicio">Inicio</a></li>
       <li><a href="#nosotros">Nosotros</a></li>
       <li><a href="#servicios">Servicios</a></li>
-      <li><a href="#trabajos">Trabajos</a></li>
       <li><a href="#faq">FAQ</a></li>
       <li><a href="#contacto">Contacto</a></li>
     </ul>
@@ -366,7 +438,6 @@ footer{background:#060606;border-top:1px solid var(--border);padding:48px 5% 26p
   <a href="#inicio" class="ml" style="font-family:'Space Grotesk',sans-serif;font-size:2rem;font-weight:700;color:#fff">Inicio</a>
   <a href="#nosotros" class="ml" style="font-family:'Space Grotesk',sans-serif;font-size:2rem;font-weight:700;color:#fff">Nosotros</a>
   <a href="#servicios" class="ml" style="font-family:'Space Grotesk',sans-serif;font-size:2rem;font-weight:700;color:#fff">Servicios</a>
-  <a href="#trabajos" class="ml" style="font-family:'Space Grotesk',sans-serif;font-size:2rem;font-weight:700;color:#fff">Trabajos</a>
   <a href="#faq" class="ml" style="font-family:'Space Grotesk',sans-serif;font-size:2rem;font-weight:700;color:#fff">FAQ</a>
   <a href="#contacto" class="ml" style="font-family:'Space Grotesk',sans-serif;font-size:2rem;font-weight:700;color:#fff">Contacto</a>
 </div>
@@ -437,7 +508,8 @@ footer{background:#060606;border-top:1px solid var(--border);padding:48px 5% 26p
 
 <!-- NOSOTROS -->
 <section id="nosotros">
-  <div class="two-col">
+  <div class="nos-grid">
+    <!-- Texto -->
     <div class="reveal">
       <div class="section-label">Nosotros</div>
       <h2 class="sh">Ingeniería práctica, soluciones seguras y tableros <em>hechos para operar</em></h2>
@@ -448,34 +520,132 @@ footer{background:#060606;border-top:1px solid var(--border);padding:48px 5% 26p
       <div class="mv-grid">
         <div class="mv-card">
           <h4>Misión</h4>
-          <p>Brindar soluciones eléctricas industriales confiables mediante productos de calidad, asesoría técnica especializada y tableros seguros, eficientes y adaptados a las necesidades de cada cliente.</p>
+          <p>Brindar soluciones eléctricas confiables mediante productos de calidad, asesoría técnica y tableros adaptados a cada cliente.</p>
         </div>
         <div class="mv-card">
           <h4>Visión</h4>
-          <p>Ser una empresa reconocida en el sector eléctrico industrial por la calidad de nuestros productos y la confianza que generamos en nuestros clientes.</p>
+          <p>Ser reconocidos en el sector eléctrico industrial por la calidad de nuestros tableros y la confianza que generamos.</p>
         </div>
       </div>
     </div>
-    <div class="reveal about-img">
-      <img src="public/images/455c34c4-dee9-5b99-94c3-6d1626c32aa8.png" alt="Tablero eléctrico industrial complejo" loading="lazy"/>
+    <!-- 3D Cabinet -->
+    <div class="cabinet-scene" id="cabinetScene">
+      <div class="cabinet-wrap" id="cabinetWrap">
+        <!-- Floating badges -->
+        <div class="stat-badge sb1"><span class="sb-dot"></span>Schneider · ABB · Siemens</div>
+        <div class="stat-badge sb2"><span class="sb-dot"></span>Lima y todo el Perú</div>
+        <div class="stat-badge sb3"><span class="sb-dot"></span>PLC · Variadores · Contactores</div>
+        <div class="stat-badge sb4"><span class="sb-dot"></span>Tableros a medida</div>
+        <!-- 3D Box -->
+        <div class="cabinet-3d" id="cabinet3d">
+          <!-- Front face -->
+          <div class="cab-face cab-front">
+            <span class="cab-bolt tl"></span><span class="cab-bolt tr"></span>
+            <span class="cab-bolt bl"></span><span class="cab-bolt br"></span>
+            <div class="cab-label">Tablero eléctrico industrial</div>
+            <!-- Circuit lines SVG -->
+            <svg class="cab-circuit" viewBox="0 0 280 360" xmlns="http://www.w3.org/2000/svg">
+              <g stroke="#c9a227" stroke-width=".8" fill="none" opacity=".5">
+                <path d="M20,60 L80,60 L80,80 L200,80"/><circle cx="80" cy="60" r="3" fill="#c9a227"/>
+                <path d="M20,300 L70,300 L70,280 L180,280"/><circle cx="70" cy="300" r="3" fill="#c9a227"/>
+                <path d="M260,120 L220,120 L220,100 L140,100"/><circle cx="220" cy="120" r="3" fill="#c9a227"/>
+                <path d="M260,240 L210,240 L210,260 L150,260"/><circle cx="210" cy="240" r="3" fill="#c9a227"/>
+                <line x1="20" y1="160" x2="80" y2="160" opacity=".3"/>
+                <line x1="200" y1="200" x2="260" y2="200" opacity=".3"/>
+              </g>
+            </svg>
+            <!-- Logo centered -->
+            <div class="cab-logo-area">
+              <svg viewBox="0 0 120 90" style="height:64px;width:auto" xmlns="http://www.w3.org/2000/svg">
+                <text x="2" y="78" font-family="Space Grotesk,sans-serif" font-weight="700" font-size="80" fill="#2a2a2a" stroke="#484848" stroke-width="1.5">S</text>
+                <text x="60" y="78" font-family="Space Grotesk,sans-serif" font-weight="700" font-size="80" fill="#2a2a2a" stroke="#484848" stroke-width="1.5">M</text>
+                <polygon points="60,6 63.5,26 80,15 67,30 82,44 63,34 60,54 57,34 38,44 53,30 40,15 56.5,26" fill="#c9a227"/>
+              </svg>
+            </div>
+            <div class="cab-handle"></div>
+            <div class="cab-vent"><span></span><span></span><span></span><span></span></div>
+          </div>
+          <!-- Back face -->
+          <div class="cab-face cab-back"></div>
+          <!-- Left side -->
+          <div class="cab-face cab-left"></div>
+          <!-- Right side -->
+          <div class="cab-face cab-right"></div>
+          <!-- Top -->
+          <div class="cab-face cab-top"></div>
+          <!-- Bottom -->
+          <div class="cab-face cab-bottom"></div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- POR QUÉ ELEGIRNOS -->
+<!-- POR QUÉ ELEGIRNOS — horizontal pinned scroll -->
 <section id="porque">
-  <div class="reveal" style="text-align:center;max-width:680px;margin:0 auto">
-    <div class="section-label" style="justify-content:center">Por qué elegirnos</div>
-    <h2 class="sh">Tableros ordenados, seguros y <em>pensados para durar</em></h2>
-    <p class="section-intro" style="margin:14px auto 0">Correcta selección de equipos, cableado ordenado, rotulación clara, protecciones adecuadas y pruebas antes de cada entrega.</p>
-  </div>
-  <div class="why-grid">
-    <div class="why-card reveal"><div class="why-num">01</div><h3>Asesoría técnica real</h3><p>Acompañamos la selección de componentes y el diseño de la solución según la necesidad del proyecto. No solo vendemos materiales.</p></div>
-    <div class="why-card reveal"><div class="why-num">02</div><h3>Tableros limpios y ordenados</h3><p>Priorizamos cableado organizado, rotulación clara e identificación de circuitos en cada trabajo que entregamos.</p></div>
-    <div class="why-card reveal"><div class="why-num">03</div><h3>Componentes de calidad</h3><p>Trabajamos con marcas reconocidas del sector eléctrico industrial con trazabilidad y garantía de fabricante.</p></div>
-    <div class="why-card reveal"><div class="why-num">04</div><h3>Soluciones a medida</h3><p>Cada tablero se adapta a la potencia, tensión, aplicación y condiciones operativas reales de cada cliente.</p></div>
-    <div class="why-card reveal"><div class="why-num">05</div><h3>Pruebas antes de entrega</h3><p>Revisamos maniobra, protecciones, lógica de control y funcionamiento básico antes de cada entrega. Sin excepciones.</p></div>
-    <div class="why-card reveal"><div class="why-num">06</div><h3>Cobertura nacional</h3><p>Atendemos Lima, provincias y proyectos en todo el Perú. Coordinamos envíos y visitas según el alcance del proyecto.</p></div>
+  <div class="porque-pin" id="porquePinWrap">
+    <div class="porque-track" id="porqueTrack">
+      <!-- Intro slide -->
+      <div class="porque-intro-slide">
+        <div class="section-label">Por qué elegirnos</div>
+        <h2 class="sh">Tableros ordenados, seguros y <em>pensados para durar</em></h2>
+        <p>Correcta selección de equipos, cableado ordenado, rotulación clara y pruebas antes de cada entrega.</p>
+        <div class="scroll-hint">
+          <div class="scroll-hint-arrow"></div>
+          Sigue scrolleando
+        </div>
+      </div>
+      <!-- Cards -->
+      <div class="porque-slide ps-card">
+        <div class="ps-num">01</div>
+        <div>
+          <div class="ps-title">Asesoría técnica real</div>
+          <p class="ps-body">Acompañamos la selección de componentes y el diseño de la solución según la necesidad del proyecto. No solo vendemos materiales, definimos la mejor solución.</p>
+        </div>
+        <div class="ps-tag">Consultoría incluida</div>
+      </div>
+      <div class="porque-slide ps-card">
+        <div class="ps-num">02</div>
+        <div>
+          <div class="ps-title">Tableros limpios y ordenados</div>
+          <p class="ps-body">Priorizamos cableado organizado, rotulación clara e identificación de cada circuito. Un tablero ordenado es más seguro, más fácil de mantener y dura más.</p>
+        </div>
+        <div class="ps-tag">Cero improvisación</div>
+      </div>
+      <div class="porque-slide ps-card">
+        <div class="ps-num">03</div>
+        <div>
+          <div class="ps-title">Componentes de calidad</div>
+          <p class="ps-body">Trabajamos con Schneider Electric, ABB, Siemens, General Electric y más. Marcas reconocidas con trazabilidad y garantía de fabricante. Sin componentes de dudosa procedencia.</p>
+        </div>
+        <div class="ps-tag">Schneider · ABB · Siemens</div>
+      </div>
+      <div class="porque-slide ps-card">
+        <div class="ps-num">04</div>
+        <div>
+          <div class="ps-title">Soluciones a medida</div>
+          <p class="ps-body">Cada tablero se diseña según la potencia, tensión, aplicación y condiciones operativas reales de cada cliente. No hay tableros estándar copiados: cada uno es único.</p>
+        </div>
+        <div class="ps-tag">Diseño personalizado</div>
+      </div>
+      <div class="porque-slide ps-card">
+        <div class="ps-num">05</div>
+        <div>
+          <div class="ps-title">Pruebas antes de entrega</div>
+          <p class="ps-body">Revisamos maniobra, protecciones, lógica de control y funcionamiento básico antes de cada entrega. Sin excepciones. El tablero llega probado y listo para operar.</p>
+        </div>
+        <div class="ps-tag">Calidad verificada</div>
+      </div>
+      <div class="porque-slide ps-card">
+        <div class="ps-num">06</div>
+        <div>
+          <div class="ps-title">Cobertura nacional</div>
+          <p class="ps-body">Atendemos Lima, provincias y proyectos en todo el Perú. Coordinamos envíos, visitas técnicas y puesta en marcha según el alcance y ubicación del proyecto.</p>
+        </div>
+        <div class="ps-tag">Lima y todo el Perú</div>
+      </div>
+    </div>
+    <div class="porque-progress"><div class="porque-progress-bar" id="porqueBar"></div></div>
   </div>
 </section>
 
@@ -589,31 +759,6 @@ footer{background:#060606;border-top:1px solid var(--border);padding:48px 5% 26p
       <div class="anatomy-point reveal"><div class="ap-num">05</div><div class="ap-text"><h4>Pruebas de funcionamiento</h4><p>Verificación completa de maniobra, lógica de control y protecciones antes de cada entrega.</p></div></div>
       <div class="anatomy-point reveal"><div class="ap-num">06</div><div class="ap-text"><h4>Facilidad de mantenimiento</h4><p>Distribución interna pensada para acceso técnico. Fácil de revisar, corregir o ampliar.</p></div></div>
     </div>
-  </div>
-</section>
-
-<!-- GALERÍA -->
-<section id="trabajos">
-  <div class="reveal" style="text-align:center;max-width:680px;margin:0 auto">
-    <div class="section-label" style="justify-content:center">Nuestros trabajos</div>
-    <h2 class="sh">Trabajos que muestran <em>orden, técnica y confianza</em></h2>
-    <p class="section-intro" style="margin:14px auto 0">Cada tablero refleja nuestro compromiso con el orden, la seguridad eléctrica y la calidad de ejecución.</p>
-  </div>
-  <div class="gallery-grid">
-    <div class="gallery-item reveal"><img src="public/images/25b2bf54-9ce9-5c84-adbe-16b9ec4980c1.png" alt="Tableros de distribución" loading="lazy"/><div class="gallery-overlay"><span class="gallery-label">Tableros de distribución</span></div></div>
-    <div class="gallery-item reveal"><img src="public/images/455c34c4-dee9-5b99-94c3-6d1626c32aa8.png" alt="Panel automatizado PLC" loading="lazy"/><div class="gallery-overlay"><span class="gallery-label">Panel automatizado</span></div></div>
-    <div class="gallery-item reveal"><img src="public/images/2b20e24f-0ac5-5d7c-b131-6638eb497ae5.png" alt="Tablero arranque motores" loading="lazy"/><div class="gallery-overlay"><span class="gallery-label">Arranque de motores</span></div></div>
-    <div class="gallery-item reveal"><img src="public/images/9b9aa484-4d71-5f2a-9696-9ba33a6faf59.png" alt="Bomba contra incendio" loading="lazy"/><div class="gallery-overlay"><span class="gallery-label">Bomba contra incendio</span></div></div>
-    <div class="gallery-item reveal"><img src="public/images/06dee9ac-f14e-5aba-8125-661fd9d9e9c5.jpg" alt="Interior tablero distribución" loading="lazy"/><div class="gallery-overlay"><span class="gallery-label">Distribución Schneider</span></div></div>
-    <div class="gallery-item reveal"><img src="public/images/225d0f9a-bb2d-51de-a3c0-c7a5eefda3ec.png" alt="Tablero industrial pilotos" loading="lazy"/><div class="gallery-overlay"><span class="gallery-label">Panel industrial</span></div></div>
-    <div class="gallery-item reveal"><img src="public/images/32dc07f9-8c24-5497-8dc2-96c308f7fc24.png" alt="Presión constante" loading="lazy"/><div class="gallery-overlay"><span class="gallery-label">Presión constante</span></div></div>
-    <div class="gallery-item reveal"><img src="public/images/722d6c7f-e8d1-56f0-aedb-1ad45da0a181.png" alt="Control de bombas Siemens" loading="lazy"/><div class="gallery-overlay"><span class="gallery-label">Control de bombas</span></div></div>
-    <div class="gallery-item reveal"><img src="public/images/6ef3c8ad-fab9-5144-93fc-f689371040d7.jpg" alt="Distribución ABB" loading="lazy"/><div class="gallery-overlay"><span class="gallery-label">Distribución ABB</span></div></div>
-    <div class="gallery-item reveal"><img src="public/images/750f57c3-242b-5875-843e-eac571ff934e.png" alt="Tablero Schneider empotrado" loading="lazy"/><div class="gallery-overlay"><span class="gallery-label">Tablero empotrado</span></div></div>
-    <div class="gallery-item reveal"><img src="public/images/16f7053c-5a69-57e6-b185-4a409ffc726f.png" alt="Distribución fuerza TDN" loading="lazy"/><div class="gallery-overlay"><span class="gallery-label">Distribución fuerza</span></div></div>
-  </div>
-  <div style="text-align:center;margin-top:36px">
-    <a href="https://wa.me/51998265837?text=Hola,%20vengo%20de%20la%20web%20de%20S%26M.%20Quisiera%20ver%20m%C3%A1s%20trabajos." class="btn-outline reveal" target="_blank" rel="noopener" style="display:inline-flex">Ver más trabajos por WhatsApp</a>
   </div>
 </section>
 
@@ -848,7 +993,7 @@ document.addEventListener('mousemove',function(e){
 })();
 document.addEventListener('mousedown',function(){ring.style.width='20px';ring.style.height='20px';});
 document.addEventListener('mouseup',function(){ring.style.width='32px';ring.style.height='32px';});
-document.querySelectorAll('a,button,.service-card,.gallery-item,.why-card,.brand-pill').forEach(function(el){
+document.querySelectorAll('a,button,.service-card,.porque-slide,.why-card,.brand-pill').forEach(function(el){
   el.addEventListener('mouseenter',function(){ring.style.width='46px';ring.style.height='46px';ring.style.borderColor='rgba(201,162,39,.85)';});
   el.addEventListener('mouseleave',function(){ring.style.width='32px';ring.style.height='32px';ring.style.borderColor='rgba(201,162,39,.5)';});
 });
@@ -898,14 +1043,87 @@ document.querySelectorAll('.faq-q').forEach(function(btn){
   });
 });
 
-/* ── SCROLL REVEAL — handled entirely by GSAP ScrollTrigger below ── */
+/* ── 3D CABINET ANIMATION (Nosotros) ── */
+(function(){
+  var cab=document.getElementById('cabinet3d');
+  var wrap=document.getElementById('cabinetWrap');
+  var scene=document.getElementById('cabinetScene');
+  if(!cab)return;
 
-/* ── GSAP SCROLL ANIMATIONS ── */
-/* Usamos autoAlpha (maneja opacity + visibility juntos) y once:true
-   para que nunca queden elementos en estado invisible */
-gsap.utils.toArray('.why-card').forEach(function(c,i){
-  gsap.from(c,{scrollTrigger:{trigger:c,start:'top 90%',once:true},autoAlpha:0,y:32,duration:0.65,delay:(i%3)*0.1,ease:'power2.out'});
-});
+  /* Entrada: rota desde plano a perspectiva con scroll */
+  gsap.from(cab,{
+    scrollTrigger:{trigger:'#nosotros',start:'top 80%',once:true},
+    rotateY:90,rotateX:0,autoAlpha:0,duration:1.4,ease:'power3.out'
+  });
+
+  /* Mouse tilt en la escena */
+  scene.addEventListener('mousemove',function(e){
+    var r=scene.getBoundingClientRect();
+    var nx=((e.clientX-r.left)/r.width-0.5)*2;   /* -1 a 1 */
+    var ny=((e.clientY-r.top)/r.height-0.5)*2;
+    gsap.to(cab,{
+      rotateY:-24+nx*12,
+      rotateX:6-ny*8,
+      duration:0.6,ease:'power2.out',overwrite:'auto'
+    });
+  });
+  scene.addEventListener('mouseleave',function(){
+    gsap.to(cab,{rotateY:-24,rotateX:6,duration:1,ease:'elastic.out(1,.5)',overwrite:'auto'});
+  });
+
+  /* Parallax suave al scroll */
+  gsap.to(cab,{
+    rotateY:-18,
+    scrollTrigger:{trigger:'#nosotros',start:'top bottom',end:'bottom top',scrub:2}
+  });
+})();
+
+/* ── HORIZONTAL SCROLL (Por qué elegirnos) ── */
+(function(){
+  var isMobile=window.innerWidth<=768;
+  if(isMobile)return; /* en móvil scroll nativo */
+
+  var track=document.getElementById('porqueTrack');
+  var bar=document.getElementById('porqueBar');
+  if(!track)return;
+
+  var getDistance=function(){ return track.scrollWidth - window.innerWidth; };
+
+  var scrollTween=gsap.to(track,{
+    x:function(){ return -(getDistance()); },
+    ease:'none',
+    scrollTrigger:{
+      trigger:'#porque',
+      start:'top top',
+      end:function(){ return '+=' + getDistance(); },
+      pin:true,
+      scrub:1,
+      anticipatePin:1,
+      onUpdate:function(self){
+        if(bar) bar.style.width=(self.progress*100)+'%';
+      }
+    }
+  });
+
+  /* Entrada 3D de cada card al entrar al viewport horizontal */
+  gsap.utils.toArray('.ps-card').forEach(function(card,i){
+    gsap.from(card,{
+      rotateY:22,
+      x:60,
+      autoAlpha:0,
+      duration:0.75,
+      ease:'power2.out',
+      scrollTrigger:{
+        trigger:card,
+        containerAnimation:scrollTween,
+        start:'left 95%',
+        once:true
+      }
+    });
+  });
+})();
+
+/* ── GSAP SCROLL ANIMATIONS (resto de secciones) ── */
 gsap.utils.toArray('.process-step').forEach(function(s,i){
   gsap.from(s,{scrollTrigger:{trigger:s,start:'top 90%',once:true},autoAlpha:0,y:24,duration:0.65,delay:i*0.12,ease:'power2.out'});
 });
@@ -915,16 +1133,12 @@ gsap.utils.toArray('.service-card').forEach(function(c,i){
 gsap.utils.toArray('.anatomy-point').forEach(function(p,i){
   gsap.from(p,{scrollTrigger:{trigger:p,start:'top 92%',once:true},autoAlpha:0,x:18,duration:0.6,delay:i*0.08,ease:'power2.out'});
 });
-gsap.utils.toArray('.gallery-item').forEach(function(g,i){
-  gsap.from(g,{scrollTrigger:{trigger:g,start:'top 93%',once:true},autoAlpha:0,y:18,duration:0.5,delay:(i%3)*0.07,ease:'power2.out'});
-});
-/* Secciones generales — about, why, brands, FAQ, contact */
+/* Reveal general */
 gsap.utils.toArray('.reveal').forEach(function(el){
-  /* Solo anima si no es un elemento ya manejado arriba */
-  var skip=['.why-card','.process-step','.service-card','.anatomy-point','.gallery-item'];
-  var isHandled=skip.some(function(s){return el.matches(s);});
-  if(!isHandled){
-    gsap.from(el,{scrollTrigger:{trigger:el,start:'top 88%',once:true},autoAlpha:0,y:24,duration:0.7,ease:'power2.out'});
+  var skip=['.process-step','.service-card','.anatomy-point'];
+  var handled=skip.some(function(s){return el.matches(s);});
+  if(!handled){
+    gsap.from(el,{scrollTrigger:{trigger:el,start:'top 88%',once:true},autoAlpha:0,y:22,duration:0.7,ease:'power2.out'});
   }
 });
 
