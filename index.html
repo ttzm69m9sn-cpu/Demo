@@ -1,1437 +1,1546 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>VoltCore — Electric Panels Reimagined</title>
+  <title>Industriales Eléctricos S&M | Tableros eléctricos, automatización y soluciones industriales</title>
+  <meta name="description" content="Soluciones eléctricas industriales, automatización, venta de productos eléctricos y fabricación de tableros eléctricos a medida para empresas, industrias y proyectos técnicos en Perú."/>
+  <meta name="keywords" content="tableros eléctricos, automatización industrial, tableros de distribución, tableros ATS, bombas contra incendio, presión constante, Siemens Logo, tableros eléctricos Perú, productos eléctricos industriales"/>
+  <meta name="robots" content="index, follow"/>
+  <meta property="og:title" content="Industriales Eléctricos S&M | Tableros eléctricos industriales en Perú"/>
+  <meta property="og:description" content="Tableros eléctricos a medida, automatización industrial y soluciones eléctricas para empresas en todo el Perú."/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/TextPlugin.min.js"></script>
-  <style>
-    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --gold:#c9a227;
+  --gold-light:#e8c547;
+  --gold-dim:rgba(201,162,39,0.12);
+  --gold-border:rgba(201,162,39,0.3);
+  --bg:#0a0a0a;
+  --bg2:#111111;
+  --bg3:#181818;
+  --card:#141414;
+  --border:rgba(255,255,255,0.07);
+  --text:#f0f0f0;
+  --muted:#777;
+  --font-head:'Space Grotesk',sans-serif;
+  --font-body:'Inter',sans-serif;
+}
+html{scroll-behavior:smooth;overflow-x:hidden}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);line-height:1.6;cursor:none;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+img{max-width:100%;height:auto;display:block}
+button{cursor:none;border:none;background:none;font-family:inherit}
 
-    :root {
-      --blue: #00d4ff;
-      --blue2: #0099cc;
-      --purple: #7c3aed;
-      --gold: #f59e0b;
-      --dark: #020817;
-      --dark2: #0a0f1e;
-      --dark3: #0d1528;
-      --card: rgba(255,255,255,0.03);
-      --border: rgba(0,212,255,0.15);
-      --text: #e2e8f0;
-      --muted: #64748b;
-      --glow: 0 0 40px rgba(0,212,255,0.3);
-    }
+/* CURSOR */
+#cursor-dot{position:fixed;width:6px;height:6px;background:var(--gold);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:opacity .3s}
+#cursor-ring{position:fixed;width:32px;height:32px;border:1.5px solid rgba(201,162,39,.5);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:width .2s,height .2s,border-color .2s}
 
-    html { scroll-behavior: smooth; overflow-x: hidden; }
+/* PANEL INTRO */
+#panel-intro{position:fixed;inset:0;z-index:5000;display:flex;perspective:1400px}
+#panel-intro .door{width:50%;height:100%;position:relative;overflow:hidden;transition:transform 1.5s cubic-bezier(.77,0,.175,1)}
+.door-surface{position:absolute;inset:0;background:linear-gradient(160deg,#1e1e1e 0%,#252525 40%,#1a1a1a 100%)}
+.door-surface::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 60px,rgba(255,255,255,.015) 60px,rgba(255,255,255,.015) 61px),repeating-linear-gradient(90deg,transparent,transparent 60px,rgba(255,255,255,.015) 60px,rgba(255,255,255,.015) 61px)}
+.door-left{transform-origin:left center}
+.door-right{transform-origin:right center;border-left:3px solid #080808}
+.door-left .door-surface{border-right:3px solid #080808}
+.door-bolt{position:absolute;width:14px;height:14px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#555,#222);border:1px solid #444}
+.door-bolt.tl{top:24px;left:24px}.door-bolt.tr{top:24px;right:24px}
+.door-bolt.bl{bottom:24px;left:24px}.door-bolt.br{bottom:24px;right:24px}
+.door-center-logo{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:12px}
+.door-vent{position:absolute;bottom:60px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;gap:4px}
+.door-vent span{display:block;width:40px;height:2px;background:rgba(255,255,255,.08)}
+.door-handle{position:absolute;top:50%;right:16px;transform:translateY(-50%);width:8px;height:50px;background:radial-gradient(ellipse at 30% 30%,#666,#333);border-radius:4px;border:1px solid #555}
+/* Open state */
+#panel-intro.open .door-left{transform:perspective(1400px) rotateY(-112deg)}
+#panel-intro.open .door-right{transform:perspective(1400px) rotateY(112deg)}
+#panel-intro.gone{display:none}
 
-    body {
-      font-family: 'Inter', sans-serif;
-      background: var(--dark);
-      color: var(--text);
-      cursor: none;
-      overflow-x: hidden;
-    }
+/* NAV */
+nav{position:fixed;top:0;width:100%;z-index:1000;padding:0 5%;transition:background .4s,backdrop-filter .4s,border-color .4s;border-bottom:1px solid transparent}
+nav.scrolled{background:rgba(10,10,10,.88);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-color:var(--border)}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;height:72px}
+.nav-logo{display:flex;align-items:center;gap:10px}
+.nav-logo svg{height:42px;width:auto}
+.nav-name{font-family:var(--font-head);font-size:.72rem;font-weight:600;letter-spacing:.06em;color:var(--muted);text-transform:uppercase;line-height:1.3}
+.nav-links{display:flex;gap:28px;list-style:none}
+.nav-links a{font-size:.82rem;font-weight:500;letter-spacing:.05em;color:var(--muted);transition:color .2s;text-transform:uppercase}
+.nav-links a:hover{color:var(--text)}
+.nav-cta{display:flex;align-items:center;gap:10px}
+.btn-wa-nav{background:var(--gold);color:#000;padding:9px 18px;border-radius:3px;font-weight:700;font-size:.78rem;letter-spacing:.04em;transition:background .2s}
+.btn-wa-nav:hover{background:var(--gold-light)}
+.hamburger{display:none;flex-direction:column;gap:5px;padding:4px}
+.hamburger span{display:block;width:24px;height:2px;background:var(--text);transition:.3s}
 
-    /* ── Custom Cursor ── */
-    #cursor {
-      position: fixed; width: 12px; height: 12px;
-      background: var(--blue); border-radius: 50%;
-      pointer-events: none; z-index: 9999;
-      transform: translate(-50%, -50%);
-      transition: transform 0.1s, background 0.2s;
-      mix-blend-mode: screen;
-    }
-    #cursor-ring {
-      position: fixed; width: 40px; height: 40px;
-      border: 1.5px solid rgba(0,212,255,0.6); border-radius: 50%;
-      pointer-events: none; z-index: 9998;
-      transform: translate(-50%, -50%);
-      transition: all 0.15s ease;
-    }
-    body:has(a:hover) #cursor-ring,
-    body:has(button:hover) #cursor-ring { transform: translate(-50%, -50%) scale(1.8); border-color: var(--blue); }
+/* HERO */
+#inicio{position:relative;min-height:100vh;display:flex;align-items:center;overflow:hidden}
+.hero-bg{position:absolute;inset:0;z-index:0}
+.hero-bg img{width:100%;height:100%;object-fit:cover;object-position:center;filter:brightness(.3) saturate(.7)}
+.hero-overlay{position:absolute;inset:0;background:linear-gradient(120deg,rgba(10,10,10,.95) 0%,rgba(10,10,10,.75) 55%,rgba(10,10,10,.45) 100%)}
+.hero-circuit{position:absolute;inset:0;z-index:1;pointer-events:none}
+.hero-content{position:relative;z-index:2;max-width:780px;padding:120px 5% 80px}
+.hero-tag{display:inline-flex;align-items:center;gap:8px;background:var(--gold-dim);border:1px solid var(--gold-border);padding:6px 14px;border-radius:2px;font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:28px}
+.hero-tag .dot{width:6px;height:6px;background:var(--gold);border-radius:50%;animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+h1.hero-h1{font-family:var(--font-head);font-size:clamp(2.4rem,5.5vw,4.2rem);font-weight:700;line-height:1.08;letter-spacing:-.025em;color:#fff;margin-bottom:22px}
+h1.hero-h1 em{font-style:normal;color:var(--gold)}
+.hero-sub{font-size:clamp(.95rem,1.6vw,1.1rem);color:rgba(240,240,240,.72);max-width:620px;margin-bottom:38px;line-height:1.75}
+.hero-btns{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:44px}
+.btn-primary{display:inline-flex;align-items:center;gap:8px;background:var(--gold);color:#000;padding:14px 28px;border-radius:3px;font-family:var(--font-head);font-weight:700;font-size:.88rem;letter-spacing:.04em;transition:background .2s}
+.btn-primary:hover{background:var(--gold-light)}
+.btn-outline{display:inline-flex;align-items:center;gap:8px;border:1.5px solid var(--gold-border);color:var(--text);padding:14px 28px;border-radius:3px;font-family:var(--font-head);font-weight:600;font-size:.88rem;transition:border-color .2s,color .2s}
+.btn-outline:hover{border-color:var(--gold);color:var(--gold)}
+.btn-ghost{display:inline-flex;align-items:center;gap:6px;color:var(--muted);font-size:.84rem;font-weight:500;padding:14px 4px;transition:color .2s}
+.btn-ghost:hover{color:var(--gold)}
+.hero-meta{display:flex;gap:28px;flex-wrap:wrap}
+.hero-meta span{font-size:.76rem;color:var(--muted);display:flex;align-items:center;gap:6px}
+.hero-meta span::before{content:'';width:4px;height:4px;background:var(--gold);border-radius:50%;flex-shrink:0}
 
-    /* ── Scrollbar ── */
-    ::-webkit-scrollbar { width: 4px; }
-    ::-webkit-scrollbar-track { background: var(--dark2); }
-    ::-webkit-scrollbar-thumb { background: var(--blue2); border-radius: 2px; }
+/* QUICK STRIP */
+.quick-strip{background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:18px 0;overflow:hidden}
+.quick-track{display:flex;gap:0;animation:marquee 35s linear infinite;width:max-content}
+.quick-track:hover{animation-play-state:paused}
+@keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.quick-item{display:flex;align-items:center;gap:10px;white-space:nowrap;padding:0 32px;border-right:1px solid var(--border)}
+.quick-item .qi{width:5px;height:5px;background:var(--gold);border-radius:50%;flex-shrink:0}
+.quick-item span{font-size:.8rem;font-weight:500;color:var(--muted);letter-spacing:.04em}
 
-    /* ── NAV ── */
-    nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-      padding: 20px 60px;
-      display: flex; align-items: center; justify-content: space-between;
-      backdrop-filter: blur(0px);
-      transition: all 0.4s ease;
-    }
-    nav.scrolled {
-      background: rgba(2,8,23,0.85);
-      backdrop-filter: blur(20px);
-      border-bottom: 1px solid var(--border);
-      padding: 14px 60px;
-    }
-    .nav-logo {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 1.6rem; font-weight: 700;
-      background: linear-gradient(135deg, #fff 0%, var(--blue) 100%);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-      letter-spacing: -0.5px;
-    }
-    .nav-logo span { color: var(--blue); -webkit-text-fill-color: var(--blue); }
-    .nav-links { display: flex; gap: 36px; list-style: none; }
-    .nav-links a {
-      color: rgba(255,255,255,0.7); text-decoration: none;
-      font-size: 0.9rem; font-weight: 500; letter-spacing: 0.3px;
-      transition: color 0.2s; position: relative;
-    }
-    .nav-links a::after {
-      content: ''; position: absolute; bottom: -4px; left: 0; right: 0;
-      height: 1px; background: var(--blue);
-      transform: scaleX(0); transform-origin: left; transition: transform 0.3s;
-    }
-    .nav-links a:hover { color: #fff; }
-    .nav-links a:hover::after { transform: scaleX(1); }
-    .nav-cta {
-      padding: 10px 24px; background: transparent;
-      border: 1px solid var(--blue); border-radius: 6px;
-      color: var(--blue); font-size: 0.875rem; font-weight: 600;
-      cursor: none; transition: all 0.3s;
-      letter-spacing: 0.5px;
-    }
-    .nav-cta:hover {
-      background: var(--blue); color: var(--dark);
-      box-shadow: 0 0 30px rgba(0,212,255,0.4);
-    }
+/* SECTIONS */
+section{padding:100px 5%}
+.section-label{font-size:.68rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.section-label::before{content:'';width:20px;height:1px;background:var(--gold)}
+h2.sh{font-family:var(--font-head);font-size:clamp(1.8rem,3.5vw,2.8rem);font-weight:700;line-height:1.12;letter-spacing:-.02em;color:#fff}
+h2.sh em{font-style:normal;color:var(--gold)}
+.section-intro{font-size:1rem;color:var(--muted);max-width:580px;line-height:1.8;margin-top:14px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
 
-    /* ── HERO ── */
-    #hero {
-      position: relative; min-height: 100vh;
-      display: flex; align-items: center; justify-content: center;
-      overflow: hidden;
-    }
-    #hero-canvas {
-      position: absolute; inset: 0; z-index: 0;
-    }
-    .hero-grid {
-      position: absolute; inset: 0; z-index: 1;
-      background-image:
-        linear-gradient(rgba(0,212,255,0.04) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0,212,255,0.04) 1px, transparent 1px);
-      background-size: 60px 60px;
-      mask-image: radial-gradient(ellipse at center, black 30%, transparent 70%);
-    }
-    .hero-content {
-      position: relative; z-index: 2;
-      text-align: center; max-width: 900px; padding: 0 24px;
-    }
-    .hero-badge {
-      display: inline-flex; align-items: center; gap: 8px;
-      background: rgba(0,212,255,0.08); border: 1px solid rgba(0,212,255,0.2);
-      padding: 8px 18px; border-radius: 100px;
-      font-size: 0.8rem; font-weight: 600; letter-spacing: 1.5px;
-      text-transform: uppercase; color: var(--blue);
-      margin-bottom: 32px;
-    }
-    .hero-badge::before {
-      content: ''; width: 6px; height: 6px;
-      background: var(--blue); border-radius: 50%;
-      animation: pulse-dot 2s ease-in-out infinite;
-    }
-    @keyframes pulse-dot {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.4; transform: scale(0.6); }
-    }
-    .hero-title {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: clamp(3rem, 7vw, 6.5rem);
-      font-weight: 800; line-height: 1.05;
-      letter-spacing: -2px; margin-bottom: 24px;
-    }
-    .hero-title .line1 { display: block; color: #fff; }
-    .hero-title .line2 {
-      display: block;
-      background: linear-gradient(135deg, var(--blue) 0%, var(--purple) 100%);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    }
-    .hero-subtitle {
-      font-size: 1.15rem; color: rgba(255,255,255,0.55);
-      max-width: 560px; margin: 0 auto 48px; line-height: 1.7; font-weight: 400;
-    }
-    .hero-buttons { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
-    .btn-primary {
-      padding: 16px 36px; background: var(--blue);
-      border: none; border-radius: 8px; color: var(--dark);
-      font-size: 0.95rem; font-weight: 700; cursor: none;
-      letter-spacing: 0.3px;
-      transition: all 0.3s; position: relative; overflow: hidden;
-    }
-    .btn-primary::before {
-      content: ''; position: absolute; inset: 0;
-      background: linear-gradient(135deg, transparent 40%, rgba(255,255,255,0.3) 100%);
-      transform: translateX(-100%); transition: transform 0.5s;
-    }
-    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 50px rgba(0,212,255,0.5); }
-    .btn-primary:hover::before { transform: translateX(0); }
-    .btn-ghost {
-      padding: 16px 36px; background: transparent;
-      border: 1px solid rgba(255,255,255,0.15); border-radius: 8px;
-      color: rgba(255,255,255,0.8); font-size: 0.95rem; font-weight: 600;
-      cursor: none; transition: all 0.3s;
-      display: flex; align-items: center; gap: 10px;
-    }
-    .btn-ghost:hover { border-color: rgba(255,255,255,0.4); color: #fff; transform: translateY(-2px); }
-    .hero-scroll {
-      position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
-      z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 8px;
-      color: rgba(255,255,255,0.3); font-size: 0.75rem; letter-spacing: 2px;
-      text-transform: uppercase; animation: float 3s ease-in-out infinite;
-    }
-    .hero-scroll svg { animation: bounce 2s ease-in-out infinite; }
-    @keyframes float { 0%, 100% { transform: translateX(-50%) translateY(0); } 50% { transform: translateX(-50%) translateY(-8px); } }
-    @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(6px); } }
-    .hero-stats {
-      position: absolute; bottom: 50px; right: 60px;
-      z-index: 2; display: flex; flex-direction: column; gap: 20px;
-    }
-    .hero-stat {
-      text-align: right;
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 12px; padding: 14px 20px;
-      backdrop-filter: blur(10px);
-    }
-    .hero-stat .num { font-size: 1.8rem; font-weight: 800; color: var(--blue); font-family: 'Space Grotesk', sans-serif; }
-    .hero-stat .label { font-size: 0.72rem; color: var(--muted); letter-spacing: 0.5px; margin-top: 2px; }
+/* ABOUT */
+#nosotros{background:var(--bg)}
+.about-img{position:relative;border-radius:3px;overflow:hidden}
+.about-img img{width:100%;height:520px;object-fit:cover;filter:saturate(.8)}
+.about-img::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(10,10,10,.55) 0%,transparent 60%)}
+.about-quote{background:var(--card);border-left:3px solid var(--gold);padding:22px 26px;margin:28px 0;border-radius:0 3px 3px 0}
+.about-quote p{font-size:1rem;font-style:italic;color:var(--text);line-height:1.7}
+.mv-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:28px}
+.mv-card{background:var(--card);border:1px solid var(--border);padding:22px;border-radius:3px}
+.mv-card h4{font-family:var(--font-head);font-weight:700;font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:8px}
+.mv-card p{font-size:.85rem;color:var(--muted);line-height:1.65}
 
-    /* ── SECTION COMMON ── */
-    section { position: relative; }
-    .section-label {
-      display: inline-flex; align-items: center; gap: 10px;
-      font-size: 0.75rem; font-weight: 700; letter-spacing: 2.5px;
-      text-transform: uppercase; color: var(--blue); margin-bottom: 16px;
-    }
-    .section-label::before, .section-label::after {
-      content: ''; flex: 0 0 24px; height: 1px; background: var(--blue);
-    }
-    .section-title {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: clamp(2rem, 4vw, 3.2rem);
-      font-weight: 700; letter-spacing: -1px; line-height: 1.15;
-      margin-bottom: 16px;
-    }
-    .section-title em {
-      font-style: normal;
-      background: linear-gradient(135deg, var(--blue), var(--purple));
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    }
-    .section-sub { color: var(--muted); font-size: 1rem; line-height: 1.7; max-width: 520px; }
+/* WHY */
+#porque{background:var(--bg2)}
+.why-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:56px}
+.why-card{background:var(--card);border:1px solid var(--border);padding:28px;border-radius:3px;position:relative;overflow:hidden;transition:border-color .3s,transform .3s}
+.why-card:hover{border-color:var(--gold-border);transform:translateY(-4px)}
+.why-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--gold),transparent);opacity:0;transition:opacity .3s}
+.why-card:hover::before{opacity:1}
+.why-num{font-family:var(--font-head);font-size:2.8rem;font-weight:700;color:rgba(201,162,39,.12);line-height:1;margin-bottom:14px}
+.why-card h3{font-family:var(--font-head);font-size:1rem;font-weight:700;color:#fff;margin-bottom:8px}
+.why-card p{font-size:.85rem;color:var(--muted);line-height:1.65}
 
-    /* ── LOGOS ── */
-    #logos {
-      padding: 30px 0;
-      border-top: 1px solid rgba(255,255,255,0.05);
-      border-bottom: 1px solid rgba(255,255,255,0.05);
-      overflow: hidden;
-    }
-    .logos-track {
-      display: flex; gap: 80px; align-items: center;
-      animation: logos-scroll 25s linear infinite;
-      white-space: nowrap;
-    }
-    .logos-track:hover { animation-play-state: paused; }
-    @keyframes logos-scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-    .logo-item {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 1.1rem; font-weight: 700;
-      color: rgba(255,255,255,0.2); letter-spacing: -0.5px;
-      flex-shrink: 0; transition: color 0.3s;
-    }
-    .logo-item:hover { color: rgba(255,255,255,0.6); }
+/* PROCESS */
+#proceso{background:var(--bg);background-image:radial-gradient(ellipse 75% 55% at 50% 35%,rgba(201,162,39,.09) 0%,transparent 68%),radial-gradient(ellipse 35% 25% at 15% 85%,rgba(201,162,39,.05) 0%,transparent 60%),radial-gradient(ellipse 35% 25% at 85% 85%,rgba(201,162,39,.05) 0%,transparent 60%);position:relative;overflow:hidden}
+#proceso::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:260px;height:1px;background:linear-gradient(90deg,transparent,rgba(201,162,39,.55),transparent)}
+.process-line{display:flex;gap:0;margin-top:64px;position:relative}
+.process-line::before{content:'';position:absolute;top:27px;left:60px;right:60px;height:1px;background:linear-gradient(90deg,var(--gold),rgba(201,162,39,.3),transparent);z-index:0}
+.process-step{flex:1;position:relative;z-index:1;padding:0 24px;text-align:center}
+.step-icon{width:56px;height:56px;border:1.5px solid var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 22px;background:rgba(201,162,39,.07)}
+.step-icon svg{width:22px;height:22px;stroke:var(--gold);fill:none;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
+.process-step h3{font-family:var(--font-head);font-size:.95rem;font-weight:700;color:#fff;margin-bottom:8px}
+.process-step p{font-size:.82rem;color:var(--muted);line-height:1.65}
 
-    /* ── FEATURES ── */
-    #features { padding: 120px 60px; }
-    .features-header { text-align: center; margin-bottom: 80px; }
-    .features-header .section-label { justify-content: center; }
-    .features-grid {
-      max-width: 1200px; margin: 0 auto;
-      display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
-    }
-    .feature-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 20px; padding: 36px;
-      position: relative; overflow: hidden;
-      transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-      transform-style: preserve-3d;
-      cursor: none;
-    }
-    .feature-card::before {
-      content: ''; position: absolute; inset: 0; border-radius: 20px;
-      background: radial-gradient(circle at var(--mx,50%) var(--my,50%), rgba(0,212,255,0.08) 0%, transparent 60%);
-      opacity: 0; transition: opacity 0.3s;
-    }
-    .feature-card:hover::before { opacity: 1; }
-    .feature-card:hover { border-color: rgba(0,212,255,0.3); transform: translateY(-6px); box-shadow: 0 24px 60px rgba(0,0,0,0.4), 0 0 0 1px rgba(0,212,255,0.1); }
-    .feature-card.featured {
-      background: linear-gradient(135deg, rgba(0,212,255,0.06) 0%, rgba(124,58,237,0.06) 100%);
-      border-color: rgba(0,212,255,0.25);
-      grid-row: span 2;
-    }
-    .feature-icon {
-      width: 52px; height: 52px; border-radius: 14px;
-      background: rgba(0,212,255,0.08); border: 1px solid rgba(0,212,255,0.2);
-      display: flex; align-items: center; justify-content: center;
-      margin-bottom: 24px; font-size: 1.5rem;
-      transition: all 0.3s;
-    }
-    .feature-card:hover .feature-icon {
-      background: rgba(0,212,255,0.15); border-color: rgba(0,212,255,0.4);
-      box-shadow: 0 0 20px rgba(0,212,255,0.2);
-    }
-    .feature-title { font-size: 1.15rem; font-weight: 700; margin-bottom: 10px; color: #fff; }
-    .feature-desc { color: var(--muted); font-size: 0.9rem; line-height: 1.65; }
-    .feature-tag {
-      display: inline-block; margin-top: 20px;
-      padding: 4px 12px; border-radius: 100px;
-      background: rgba(0,212,255,0.08); border: 1px solid rgba(0,212,255,0.2);
-      font-size: 0.72rem; font-weight: 600; letter-spacing: 0.5px; color: var(--blue);
-    }
+/* SERVICES */
+#servicios{background:var(--bg2)}
+.services-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;margin-top:56px}
+.service-card{position:relative;overflow:hidden;background:var(--card);border:1px solid var(--border);aspect-ratio:.75;transition:border-color .3s}
+.service-card:hover{border-color:rgba(201,162,39,.25)}
+.service-img{position:absolute;inset:0}
+.service-img img{width:100%;height:100%;object-fit:cover;filter:brightness(.38) saturate(.65);transition:filter .5s,transform .6s}
+.service-card:hover .service-img img{filter:brightness(.22) saturate(.4);transform:scale(1.06)}
+.service-base{position:absolute;bottom:0;left:0;right:0;padding:24px 20px;background:linear-gradient(to top,rgba(0,0,0,.96) 0%,transparent 100%);z-index:2}
+.service-tag{font-size:.62rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+.service-card h3{font-family:var(--font-head);font-size:.92rem;font-weight:700;color:#fff;line-height:1.3;margin-bottom:4px}
+.service-card .ideal{font-size:.72rem;color:var(--muted)}
+.service-hover{position:absolute;inset:0;background:rgba(8,8,8,.96);z-index:3;padding:24px 20px;display:flex;flex-direction:column;justify-content:flex-end;transform:translateY(100%);transition:transform .42s cubic-bezier(.4,0,.2,1)}
+.service-card:hover .service-hover{transform:translateY(0)}
+.service-hover h4{font-family:var(--font-head);font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);margin-bottom:10px}
+.service-hover p{font-size:.8rem;color:rgba(240,240,240,.78);line-height:1.65;margin-bottom:14px}
+.service-hover .comps{font-size:.7rem;color:var(--muted);line-height:1.6}
+.service-hover .comps strong{color:rgba(201,162,39,.7);display:block;margin-bottom:3px;font-size:.62rem;letter-spacing:.08em;text-transform:uppercase}
+.service-hover .wa-link{margin-top:14px;color:var(--gold);font-size:.75rem;font-weight:600;display:flex;align-items:center;gap:5px;border-top:1px solid var(--border);padding-top:12px}
 
-    /* ── PRODUCTS ── */
-    #products {
-      padding: 120px 60px;
-      background: var(--dark2);
-    }
-    .products-layout { max-width: 1200px; margin: 0 auto; }
-    .products-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 60px; }
-    .products-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
-    .product-card {
-      background: var(--dark3); border: 1px solid rgba(255,255,255,0.06);
-      border-radius: 24px; overflow: hidden;
-      transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
-      cursor: none; position: relative;
-    }
-    .product-card:hover { transform: translateY(-10px); border-color: rgba(0,212,255,0.25); box-shadow: 0 40px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(0,212,255,0.1), 0 0 60px rgba(0,212,255,0.05); }
-    .product-img {
-      height: 220px; position: relative; overflow: hidden;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .product-img svg { width: 100%; height: 100%; }
-    .product-badge {
-      position: absolute; top: 16px; right: 16px;
-      padding: 4px 12px; border-radius: 100px; font-size: 0.72rem; font-weight: 700;
-      letter-spacing: 0.5px; text-transform: uppercase;
-    }
-    .badge-new { background: rgba(0,212,255,0.15); border: 1px solid var(--blue); color: var(--blue); }
-    .badge-hot { background: rgba(245,158,11,0.15); border: 1px solid var(--gold); color: var(--gold); }
-    .badge-pro { background: rgba(124,58,237,0.15); border: 1px solid var(--purple); color: #a78bfa; }
-    .product-body { padding: 28px; }
-    .product-name { font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; font-weight: 700; margin-bottom: 6px; }
-    .product-desc { color: var(--muted); font-size: 0.875rem; line-height: 1.6; margin-bottom: 20px; }
-    .product-specs { display: flex; gap: 20px; margin-bottom: 24px; }
-    .spec { display: flex; flex-direction: column; gap: 2px; }
-    .spec-label { font-size: 0.68rem; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); }
-    .spec-value { font-size: 0.95rem; font-weight: 700; color: var(--blue); font-family: 'Space Grotesk', sans-serif; }
-    .product-footer { display: flex; align-items: center; justify-content: space-between; }
-    .product-price { font-family: 'Space Grotesk', sans-serif; font-size: 1.8rem; font-weight: 800; }
-    .product-price span { font-size: 0.9rem; color: var(--muted); font-weight: 400; }
-    .btn-card {
-      padding: 10px 20px; background: rgba(0,212,255,0.08);
-      border: 1px solid rgba(0,212,255,0.25); border-radius: 8px;
-      color: var(--blue); font-size: 0.85rem; font-weight: 600;
-      cursor: none; transition: all 0.3s;
-    }
-    .btn-card:hover { background: var(--blue); color: var(--dark); box-shadow: 0 0 20px rgba(0,212,255,0.4); }
+/* ANATOMY */
+#anatomia{background:var(--bg)}
+.anatomy-wrap{display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center;margin-top:56px}
+.anatomy-img img{width:100%;border-radius:3px;filter:saturate(.75)}
+.anatomy-points{display:flex;flex-direction:column;gap:16px}
+.anatomy-point{display:flex;gap:16px;align-items:flex-start;padding:18px;background:var(--card);border:1px solid var(--border);border-radius:3px;transition:border-color .3s}
+.anatomy-point:hover{border-color:var(--gold-border)}
+.ap-num{width:30px;height:30px;background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:2px;display:flex;align-items:center;justify-content:center;font-family:var(--font-head);font-weight:700;font-size:.75rem;color:var(--gold);flex-shrink:0}
+.ap-text h4{font-family:var(--font-head);font-weight:700;font-size:.88rem;color:#fff;margin-bottom:3px}
+.ap-text p{font-size:.8rem;color:var(--muted);line-height:1.55}
 
-    /* Panel SVG illustrations */
-    .panel-bg-1 { background: linear-gradient(135deg, #0a1628 0%, #0d2040 100%); }
-    .panel-bg-2 { background: linear-gradient(135deg, #0a0f28 0%, #140a28 100%); }
-    .panel-bg-3 { background: linear-gradient(135deg, #0a1a10 0%, #0d2818 100%); }
+/* GALLERY */
+#trabajos{background:var(--bg2)}
+.gallery-grid{columns:3;gap:10px;margin-top:56px}
+.gallery-item{break-inside:avoid;position:relative;overflow:hidden;border-radius:3px;margin-bottom:10px;border:1px solid var(--border)}
+.gallery-item img{width:100%;display:block;transition:transform .5s,filter .4s;filter:saturate(.82)}
+.gallery-item:hover img{transform:scale(1.04);filter:saturate(1)}
+.gallery-overlay{position:absolute;inset:0;background:rgba(0,0,0,0);transition:background .3s;display:flex;align-items:flex-end;padding:16px}
+.gallery-item:hover .gallery-overlay{background:rgba(0,0,0,.48)}
+.gallery-label{opacity:0;transition:opacity .3s;font-size:.75rem;font-weight:600;color:#fff;background:rgba(201,162,39,.88);padding:4px 10px;border-radius:2px}
+.gallery-item:hover .gallery-label{opacity:1}
 
-    /* ── STATS ── */
-    #stats {
-      padding: 100px 60px;
-      background: linear-gradient(135deg, rgba(0,212,255,0.04) 0%, rgba(124,58,237,0.04) 100%);
-      border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
-      position: relative; overflow: hidden;
-    }
-    #stats::before {
-      content: ''; position: absolute; top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      width: 600px; height: 600px; border-radius: 50%;
-      background: radial-gradient(circle, rgba(0,212,255,0.06) 0%, transparent 70%);
-      pointer-events: none;
-    }
-    .stats-grid {
-      max-width: 1200px; margin: 0 auto;
-      display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px;
-      position: relative;
-    }
-    .stat-item { text-align: center; }
-    .stat-num {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: clamp(2.8rem, 5vw, 4.5rem);
-      font-weight: 800; line-height: 1;
-      background: linear-gradient(135deg, #fff 0%, var(--blue) 100%);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-      margin-bottom: 10px;
-    }
-    .stat-label { color: var(--muted); font-size: 0.9rem; letter-spacing: 0.3px; }
-    .stat-divider {
-      position: absolute; top: 50%; transform: translateY(-50%);
-      width: 1px; height: 60px; background: var(--border);
-    }
+/* BRANDS */
+#marcas{background:var(--bg);padding:72px 5%;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.brands-head{text-align:center;margin-bottom:44px}
+.brands-row{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
+.brand-pill{background:var(--card);border:1px solid var(--border);padding:13px 26px;border-radius:3px;font-family:var(--font-head);font-weight:700;font-size:.82rem;letter-spacing:.06em;color:var(--muted);transition:border-color .3s,color .3s}
+.brand-pill:hover{border-color:var(--gold-border);color:var(--gold)}
 
-    /* ── WHY US ── */
-    #why { padding: 120px 60px; }
-    .why-layout { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
-    .why-visual {
-      position: relative; height: 500px;
-    }
-    .why-panel {
-      position: absolute;
-      border-radius: 20px; padding: 24px;
-      border: 1px solid rgba(0,212,255,0.2);
-      backdrop-filter: blur(10px);
-    }
-    .panel-main {
-      inset: 0; background: rgba(13,21,40,0.9);
-      display: flex; align-items: center; justify-content: center;
-    }
-    .panel-float-1 {
-      bottom: -30px; right: -30px; background: rgba(10,15,30,0.95);
-      border-color: rgba(124,58,237,0.3); width: 200px;
-    }
-    .panel-float-2 {
-      top: 20px; left: -30px; background: rgba(10,15,30,0.95);
-      border-color: rgba(245,158,11,0.3); width: 160px;
-    }
-    .panel-float-3 {
-      top: 50%; right: -20px; transform: translateY(-50%);
-      background: rgba(10,15,30,0.95); border-color: rgba(0,212,255,0.3); width: 140px;
-    }
-    .float-label { font-size: 0.68rem; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
-    .float-value { font-family: 'Space Grotesk', sans-serif; font-size: 1.4rem; font-weight: 700; }
-    .float-bar { margin-top: 8px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden; }
-    .float-bar-fill { height: 100%; border-radius: 2px; transition: width 1.5s cubic-bezier(0.23,1,0.32,1); }
-    .why-list { list-style: none; display: flex; flex-direction: column; gap: 28px; }
-    .why-item { display: flex; gap: 20px; align-items: flex-start; }
-    .why-icon {
-      flex-shrink: 0; width: 44px; height: 44px; border-radius: 12px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.2rem; margin-top: 4px;
-    }
-    .why-icon.blue { background: rgba(0,212,255,0.1); border: 1px solid rgba(0,212,255,0.2); }
-    .why-icon.purple { background: rgba(124,58,237,0.1); border: 1px solid rgba(124,58,237,0.2); }
-    .why-icon.gold { background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.2); }
-    .why-text h4 { font-size: 1.05rem; font-weight: 700; margin-bottom: 6px; }
-    .why-text p { color: var(--muted); font-size: 0.875rem; line-height: 1.65; }
+/* FAQ */
+#faq{background:var(--bg2)}
+.faq-wrap{max-width:800px;margin:56px auto 0}
+.faq-item{border-bottom:1px solid var(--border)}
+.faq-q{width:100%;text-align:left;padding:20px 0;display:flex;justify-content:space-between;align-items:center;gap:16px;font-family:var(--font-head);font-size:.92rem;font-weight:600;color:var(--text);transition:color .2s}
+.faq-q:hover{color:var(--gold)}
+.faq-icon{width:18px;height:18px;flex-shrink:0;position:relative}
+.faq-icon::before,.faq-icon::after{content:'';position:absolute;background:currentColor;border-radius:2px;transition:transform .3s}
+.faq-icon::before{width:10px;height:1.5px;top:50%;left:50%;transform:translate(-50%,-50%)}
+.faq-icon::after{width:1.5px;height:10px;top:50%;left:50%;transform:translate(-50%,-50%)}
+.faq-item.open .faq-icon::after{transform:translate(-50%,-50%) rotate(90deg)}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .4s ease}
+.faq-a p{padding:0 0 20px;font-size:.86rem;color:var(--muted);line-height:1.8}
 
-    /* ── PROCESS ── */
-    #process { padding: 120px 60px; background: var(--dark2); }
-    .process-header { text-align: center; margin-bottom: 80px; }
-    .process-header .section-label { justify-content: center; }
-    .process-steps {
-      max-width: 1000px; margin: 0 auto;
-      display: grid; grid-template-columns: repeat(4, 1fr); gap: 0;
-      position: relative;
-    }
-    .process-steps::before {
-      content: ''; position: absolute;
-      top: 32px; left: calc(12.5% + 16px); right: calc(12.5% + 16px); height: 1px;
-      background: linear-gradient(90deg, var(--blue), var(--purple)); z-index: 0;
-    }
-    .process-step { text-align: center; position: relative; z-index: 1; padding: 0 16px; }
-    .step-num {
-      width: 64px; height: 64px; border-radius: 50%;
-      background: var(--dark2); border: 2px solid var(--blue);
-      display: flex; align-items: center; justify-content: center;
-      font-family: 'Space Grotesk', sans-serif; font-size: 1.4rem; font-weight: 800;
-      color: var(--blue); margin: 0 auto 24px;
-      box-shadow: 0 0 30px rgba(0,212,255,0.2), inset 0 0 20px rgba(0,212,255,0.05);
-      transition: all 0.4s;
-    }
-    .process-step:hover .step-num {
-      background: rgba(0,212,255,0.1);
-      box-shadow: 0 0 50px rgba(0,212,255,0.4), inset 0 0 20px rgba(0,212,255,0.1);
-      transform: scale(1.1);
-    }
-    .step-title { font-size: 1rem; font-weight: 700; margin-bottom: 8px; }
-    .step-desc { color: var(--muted); font-size: 0.82rem; line-height: 1.6; }
+/* CONTACT */
+#contacto{background:var(--bg)}
+.contact-wrap{display:grid;grid-template-columns:1fr 1fr;gap:72px;margin-top:56px}
+.contact-info h3{font-family:var(--font-head);font-size:1.05rem;font-weight:700;color:#fff;margin-bottom:22px}
+.contact-detail{display:flex;flex-direction:column;gap:13px;margin-bottom:28px}
+.cd{display:flex;gap:12px;align-items:flex-start}
+.cd-icon{width:34px;height:34px;background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:2px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.cd-icon svg{width:14px;height:14px;stroke:var(--gold);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.cd-text strong{display:block;font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:2px}
+.cd-text span{font-size:.86rem;color:var(--muted);line-height:1.55}
+.btn-wa-big{display:flex;align-items:center;justify-content:center;gap:10px;background:#25d366;color:#fff;padding:15px 28px;border-radius:3px;font-family:var(--font-head);font-weight:700;font-size:.95rem;margin-top:24px;transition:background .2s}
+.btn-wa-big:hover{background:#1db954}
+.contact-form{display:flex;flex-direction:column;gap:13px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.form-group{display:flex;flex-direction:column;gap:5px}
+.form-group label{font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.form-group input,.form-group select,.form-group textarea{background:var(--card);border:1px solid var(--border);color:var(--text);padding:11px 13px;border-radius:2px;font-family:var(--font-body);font-size:.88rem;transition:border-color .2s;outline:none}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--gold-border)}
+.form-group select option{background:var(--bg2)}
+.form-group textarea{resize:vertical;min-height:96px}
+.form-submit{background:var(--gold);color:#000;padding:13px 24px;border-radius:3px;font-family:var(--font-head);font-weight:700;font-size:.88rem;letter-spacing:.04em;transition:background .2s;width:100%}
+.form-submit:hover{background:var(--gold-light)}
+.form-note{font-size:.72rem;color:var(--muted);text-align:center;line-height:1.5}
 
-    /* ── TESTIMONIALS ── */
-    #testimonials { padding: 120px 60px; }
-    .testimonials-header { text-align: center; margin-bottom: 60px; }
-    .testimonials-header .section-label { justify-content: center; }
-    .testimonials-track-wrapper { overflow: hidden; }
-    .testimonials-track {
-      display: flex; gap: 24px;
-      transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
-    }
-    .testimonial-card {
-      flex: 0 0 calc(33.333% - 16px);
-      background: var(--card); border: 1px solid rgba(255,255,255,0.06);
-      border-radius: 20px; padding: 32px;
-      transition: all 0.4s;
-    }
-    .testimonial-card.active { border-color: rgba(0,212,255,0.2); }
-    .t-stars { display: flex; gap: 4px; margin-bottom: 20px; font-size: 0.9rem; }
-    .t-text { color: rgba(255,255,255,0.75); font-size: 0.925rem; line-height: 1.7; margin-bottom: 24px; font-style: italic; }
-    .t-author { display: flex; align-items: center; gap: 14px; }
-    .t-avatar {
-      width: 44px; height: 44px; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-weight: 700; font-size: 1rem;
-    }
-    .t-name { font-weight: 700; font-size: 0.9rem; }
-    .t-role { color: var(--muted); font-size: 0.78rem; margin-top: 2px; }
-    .t-controls { display: flex; justify-content: center; gap: 12px; margin-top: 40px; }
-    .t-dot {
-      width: 8px; height: 8px; border-radius: 50%;
-      background: rgba(255,255,255,0.15); cursor: none; transition: all 0.3s;
-    }
-    .t-dot.active { background: var(--blue); width: 24px; border-radius: 4px; }
+/* FOOTER */
+footer{background:#060606;border-top:1px solid var(--border);padding:48px 5% 26px}
+.footer-inner{display:grid;grid-template-columns:2fr 1fr 1fr;gap:48px;margin-bottom:36px}
+.footer-brand p{font-size:.83rem;color:var(--muted);line-height:1.65;margin-top:13px;max-width:300px}
+.footer-col h5{font-family:var(--font-head);font-weight:700;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--gold);margin-bottom:14px}
+.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:7px}
+.footer-col ul li a{font-size:.82rem;color:var(--muted);transition:color .2s}
+.footer-col ul li a:hover{color:var(--gold)}
+.footer-bottom{border-top:1px solid var(--border);padding-top:22px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.footer-bottom p,.footer-bottom a{font-size:.76rem;color:var(--muted)}
+.footer-bottom a:hover{color:var(--gold)}
 
-    /* ── CTA ── */
-    #cta {
-      padding: 120px 60px;
-      background: linear-gradient(135deg, rgba(0,212,255,0.05) 0%, rgba(124,58,237,0.05) 100%);
-      border-top: 1px solid var(--border);
-      text-align: center; position: relative; overflow: hidden;
-    }
-    #cta::before {
-      content: ''; position: absolute; top: -200px; left: 50%;
-      transform: translateX(-50%);
-      width: 800px; height: 800px;
-      background: radial-gradient(circle, rgba(0,212,255,0.07) 0%, transparent 60%);
-      pointer-events: none;
-    }
-    .cta-content { position: relative; max-width: 700px; margin: 0 auto; }
-    .cta-title {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: clamp(2.2rem, 4vw, 3.5rem);
-      font-weight: 800; letter-spacing: -1.5px; margin-bottom: 20px;
-    }
-    .cta-sub { color: var(--muted); font-size: 1.05rem; line-height: 1.7; margin-bottom: 48px; }
-    .cta-form { display: flex; gap: 12px; max-width: 480px; margin: 0 auto; }
-    .cta-input {
-      flex: 1; padding: 14px 20px;
-      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 8px; color: #fff; font-size: 0.95rem; outline: none;
-      transition: border-color 0.3s;
-    }
-    .cta-input::placeholder { color: var(--muted); }
-    .cta-input:focus { border-color: var(--blue); }
-    .cta-trust { margin-top: 20px; color: var(--muted); font-size: 0.8rem; display: flex; align-items: center; justify-content: center; gap: 6px; }
+/* FLOATING WA */
+#wa-float{position:fixed;bottom:26px;right:26px;z-index:4000;display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+.wa-btn{width:52px;height:52px;background:#25d366;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(37,211,102,.38);transition:transform .2s,box-shadow .2s}
+.wa-btn:hover{transform:scale(1.1);box-shadow:0 6px 28px rgba(37,211,102,.5)}
+.wa-btn svg{width:24px;height:24px;fill:#fff}
+.wa-label{background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:5px 11px;border-radius:3px;font-size:.73rem;font-weight:600;white-space:nowrap;opacity:0;transform:translateX(8px);transition:opacity .2s,transform .2s;pointer-events:none}
+#wa-float:hover .wa-label{opacity:1;transform:translateX(0)}
 
-    /* ── FOOTER ── */
-    footer {
-      padding: 60px 60px 40px;
-      border-top: 1px solid rgba(255,255,255,0.06);
-      background: var(--dark2);
-    }
-    .footer-grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 60px; margin-bottom: 60px; }
-    .footer-brand .nav-logo { font-size: 1.4rem; }
-    .footer-desc { color: var(--muted); font-size: 0.875rem; line-height: 1.65; margin-top: 16px; max-width: 260px; }
-    .footer-social { display: flex; gap: 12px; margin-top: 28px; }
-    .social-btn {
-      width: 38px; height: 38px; border-radius: 10px;
-      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 0.9rem; cursor: none; transition: all 0.3s; text-decoration: none; color: var(--muted);
-    }
-    .social-btn:hover { background: rgba(0,212,255,0.1); border-color: rgba(0,212,255,0.3); color: var(--blue); }
-    .footer-col h4 { font-size: 0.875rem; font-weight: 700; color: #fff; margin-bottom: 20px; letter-spacing: 0.3px; }
-    .footer-links { list-style: none; display: flex; flex-direction: column; gap: 10px; }
-    .footer-links a { color: var(--muted); text-decoration: none; font-size: 0.875rem; transition: color 0.2s; }
-    .footer-links a:hover { color: #fff; }
-    .footer-bottom {
-      max-width: 1200px; margin: 0 auto;
-      padding-top: 30px; border-top: 1px solid rgba(255,255,255,0.05);
-      display: flex; justify-content: space-between; align-items: center;
-    }
-    .footer-copy { color: var(--muted); font-size: 0.8rem; }
+/* SCROLL REVEAL */
+.reveal{opacity:1;transform:none}
 
-    /* ── REVEAL ANIMATIONS ── */
-    .reveal { opacity: 0; transform: translateY(40px); }
-    .reveal-left { opacity: 0; transform: translateX(-40px); }
-    .reveal-right { opacity: 0; transform: translateX(40px); }
+/* ── 3D CABINET (Nosotros) ── */
+:root{--cd:52px}
+.op-scene{width:100%;height:560px;display:flex;align-items:center;justify-content:center;perspective:1200px;perspective-origin:50% 38%;position:relative}
+.op-cabinet{width:310px;height:440px;position:relative;transform-style:preserve-3d;transform:rotateX(5deg) rotateY(18deg)}
+/* Back wall — CSS-built interior, no photo */
+.op-back{position:absolute;inset:0;background:#0b0b0b;border:2px solid #1e1e1e;overflow:hidden;transform:translateZ(calc(-1 * var(--cd)));contain:layout paint}
+/* Busbar */
+.op-int-bus{position:absolute;left:8%;right:8%;top:9%;height:9px;background:linear-gradient(90deg,#7a5600,#c9a227,#f2cc40,#c9a227,#7a5600);border-radius:3px;box-shadow:0 0 22px rgba(201,162,39,.75),0 2px 6px rgba(0,0,0,.8)}
+/* Component zone */
+.op-int-zone{position:absolute;left:8%;right:8%}
+/* DIN rail */
+.op-int-din{height:7px;background:linear-gradient(90deg,#1e1e1e,#606060,#1e1e1e);border-radius:2px;margin-bottom:3px}
+/* Circuit breakers */
+.op-int-brs{display:flex;gap:4px}
+.op-int-br{flex:1;height:70px;background:linear-gradient(175deg,#2c2c2c,#1c1c1c);border:1px solid #424242;border-radius:2px;position:relative;overflow:hidden}
+.op-int-br::before{content:'';position:absolute;top:0;left:0;right:0;height:6px;border-radius:2px 2px 0 0;background:#484848}
+.op-int-br.b3::before{background:linear-gradient(90deg,#9a7400,#c9a227,#9a7400)}
+.op-int-br::after{content:'';position:absolute;top:18px;left:50%;transform:translateX(-50%);width:55%;height:26px;background:linear-gradient(180deg,#383838,#252525);border:1px solid #525252;border-radius:3px}
+/* Contactors */
+.op-int-ctrs{display:flex;gap:5px}
+.op-int-ctr{flex:1;height:88px;background:linear-gradient(175deg,#222,#151515);border:1px solid #3a3a3a;border-radius:3px;position:relative;overflow:hidden;max-width:90px}
+.op-int-ctr::before{content:'';position:absolute;top:7px;left:50%;transform:translateX(-50%);width:68%;height:22px;background:linear-gradient(180deg,#2e2e2e,#1e1e1e);border:1px solid #484848;border-radius:2px}
+.op-int-ctr::after{content:'';position:absolute;bottom:5px;left:8%;right:8%;height:14px;background:repeating-linear-gradient(90deg,#181818 0,#181818 8px,#404040 8px,#404040 11px);border-radius:1px}
+.op-int-ctr.orn{background:linear-gradient(175deg,#5a2800,#381a00);border-color:#7a3c00}
+.op-int-ctr.orn::before{background:linear-gradient(180deg,#7a3800,#582600);border-color:#9a4c00}
+/* Wire bundle at bottom */
+.op-int-wires{position:absolute;bottom:0;left:0;right:0;height:26%;display:flex;gap:3px;align-items:flex-end;padding:0 6px;overflow:hidden}
+.op-int-wire{flex-shrink:0;width:7px;border-radius:2px 2px 0 0}
+/* Glow overlay */
+.op-int-glow{position:absolute;inset:0;background:linear-gradient(90deg,rgba(201,162,39,.25) 0%,transparent 55%),radial-gradient(ellipse at 42% 44%,rgba(255,140,0,.22) 0%,transparent 68%);opacity:0;pointer-events:none;mix-blend-mode:screen}
+/* LEDs */
+.op-leds{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);display:flex;gap:9px}
+.op-led{width:9px;height:9px;border-radius:50%}
+.op-led.g{background:#22ff55;box-shadow:0 0 12px #22ff55,0 0 5px #22ff55}
+.op-led.r{background:#ff3322;box-shadow:0 0 12px #ff3322,0 0 5px #ff3322}
+.op-led.y{background:#ffcc00;box-shadow:0 0 12px #ffcc00,0 0 5px #ffcc00}
+/* ONE side face — right (the only visible one at rotateY 18°) */
+.op-right{position:absolute;top:0;right:0;width:var(--cd);height:100%;background:linear-gradient(90deg,#1c1c1c,#111);border:1px solid #222;transform-origin:right center;transform:rotateY(90deg)}
+/* Door — only animated element, gets will-change */
+.op-door{position:absolute;inset:0;transform-origin:left center;transform-style:preserve-3d;transform:rotateY(0deg);will-change:transform}
+.op-door-face{position:absolute;inset:0;background:linear-gradient(148deg,#2d2d2d 0%,#202020 55%,#1a1a1a 100%);border:2px solid #454545;backface-visibility:hidden;overflow:hidden}
+.op-door-face::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 28px,rgba(255,255,255,.017) 28px,rgba(255,255,255,.017) 29px)}
+.op-door-inner{position:absolute;inset:0;background:linear-gradient(135deg,#1c1c1c,#131313);transform:rotateY(180deg);backface-visibility:hidden}
+/* Door hardware */
+.op-bolt{position:absolute;width:10px;height:10px;border-radius:50%;background:radial-gradient(circle at 33% 33%,#5a5a5a,#222);border:1px solid #464646}
+.op-bolt.tl{top:14px;left:14px}.op-bolt.tr{top:14px;right:14px}
+.op-bolt.bl{bottom:14px;left:14px}.op-bolt.br{bottom:14px;right:14px}
+.op-handle{position:absolute;right:18px;top:50%;transform:translateY(-50%);width:8px;height:58px;background:linear-gradient(180deg,#5a5a5a,#8a8a8a,#5a5a5a);border-radius:4px;border:1px solid #777;box-shadow:inset 0 0 8px rgba(0,0,0,.6)}
+.op-nameplate{position:absolute;top:18px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.62);border:1px solid #3c3c3c;padding:4px 14px;font-family:var(--font-head);font-size:.5rem;letter-spacing:.16em;color:var(--muted);text-transform:uppercase;white-space:nowrap}
+.op-logo-mark{position:absolute;top:50%;left:50%;transform:translate(-50%,-56%)}
+.op-vent-slits{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;gap:4px}
+.op-vent-slits span{display:block;width:44px;height:2px;background:rgba(255,255,255,.06);border-radius:1px}
+.op-door-lines{position:absolute;inset:0;pointer-events:none}
+/* Light leak — no blur (avoids extra composite layer) */
+.op-leak{position:absolute;left:-1px;top:6%;bottom:6%;width:10px;background:linear-gradient(180deg,transparent,rgba(201,162,39,.95),rgba(255,120,0,.85),rgba(201,162,39,.95),transparent);opacity:0;border-radius:3px;pointer-events:none;z-index:2}
+/* Nosotros two-col grid */
+#nosotros .nos-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
 
-    /* ── GLOW ORBS ── */
-    .orb {
-      position: absolute; border-radius: 50%; filter: blur(80px);
-      pointer-events: none; z-index: 0;
-    }
-    .orb-blue { background: rgba(0,212,255,0.12); }
-    .orb-purple { background: rgba(124,58,237,0.12); }
+/* ── ASSEMBLY DIAGRAM (Anatomía) ── */
+#anatomia{background:var(--bg);padding:100px 5% 80px}
+.anatomy-header{text-align:center;max-width:640px;margin:0 auto 64px}
+.asm-wrap{position:relative;max-width:700px;height:510px;margin:0 auto 80px;overflow:hidden}
+/* Frame (enclosure outline) */
+.asm-frame{position:absolute;left:7%;right:7%;top:5%;bottom:4%;border:1.5px solid rgba(201,162,39,.3);border-radius:2px}
+.asm-frame::before{content:'';position:absolute;top:-2px;left:-2px;width:14px;height:14px;border-top:2px solid var(--gold);border-left:2px solid var(--gold)}
+.asm-frame::after{content:'';position:absolute;bottom:-2px;right:-2px;width:14px;height:14px;border-bottom:2px solid var(--gold);border-right:2px solid var(--gold)}
+/* Busbar */
+.asm-busbar{position:absolute;left:10%;right:10%;top:14%;height:5px;background:linear-gradient(90deg,#8a6600,#c9a227,#f0c040,#c9a227,#8a6600);border-radius:2px;box-shadow:0 0 16px rgba(201,162,39,.55)}
+/* Main switch */
+.asm-main-sw{position:absolute;left:50%;top:5.5%;transform:translateX(-50%);width:56px;height:40px;background:linear-gradient(180deg,#2e2e2e,#1e1e1e);border:1.5px solid #4e4e4e;border-radius:2px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:6px;z-index:2}
+.asm-msw-top,.asm-msw-bot{display:block;width:18px;height:3px;background:#888;border-radius:1px}
+.asm-msw-lbl{font-family:var(--font-head);font-size:.46rem;font-weight:700;color:var(--gold);letter-spacing:.08em}
+/* Component rows */
+.asm-row{position:absolute;left:10%;right:10%}
+.asm-row-1{top:31%}.asm-row-2{top:56%}.asm-row-3{top:78%}
+.asm-din-rail{height:5px;background:linear-gradient(90deg,#2a2a2a,#525252,#2a2a2a);border-radius:1px}
+/* Breakers */
+.asm-brs{display:flex;gap:3px;margin-top:3px}
+.asm-br{flex:1;height:52px;max-width:86px;background:linear-gradient(180deg,#303030,#1e1e1e);border:1px solid #484848;border-radius:2px;display:flex;align-items:center;justify-content:center;font-family:var(--font-head);font-size:.48rem;font-weight:700;color:var(--muted);position:relative;overflow:hidden}
+.asm-br::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:#444;border-radius:2px 2px 0 0}
+.asm-br.gd::before{background:var(--gold)}.asm-br.or::before{background:#e06400}
+/* Terminals */
+.asm-terms{display:flex;gap:0;margin-top:3px}
+.asm-term{flex:1;height:30px;max-width:46px;background:linear-gradient(180deg,#262626,#1a1a1a);border:1px solid #333;border-right:none;position:relative}
+.asm-term:last-child{border-right:1px solid #333}
+.asm-term::before{content:'';position:absolute;top:5px;left:50%;transform:translateX(-50%);width:9px;height:9px;border-radius:50%;background:#2e2e2e;border:1px solid #555}
+/* Wires SVG overlay */
+.asm-wires{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+/* Row labels */
+.asm-row-label{position:absolute;top:calc(100% + 7px);left:0;font-size:.54rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.asm-bar-label{position:absolute;top:calc(100% + 7px);left:0;font-size:.54rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(201,162,39,.6)}
+/* Status badge */
+.asm-status{position:absolute;bottom:0;left:50%;transform:translateX(-50%);background:rgba(201,162,39,.07);border:1px solid rgba(201,162,39,.22);padding:6px 20px;border-radius:2px;font-family:var(--font-head);font-size:.6rem;letter-spacing:.1em;color:var(--gold);white-space:nowrap;display:flex;align-items:center;gap:9px;opacity:0}
+.asm-status-dot{width:6px;height:6px;background:#22ff55;border-radius:50%;box-shadow:0 0 7px #22ff55;flex-shrink:0;animation:ledPulse 1.6s ease-in-out infinite}
+@keyframes ledPulse{0%,100%{opacity:1}50%{opacity:.25}}
+/* Grid */
+.anatomy-grid-new{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;max-width:1020px;margin:0 auto}
+.agn-point{padding:30px 26px;background:var(--card);border:1px solid var(--border);position:relative;overflow:hidden}
+.agn-point::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--gold),transparent);opacity:0;transition:opacity .3s}
+.agn-point:hover::before{opacity:1}
+.agn-num{font-family:var(--font-head);font-size:2.6rem;font-weight:700;color:rgba(201,162,39,.13);line-height:1;margin-bottom:12px;display:block}
+.agn-title{font-family:var(--font-head);font-size:1rem;font-weight:700;color:#fff;margin-bottom:7px}
+.agn-body{font-size:.83rem;color:var(--muted);line-height:1.65}
+@media(max-width:900px){.anatomy-grid-new{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:580px){.anatomy-grid-new{grid-template-columns:1fr}.asm-wrap{transform:scale(.72);transform-origin:top center;margin-bottom:24px}}
+@media(max-width:768px){#nosotros .nos-grid{grid-template-columns:1fr;gap:40px}.op-scene{height:400px}}
 
-    /* ── MOBILE ── */
-    @media (max-width: 1024px) {
-      nav { padding: 20px 30px; }
-      .features-grid { grid-template-columns: 1fr 1fr; }
-      .feature-card.featured { grid-row: span 1; }
-      .products-grid { grid-template-columns: 1fr 1fr; }
-      .stats-grid { grid-template-columns: repeat(2, 1fr); }
-      .why-layout { grid-template-columns: 1fr; }
-      .why-visual { display: none; }
-      .footer-grid { grid-template-columns: 1fr 1fr; }
-    }
-    @media (max-width: 768px) {
-      nav { padding: 16px 20px; }
-      .nav-links { display: none; }
-      #features, #products, #stats, #why, #process, #testimonials, #cta { padding: 80px 20px; }
-      .features-grid, .products-grid { grid-template-columns: 1fr; }
-      .process-steps { grid-template-columns: 1fr 1fr; }
-      .process-steps::before { display: none; }
-      .testimonial-card { flex: 0 0 calc(100% - 12px); }
-      .footer-grid { grid-template-columns: 1fr; gap: 30px; }
-      .cta-form { flex-direction: column; }
-      .hero-stats { display: none; }
-      .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
-    }
-  </style>
+/* ── MINI 3D COMPONENT ICONS (anatomy grid) ── */
+.agn-icon{margin-bottom:18px;perspective:280px;perspective-origin:50% 55%}
+.agn-icon-inner{transition:transform .55s cubic-bezier(.25,.46,.45,.94),box-shadow .55s;transform:rotateX(7deg) rotateY(-5deg)}
+.agn-point:hover .agn-icon-inner{transform:rotateX(-5deg) rotateY(7deg) translateZ(14px)}
+/* Wire bundle */
+.i-wires{display:flex;align-items:flex-end;gap:3px;height:52px;padding:4px 10px 0;background:linear-gradient(180deg,#181818,#0f0f0f);border:1px solid #2a2a2a;border-radius:2px 2px 0 0;border-bottom:5px solid #252525;overflow:hidden}
+.i-w{width:7px;border-radius:2px 2px 0 0;flex-shrink:0}
+/* Breaker */
+.i-breaker{width:58px;height:56px;background:linear-gradient(175deg,#2e2e2e,#1c1c1c);border:1px solid #424242;border-radius:2px;position:relative;margin:0 auto;overflow:hidden;transition:box-shadow .4s}
+.i-br-top{position:absolute;top:0;left:0;right:0;height:7px;background:linear-gradient(90deg,#9a7400,#c9a227,#9a7400);border-radius:2px 2px 0 0;transition:box-shadow .4s,background .4s}
+.i-br-sw{position:absolute;top:17px;left:50%;transform:translateX(-50%);width:54%;height:24px;background:linear-gradient(180deg,#3a3a3a,#252525);border:1px solid #525252;border-radius:3px}
+.agn-point:hover .i-breaker{box-shadow:0 0 24px rgba(201,162,39,.4)}
+.agn-point:hover .i-br-top{background:linear-gradient(90deg,#c9a227,#f2cc40,#c9a227);box-shadow:0 0 12px rgba(201,162,39,.7)}
+/* Terminal block */
+.i-terms{display:flex;gap:0}
+.i-term{flex:1;height:50px;background:linear-gradient(180deg,#242424,#181818);border:1px solid #303030;border-right:none;position:relative;min-width:0}
+.i-term:last-child{border-right:1px solid #303030}
+.i-term::before{content:'';position:absolute;top:8px;left:50%;transform:translateX(-50%);width:9px;height:9px;border-radius:50%;background:#2a2a2a;border:1px solid #444}
+.i-term.lit::before{border-color:rgba(201,162,39,.7);box-shadow:0 0 5px rgba(201,162,39,.4)}
+.i-term::after{content:'';position:absolute;bottom:6px;left:50%;transform:translateX(-50%);width:7px;height:9px;background:#1e1e1e;border:1px solid #3a3a3a}
+.agn-point:hover .i-term.lit::before{box-shadow:0 0 12px rgba(201,162,39,.75)}
+/* Contactor */
+.i-ctr{width:54px;height:56px;background:linear-gradient(175deg,#5a2800,#381a00);border:1px solid #7a3c00;border-radius:3px;position:relative;margin:0 auto;overflow:hidden;transition:box-shadow .4s,border-color .4s}
+.i-ctr::before{content:'';position:absolute;top:7px;left:50%;transform:translateX(-50%);width:68%;height:18px;background:linear-gradient(180deg,#7a3800,#582600);border:1px solid #9a4c00;border-radius:2px}
+.i-ctr::after{content:'';position:absolute;bottom:6px;left:10%;right:10%;height:11px;background:repeating-linear-gradient(90deg,#1a1a1a 0,#1a1a1a 7px,#553300 7px,#553300 10px);border-radius:1px}
+.agn-point:hover .i-ctr{box-shadow:0 0 24px rgba(200,80,0,.45);border-color:#b05500}
+/* LED test panel */
+.i-meter{background:linear-gradient(180deg,#181818,#111);border:1px solid #2a2a2a;border-radius:2px;display:flex;gap:10px;justify-content:center;align-items:center;height:56px;padding:0 14px}
+.i-led{width:13px;height:13px;border-radius:50%;transition:background .4s,box-shadow .4s}
+.i-led.g{background:#22ff55;box-shadow:0 0 10px #22ff55}
+.i-led.r{background:#ff3322;box-shadow:0 0 10px #ff3322}
+.i-led.y{background:#ffcc00;box-shadow:0 0 10px #ffcc00}
+.agn-point:hover .i-led.r,.agn-point:hover .i-led.y{background:#22ff55;box-shadow:0 0 18px #22ff55}
+/* DIN rail assembly */
+.i-din-assy{display:flex;flex-direction:column;gap:3px}
+.i-din{height:5px;background:linear-gradient(90deg,#2a2a2a,#606060,#2a2a2a);border-radius:1px}
+.i-din-row{display:flex;gap:3px}
+.i-dc{flex:1;height:42px;background:linear-gradient(180deg,#252525,#181818);border:1px solid #333;border-radius:2px;transition:border-color .3s,box-shadow .3s}
+.i-dc.focus{border-color:rgba(201,162,39,.25)}
+.agn-point:hover .i-dc.focus{border-color:var(--gold);box-shadow:0 0 12px rgba(201,162,39,.28)}
+#porque{padding:0;overflow:hidden;background:var(--bg2)}
+.porque-pin{height:100vh;overflow:hidden;display:flex;align-items:center;position:relative}
+.porque-track{display:flex;gap:0;will-change:transform;padding:0 5vw}
+.porque-intro-slide{min-width:520px;padding-right:80px;flex-shrink:0;display:flex;flex-direction:column;justify-content:center}
+.porque-intro-slide .section-label{margin-bottom:14px}
+.porque-intro-slide h2{margin-bottom:16px}
+.porque-intro-slide p{font-size:.95rem;color:var(--muted);line-height:1.8;max-width:400px}
+.porque-intro-slide .scroll-hint{display:flex;align-items:center;gap:8px;margin-top:28px;font-size:.72rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.scroll-hint-arrow{width:32px;height:1px;background:var(--gold);position:relative}
+.scroll-hint-arrow::after{content:'';position:absolute;right:-1px;top:-3px;width:0;height:0;border-left:6px solid var(--gold);border-top:3px solid transparent;border-bottom:3px solid transparent}
+.porque-slide{min-width:380px;height:340px;flex-shrink:0;margin-right:16px;background:var(--card);border:1px solid var(--border);padding:40px 36px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden;transform-style:preserve-3d;transition:border-color .3s}
+.porque-slide::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:linear-gradient(180deg,var(--gold),transparent)}
+.porque-slide::after{content:'';position:absolute;top:-60px;right:-60px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(201,162,39,.06),transparent 70%);pointer-events:none}
+.ps-num{font-family:var(--font-head);font-size:4rem;font-weight:700;color:rgba(201,162,39,.1);line-height:1;margin-bottom:8px}
+.ps-title{font-family:var(--font-head);font-size:1.2rem;font-weight:700;color:#fff;margin-bottom:12px}
+.ps-body{font-size:.86rem;color:var(--muted);line-height:1.7;flex:1}
+.ps-tag{display:inline-flex;align-items:center;gap:6px;font-size:.65rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-top:16px}
+.ps-tag::before{content:'';width:14px;height:1px;background:var(--gold)}
+/* Progress bar */
+.porque-progress{position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--border)}
+.porque-progress-bar{height:100%;background:var(--gold);width:0%;transition:width .1s}
+@media(max-width:768px){
+  #porque{overflow-x:auto}
+  .porque-pin{height:auto;padding:72px 0}
+  .porque-track{padding:0 5%;gap:14px;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .porque-intro-slide{min-width:85vw}
+  .porque-slide{min-width:280px;height:auto;min-height:280px}
+  #nosotros .nos-grid{grid-template-columns:1fr;gap:40px}
+  .cabinet-scene{height:360px}
+}
+
+/* RESPONSIVE */
+@media(max-width:1100px){
+  .services-grid{grid-template-columns:repeat(2,1fr)}
+  .why-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:900px){
+  .two-col{grid-template-columns:1fr;gap:40px}
+  .anatomy-wrap{grid-template-columns:1fr}
+  .contact-wrap{grid-template-columns:1fr;gap:40px}
+  .footer-inner{grid-template-columns:1fr 1fr}
+}
+@media(max-width:768px){
+  .nav-links{display:none}
+  .hamburger{display:flex}
+  .gallery-grid{columns:2}
+  .process-line{flex-direction:column;gap:28px}
+  .process-line::before{display:none}
+  .why-grid{grid-template-columns:1fr}
+  .mv-grid{grid-template-columns:1fr}
+  .form-row{grid-template-columns:1fr}
+  .footer-inner{grid-template-columns:1fr}
+}
+@media(max-width:540px){
+  section{padding:72px 5%}
+  .services-grid{grid-template-columns:1fr}
+  .gallery-grid{columns:1}
+  .hero-btns{flex-direction:column;align-items:flex-start}
+}
+</style>
 </head>
 <body>
 
-<!-- Custom Cursor -->
-<div id="cursor"></div>
+<!-- CURSOR -->
+<div id="cursor-dot"></div>
 <div id="cursor-ring"></div>
 
-<!-- Navigation -->
-<nav id="navbar">
-  <div class="nav-logo">Volt<span>Core</span></div>
-  <ul class="nav-links">
-    <li><a href="#features">Features</a></li>
-    <li><a href="#products">Products</a></li>
-    <li><a href="#why">Why Us</a></li>
-    <li><a href="#process">Process</a></li>
-    <li><a href="#testimonials">Reviews</a></li>
-  </ul>
-  <button class="nav-cta" onclick="document.getElementById('cta').scrollIntoView({behavior:'smooth'})">Get a Quote</button>
-</nav>
-
-<!-- Hero -->
-<section id="hero">
-  <canvas id="hero-canvas"></canvas>
-  <div class="hero-grid"></div>
-
-  <div class="hero-content">
-    <div class="hero-badge">Next Generation Power Systems</div>
-    <h1 class="hero-title">
-      <span class="line1">Power Your World</span>
-      <span class="line2">Without Limits</span>
-    </h1>
-    <p class="hero-subtitle">Premium electric panels engineered for reliability, built for the future. Smart, safe, and certified for residential and industrial use.</p>
-    <div class="hero-buttons">
-      <button class="btn-primary" onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})">Explore Panels</button>
-      <button class="btn-ghost" onclick="document.getElementById('process').scrollIntoView({behavior:'smooth'})">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
-        How It Works
-      </button>
+<!-- PANEL INTRO ANIMATION -->
+<div id="panel-intro">
+  <div class="door door-left">
+    <div class="door-surface">
+      <span class="door-bolt tl"></span>
+      <span class="door-bolt tr"></span>
+      <span class="door-bolt bl"></span>
+      <span class="door-bolt br"></span>
+      <div class="door-center-logo">
+        <svg viewBox="0 0 120 90" style="height:72px;width:auto" xmlns="http://www.w3.org/2000/svg">
+          <text x="2" y="78" font-family="Space Grotesk,sans-serif" font-weight="700" font-size="80" fill="#2c2c2c" stroke="#505050" stroke-width="1.5">S</text>
+          <text x="60" y="78" font-family="Space Grotesk,sans-serif" font-weight="700" font-size="80" fill="#2c2c2c" stroke="#505050" stroke-width="1.5">M</text>
+          <polygon points="60,6 63.5,26 80,15 67,30 82,44 63,34 60,54 57,34 38,44 53,30 40,15 56.5,26" fill="#c9a227"/>
+        </svg>
+        <span style="font-family:'Space Grotesk',sans-serif;font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;color:#505050;font-weight:600">Industriales Eléctricos</span>
+      </div>
+      <div class="door-vent">
+        <span></span><span></span><span></span><span></span>
+      </div>
+    </div>
+    <div class="door-handle"></div>
+  </div>
+  <div class="door door-right">
+    <div class="door-surface">
+      <span class="door-bolt tl"></span>
+      <span class="door-bolt tr"></span>
+      <span class="door-bolt bl"></span>
+      <span class="door-bolt br"></span>
+      <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:60px;height:80px;border:1px solid rgba(201,162,39,.15);border-radius:2px;display:flex;flex-direction:column;gap:8px;padding:12px 8px">
+        <span style="display:block;height:6px;background:rgba(201,162,39,.3);border-radius:1px"></span>
+        <span style="display:block;height:6px;background:rgba(80,80,80,.4);border-radius:1px"></span>
+        <span style="display:block;height:6px;background:rgba(80,80,80,.4);border-radius:1px"></span>
+        <span style="display:block;height:6px;background:rgba(201,162,39,.2);border-radius:1px"></span>
+        <span style="display:block;height:6px;background:rgba(80,80,80,.4);border-radius:1px"></span>
+      </div>
     </div>
   </div>
-
-  <div class="hero-stats">
-    <div class="hero-stat">
-      <div class="num" id="hs1">0</div>
-      <div class="label">Installations</div>
-    </div>
-    <div class="hero-stat">
-      <div class="num" id="hs2">0</div>
-      <div class="label">MW Installed</div>
-    </div>
-    <div class="hero-stat">
-      <div class="num" id="hs3">0%</div>
-      <div class="label">Uptime SLA</div>
-    </div>
-  </div>
-
-  <div class="hero-scroll">
-    <span>Scroll</span>
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
-  </div>
-</section>
-
-<!-- Logos -->
-<div id="logos">
-  <div class="logos-track" id="logos-track"></div>
 </div>
 
-<!-- Features -->
-<section id="features">
-  <div class="features-header reveal">
-    <div class="section-label">Why VoltCore</div>
-    <h2 class="section-title">Built Different.<br><em>Engineered Better.</em></h2>
-  </div>
-  <div class="features-grid">
-    <div class="feature-card featured reveal" data-delay="0">
-      <div class="feature-icon">⚡</div>
-      <div class="feature-title">Smart Load Management</div>
-      <div class="feature-desc">AI-powered distribution automatically balances load across circuits in real-time, preventing overloads and reducing energy waste by up to 35%.</div>
-      <div class="feature-tag">AI-Powered</div>
-    </div>
-    <div class="feature-card reveal" data-delay="100">
-      <div class="feature-icon">🛡️</div>
-      <div class="feature-title">Arc-Fault Protection</div>
-      <div class="feature-desc">Advanced AFCI technology detects dangerous arc faults before they cause fires. UL 1699 certified.</div>
-      <div class="feature-tag">UL Certified</div>
-    </div>
-    <div class="feature-card reveal" data-delay="200">
-      <div class="feature-icon">📡</div>
-      <div class="feature-title">Remote Monitoring</div>
-      <div class="feature-desc">Real-time energy analytics via our app. Monitor usage, receive alerts, and control circuits remotely.</div>
-      <div class="feature-tag">Cloud-Connected</div>
-    </div>
-    <div class="feature-card reveal" data-delay="300">
-      <div class="feature-icon">🔋</div>
-      <div class="feature-title">EV & Solar Ready</div>
-      <div class="feature-desc">Pre-wired for EV charging stations and solar inverter integration. Future-proof your electrical system today.</div>
-    </div>
-    <div class="feature-card reveal" data-delay="400">
-      <div class="feature-icon">🌡️</div>
-      <div class="feature-title">Thermal Sensing</div>
-      <div class="feature-desc">Built-in thermal sensors monitor temperature at each breaker, triggering alerts before issues escalate.</div>
+<!-- NAV -->
+<nav id="main-nav">
+  <div class="nav-inner">
+    <a href="#inicio" class="nav-logo">
+      <svg viewBox="0 0 120 90" xmlns="http://www.w3.org/2000/svg">
+        <text x="2" y="78" font-family="Space Grotesk,sans-serif" font-weight="700" font-size="80" fill="#202020" stroke="#444" stroke-width="1.5">S</text>
+        <text x="60" y="78" font-family="Space Grotesk,sans-serif" font-weight="700" font-size="80" fill="#202020" stroke="#444" stroke-width="1.5">M</text>
+        <polygon points="60,6 63.5,26 80,15 67,30 82,44 63,34 60,54 57,34 38,44 53,30 40,15 56.5,26" fill="#c9a227"/>
+      </svg>
+      <span class="nav-name">Industriales<br>Eléctricos S&amp;M</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#inicio">Inicio</a></li>
+      <li><a href="#nosotros">Nosotros</a></li>
+      <li><a href="#servicios">Servicios</a></li>
+      <li><a href="#faq">FAQ</a></li>
+      <li><a href="#contacto">Contacto</a></li>
+    </ul>
+    <div class="nav-cta">
+      <a href="https://wa.me/51998265837?text=Hola,%20vengo%20de%20la%20p%C3%A1gina%20web%20de%20Industriales%20El%C3%A9ctricos%20S%26M.%20Deseo%20solicitar%20una%20cotizaci%C3%B3n." class="btn-wa-nav" target="_blank" rel="noopener">WhatsApp</a>
+      <button class="hamburger" id="hamburger" aria-label="Menú"><span></span><span></span><span></span></button>
     </div>
   </div>
-</section>
+</nav>
 
-<!-- Products -->
-<section id="products">
-  <div class="products-layout">
-    <div class="products-header">
-      <div>
-        <div class="section-label reveal-left">Our Products</div>
-        <h2 class="section-title reveal-left">Panels For Every<br><em>Scale & Demand</em></h2>
-      </div>
-      <p class="section-sub reveal-right" style="text-align:right">From residential breaker boxes to industrial switchgear — we manufacture it all in-house.</p>
+<!-- MOBILE MENU -->
+<div id="mobile-menu" style="display:none;position:fixed;inset:0;z-index:999;background:rgba(10,10,10,.97);flex-direction:column;align-items:center;justify-content:center;gap:28px">
+  <a href="#inicio" class="ml" style="font-family:'Space Grotesk',sans-serif;font-size:2rem;font-weight:700;color:#fff">Inicio</a>
+  <a href="#nosotros" class="ml" style="font-family:'Space Grotesk',sans-serif;font-size:2rem;font-weight:700;color:#fff">Nosotros</a>
+  <a href="#servicios" class="ml" style="font-family:'Space Grotesk',sans-serif;font-size:2rem;font-weight:700;color:#fff">Servicios</a>
+  <a href="#faq" class="ml" style="font-family:'Space Grotesk',sans-serif;font-size:2rem;font-weight:700;color:#fff">FAQ</a>
+  <a href="#contacto" class="ml" style="font-family:'Space Grotesk',sans-serif;font-size:2rem;font-weight:700;color:#fff">Contacto</a>
+</div>
+
+<!-- HERO -->
+<section id="inicio">
+  <div class="hero-bg">
+    <img src="public/images/25b2bf54-9ce9-5c84-adbe-16b9ec4980c1.png" alt="Tableros eléctricos industriales Industriales Eléctricos S&M" loading="eager"/>
+  </div>
+  <div class="hero-overlay"></div>
+  <svg class="hero-circuit" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+    <g stroke="#c9a227" stroke-width="1" fill="none" opacity="0.45">
+      <path id="cp1" d="M0,220 L80,220 L80,300 L260,300 L260,220 L480,220" stroke-dasharray="700" stroke-dashoffset="700"/>
+      <path id="cp2" d="M1440,380 L1340,380 L1340,300 L1140,300 L1140,380 L940,380" stroke-dasharray="650" stroke-dashoffset="650"/>
+      <path id="cp3" d="M180,0 L180,130 L340,130 L340,70 L560,70" stroke-dasharray="550" stroke-dashoffset="550"/>
+      <path id="cp4" d="M1260,900 L1260,760 L1080,760 L1080,830 L860,830" stroke-dasharray="520" stroke-dashoffset="520"/>
+      <circle cx="80" cy="220" r="4" class="cc" opacity="0"/>
+      <circle cx="1340" cy="380" r="4" class="cc" opacity="0"/>
+      <circle cx="340" cy="130" r="4" class="cc" opacity="0"/>
+    </g>
+  </svg>
+  <div class="hero-content">
+    <div class="hero-tag"><span class="dot"></span>Lima, Perú — Soluciones Eléctricas Industriales</div>
+    <h1 class="hero-h1">Tableros eléctricos diseñados según la <em>operación real</em> de tu proyecto.</h1>
+    <p class="hero-sub">Distribución eléctrica, automatización industrial, arranque de motores, presión constante, transferencia automática y tableros eléctricos a medida para empresas, industrias y proyectos técnicos en todo el Perú.</p>
+    <div class="hero-btns">
+      <a href="https://wa.me/51998265837?text=Hola,%20vengo%20de%20la%20p%C3%A1gina%20web%20de%20Industriales%20El%C3%A9ctricos%20S%26M.%20Deseo%20solicitar%20una%20cotizaci%C3%B3n." class="btn-primary magnetic" target="_blank" rel="noopener">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        Solicitar cotización
+      </a>
+      <a href="#servicios" class="btn-outline magnetic">Ver servicios</a>
+      <a href="tel:+51998265837" class="btn-ghost">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.8a19.79 19.79 0 01-3.07-8.67A2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.16 6.16l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92z"/></svg>
+        Llamar
+      </a>
     </div>
-    <div class="products-grid">
-
-      <!-- Product 1 -->
-      <div class="product-card reveal" data-delay="0">
-        <div class="product-img panel-bg-1">
-          <svg viewBox="0 0 300 220" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="pg1" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#00d4ff" stop-opacity="0.6"/>
-                <stop offset="100%" stop-color="#0066ff" stop-opacity="0.3"/>
-              </linearGradient>
-              <filter id="glow1"><feGaussianBlur stdDeviation="2" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-            </defs>
-            <!-- Panel housing -->
-            <rect x="60" y="20" width="180" height="180" rx="8" fill="rgba(255,255,255,0.03)" stroke="rgba(0,212,255,0.3)" stroke-width="1"/>
-            <rect x="70" y="30" width="160" height="160" rx="4" fill="rgba(0,212,255,0.03)"/>
-            <!-- Breakers -->
-            <g filter="url(#glow1)">
-              <rect x="90" y="50" width="50" height="24" rx="4" fill="url(#pg1)" opacity="0.9"/>
-              <rect x="150" y="50" width="50" height="24" rx="4" fill="url(#pg1)" opacity="0.7"/>
-              <rect x="90" y="82" width="50" height="24" rx="4" fill="url(#pg1)" opacity="0.9"/>
-              <rect x="150" y="82" width="50" height="24" rx="4" fill="url(#pg1)" opacity="0.5"/>
-              <rect x="90" y="114" width="50" height="24" rx="4" fill="url(#pg1)" opacity="0.8"/>
-              <rect x="150" y="114" width="50" height="24" rx="4" fill="url(#pg1)" opacity="0.9"/>
-              <rect x="90" y="146" width="110" height="24" rx="4" fill="rgba(0,212,255,0.4)" opacity="0.9"/>
-            </g>
-            <!-- LED indicators -->
-            <circle cx="100" cy="62" r="3" fill="#00ff88" opacity="0.9"/>
-            <circle cx="160" cy="62" r="3" fill="#00ff88" opacity="0.9"/>
-            <circle cx="100" cy="94" r="3" fill="#00ff88" opacity="0.9"/>
-            <circle cx="160" cy="94" r="3" fill="#ffcc00" opacity="0.9"/>
-            <circle cx="100" cy="126" r="3" fill="#00ff88" opacity="0.9"/>
-            <circle cx="160" cy="126" r="3" fill="#00ff88" opacity="0.9"/>
-            <!-- Label -->
-            <text x="150" y="200" text-anchor="middle" fill="rgba(0,212,255,0.4)" font-size="9" font-family="Space Grotesk">VOLTCORE ATLAS 200A</text>
-          </svg>
-          <div class="product-badge badge-new">New</div>
-        </div>
-        <div class="product-body">
-          <div class="product-name">Atlas 200A Residential</div>
-          <div class="product-desc">Perfect for modern homes with smart appliances, EV charging, and solar integration. 40-space capacity.</div>
-          <div class="product-specs">
-            <div class="spec"><span class="spec-label">Amperage</span><span class="spec-value">200A</span></div>
-            <div class="spec"><span class="spec-label">Circuits</span><span class="spec-value">40</span></div>
-            <div class="spec"><span class="spec-label">Voltage</span><span class="spec-value">240V</span></div>
-          </div>
-          <div class="product-footer">
-            <div class="product-price">$849<span> / unit</span></div>
-            <button class="btn-card">Configure</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Product 2 -->
-      <div class="product-card reveal" data-delay="150">
-        <div class="product-img panel-bg-2">
-          <svg viewBox="0 0 300 220" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="pg2" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#a78bfa" stop-opacity="0.7"/>
-                <stop offset="100%" stop-color="#7c3aed" stop-opacity="0.4"/>
-              </linearGradient>
-              <filter id="glow2"><feGaussianBlur stdDeviation="2" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-            </defs>
-            <rect x="50" y="15" width="200" height="190" rx="8" fill="rgba(255,255,255,0.02)" stroke="rgba(124,58,237,0.35)" stroke-width="1"/>
-            <rect x="58" y="23" width="184" height="174" rx="4" fill="rgba(124,58,237,0.03)"/>
-            <!-- 3-phase indicator -->
-            <rect x="65" y="30" width="170" height="28" rx="4" fill="rgba(124,58,237,0.25)" stroke="rgba(124,58,237,0.4)" stroke-width="0.5"/>
-            <text x="150" y="49" text-anchor="middle" fill="rgba(167,139,250,0.9)" font-size="10" font-family="Space Grotesk" font-weight="600">3-PHASE DISTRIBUTION</text>
-            <g filter="url(#glow2)">
-              <rect x="65" y="68" width="54" height="22" rx="3" fill="url(#pg2)" opacity="0.9"/>
-              <rect x="125" y="68" width="54" height="22" rx="3" fill="url(#pg2)" opacity="0.7"/>
-              <rect x="185" y="68" width="49" height="22" rx="3" fill="url(#pg2)" opacity="0.9"/>
-              <rect x="65" y="98" width="54" height="22" rx="3" fill="url(#pg2)" opacity="0.6"/>
-              <rect x="125" y="98" width="54" height="22" rx="3" fill="url(#pg2)" opacity="0.9"/>
-              <rect x="185" y="98" width="49" height="22" rx="3" fill="url(#pg2)" opacity="0.8"/>
-              <rect x="65" y="128" width="54" height="22" rx="3" fill="url(#pg2)" opacity="0.9"/>
-              <rect x="125" y="128" width="54" height="22" rx="3" fill="url(#pg2)" opacity="0.5"/>
-              <rect x="185" y="128" width="49" height="22" rx="3" fill="url(#pg2)" opacity="0.9"/>
-              <rect x="65" y="158" width="169" height="22" rx="3" fill="rgba(124,58,237,0.4)" opacity="0.9"/>
-            </g>
-            <circle cx="76" cy="79" r="3" fill="#a78bfa" opacity="0.9"/>
-            <circle cx="136" cy="79" r="3" fill="#a78bfa" opacity="0.9"/>
-            <circle cx="196" cy="79" r="3" fill="#a78bfa" opacity="0.9"/>
-            <circle cx="76" cy="109" r="3" fill="#ffcc00" opacity="0.9"/>
-            <circle cx="136" cy="109" r="3" fill="#a78bfa" opacity="0.9"/>
-            <circle cx="196" cy="109" r="3" fill="#a78bfa" opacity="0.9"/>
-            <text x="150" y="208" text-anchor="middle" fill="rgba(124,58,237,0.4)" font-size="9" font-family="Space Grotesk">VOLTCORE NEXUS 400A</text>
-          </svg>
-          <div class="product-badge badge-hot">Best Seller</div>
-        </div>
-        <div class="product-body">
-          <div class="product-name">Nexus 400A Commercial</div>
-          <div class="product-desc">Three-phase distribution for light commercial buildings, restaurants, and office complexes. NEMA 1 rated.</div>
-          <div class="product-specs">
-            <div class="spec"><span class="spec-label">Amperage</span><span class="spec-value">400A</span></div>
-            <div class="spec"><span class="spec-label">Circuits</span><span class="spec-value">84</span></div>
-            <div class="spec"><span class="spec-label">Phases</span><span class="spec-value">3Ø</span></div>
-          </div>
-          <div class="product-footer">
-            <div class="product-price">$2,499<span> / unit</span></div>
-            <button class="btn-card">Configure</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Product 3 -->
-      <div class="product-card reveal" data-delay="300">
-        <div class="product-img panel-bg-3">
-          <svg viewBox="0 0 300 220" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="pg3" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#f59e0b" stop-opacity="0.6"/>
-                <stop offset="100%" stop-color="#d97706" stop-opacity="0.3"/>
-              </linearGradient>
-              <filter id="glow3"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-            </defs>
-            <!-- Large industrial housing -->
-            <rect x="30" y="10" width="240" height="200" rx="6" fill="rgba(255,255,255,0.02)" stroke="rgba(245,158,11,0.3)" stroke-width="1"/>
-            <!-- Top bus -->
-            <rect x="40" y="18" width="220" height="30" rx="3" fill="rgba(245,158,11,0.08)" stroke="rgba(245,158,11,0.25)" stroke-width="0.5"/>
-            <text x="150" y="37" text-anchor="middle" fill="rgba(245,158,11,0.7)" font-size="10" font-family="Space Grotesk" font-weight="700">INDUSTRIAL SWITCHGEAR — 1200A</text>
-            <g filter="url(#glow3)">
-              <!-- Column 1 -->
-              <rect x="40" y="56" width="65" height="40" rx="4" fill="url(#pg3)" opacity="0.8"/>
-              <rect x="40" y="102" width="65" height="40" rx="4" fill="url(#pg3)" opacity="0.6"/>
-              <rect x="40" y="148" width="65" height="40" rx="4" fill="url(#pg3)" opacity="0.9"/>
-              <!-- Column 2 -->
-              <rect x="115" y="56" width="65" height="40" rx="4" fill="url(#pg3)" opacity="0.9"/>
-              <rect x="115" y="102" width="65" height="40" rx="4" fill="url(#pg3)" opacity="0.7"/>
-              <rect x="115" y="148" width="65" height="40" rx="4" fill="url(#pg3)" opacity="0.8"/>
-              <!-- Column 3 -->
-              <rect x="190" y="56" width="65" height="86" rx="4" fill="rgba(245,158,11,0.3)" opacity="0.9"/>
-              <rect x="190" y="148" width="65" height="40" rx="4" fill="url(#pg3)" opacity="0.8"/>
-            </g>
-            <!-- Dials on big breaker -->
-            <circle cx="222" cy="86" r="12" fill="none" stroke="rgba(245,158,11,0.5)" stroke-width="2"/>
-            <circle cx="222" cy="86" r="4" fill="rgba(245,158,11,0.7)"/>
-            <line x1="222" y1="74" x2="222" y2="80" stroke="rgba(245,158,11,0.8)" stroke-width="1.5"/>
-            <!-- Indicators -->
-            <circle cx="55" cy="66" r="4" fill="#ff4444" opacity="0.9"/>
-            <circle cx="130" cy="66" r="4" fill="#00ff88" opacity="0.9"/>
-            <circle cx="55" cy="112" r="4" fill="#00ff88" opacity="0.9"/>
-            <circle cx="130" cy="112" r="4" fill="#00ff88" opacity="0.9"/>
-            <circle cx="55" cy="158" r="4" fill="#ffcc00" opacity="0.9"/>
-            <circle cx="130" cy="158" r="4" fill="#00ff88" opacity="0.9"/>
-          </svg>
-          <div class="product-badge badge-pro">Pro</div>
-        </div>
-        <div class="product-body">
-          <div class="product-name">Titan 1200A Industrial</div>
-          <div class="product-desc">Heavy-duty switchgear for factories, data centers, and large facilities. NEMA 3R outdoor rated.</div>
-          <div class="product-specs">
-            <div class="spec"><span class="spec-label">Amperage</span><span class="spec-value">1200A</span></div>
-            <div class="spec"><span class="spec-label">Circuits</span><span class="spec-value">Custom</span></div>
-            <div class="spec"><span class="spec-label">Rating</span><span class="spec-value">NEMA 3R</span></div>
-          </div>
-          <div class="product-footer">
-            <div class="product-price">Custom<span> pricing</span></div>
-            <button class="btn-card">Get Quote</button>
-          </div>
-        </div>
-      </div>
-
+    <div class="hero-meta">
+      <span>Lun–Sáb · 9:00 a.m.–6:30 p.m.</span>
+      <span>Lima, provincias y todo el Perú</span>
+      <span>RUC 20552965028</span>
     </div>
   </div>
 </section>
 
-<!-- Stats -->
-<section id="stats">
-  <div class="stats-grid">
-    <div class="stat-item reveal" data-delay="0">
-      <div class="stat-num" data-target="12400" data-suffix="+">0</div>
-      <div class="stat-label">Panels Installed Nationwide</div>
-    </div>
-    <div class="stat-item reveal" data-delay="100">
-      <div class="stat-num" data-target="98.9" data-suffix="%" data-decimal="1">0</div>
-      <div class="stat-label">Uptime SLA Guarantee</div>
-    </div>
-    <div class="stat-item reveal" data-delay="200">
-      <div class="stat-num" data-target="500" data-suffix="MW+">0</div>
-      <div class="stat-label">Total Capacity Deployed</div>
-    </div>
-    <div class="stat-item reveal" data-delay="300">
-      <div class="stat-num" data-target="24" data-suffix="/7">0</div>
-      <div class="stat-label">Expert Support Hours</div>
-    </div>
+<!-- QUICK STRIP -->
+<div class="quick-strip">
+  <div class="quick-track">
+    <div class="quick-item"><span class="qi"></span><span>Tableros de distribución eléctrica</span></div>
+    <div class="quick-item"><span class="qi"></span><span>Transferencia automática ATS</span></div>
+    <div class="quick-item"><span class="qi"></span><span>Bombas contra incendio</span></div>
+    <div class="quick-item"><span class="qi"></span><span>Automatización con PLC / Siemens Logo</span></div>
+    <div class="quick-item"><span class="qi"></span><span>Arranque estrella-triángulo</span></div>
+    <div class="quick-item"><span class="qi"></span><span>Presión constante con variador</span></div>
+    <div class="quick-item"><span class="qi"></span><span>Bombas alternadas</span></div>
+    <div class="quick-item"><span class="qi"></span><span>Atención en todo el Perú</span></div>
+    <div class="quick-item"><span class="qi"></span><span>Schneider · ABB · Siemens · GE</span></div>
+    <div class="quick-item"><span class="qi"></span><span>Tableros de distribución eléctrica</span></div>
+    <div class="quick-item"><span class="qi"></span><span>Transferencia automática ATS</span></div>
+    <div class="quick-item"><span class="qi"></span><span>Bombas contra incendio</span></div>
+    <div class="quick-item"><span class="qi"></span><span>Automatización con PLC / Siemens Logo</span></div>
+    <div class="quick-item"><span class="qi"></span><span>Arranque estrella-triángulo</span></div>
+    <div class="quick-item"><span class="qi"></span><span>Presión constante con variador</span></div>
+    <div class="quick-item"><span class="qi"></span><span>Bombas alternadas</span></div>
+    <div class="quick-item"><span class="qi"></span><span>Atención en todo el Perú</span></div>
+    <div class="quick-item"><span class="qi"></span><span>Schneider · ABB · Siemens · GE</span></div>
   </div>
-</section>
+</div>
 
-<!-- Why Us -->
-<section id="why">
-  <div class="why-layout" style="max-width:1200px;margin:0 auto;">
-    <div class="why-visual">
-      <div class="why-panel panel-main">
-        <svg width="280" height="300" viewBox="0 0 280 300" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <linearGradient id="wg1" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#00d4ff" stop-opacity="0.8"/>
-              <stop offset="100%" stop-color="#7c3aed" stop-opacity="0.8"/>
-            </linearGradient>
-            <linearGradient id="wg2" x1="0%" y1="100%" x2="100%" y2="0%">
-              <stop offset="0%" stop-color="#00d4ff"/>
-              <stop offset="100%" stop-color="#7c3aed"/>
-            </linearGradient>
-          </defs>
-          <!-- Circuit board pattern -->
-          <g stroke="rgba(0,212,255,0.15)" stroke-width="1" fill="none">
-            <path d="M40 80 H80 V120 H160 V80 H220"/>
-            <path d="M40 150 H100 V110"/>
-            <path d="M220 150 H160 V190 H80"/>
-            <path d="M40 220 H120 V180 H200 V220"/>
-            <path d="M120 260 V280"/>
-            <path d="M160 260 V280"/>
-          </g>
-          <!-- Nodes -->
-          <circle cx="80" cy="80" r="5" fill="rgba(0,212,255,0.5)"/>
-          <circle cx="160" cy="80" r="5" fill="rgba(0,212,255,0.5)"/>
-          <circle cx="100" cy="150" r="5" fill="rgba(124,58,237,0.6)"/>
-          <circle cx="160" cy="190" r="5" fill="rgba(0,212,255,0.5)"/>
-          <circle cx="200" cy="220" r="5" fill="rgba(124,58,237,0.6)"/>
-          <!-- Central element -->
-          <rect x="90" y="130" width="100" height="80" rx="8" fill="url(#wg1)" opacity="0.15" stroke="url(#wg2)" stroke-width="1.5"/>
-          <text x="140" y="162" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="11" font-family="Space Grotesk" font-weight="700">SMART CORE</text>
-          <text x="140" y="178" text-anchor="middle" fill="rgba(0,212,255,0.7)" font-size="9" font-family="Space Grotesk">AI Processing Unit</text>
-          <!-- Animated pulse rings -->
-          <circle cx="140" cy="170" r="50" stroke="rgba(0,212,255,0.15)" stroke-width="1" fill="none" class="pulse-ring" style="animation: pulse-ring 3s ease-out infinite;"/>
-          <circle cx="140" cy="170" r="70" stroke="rgba(0,212,255,0.08)" stroke-width="1" fill="none" class="pulse-ring" style="animation: pulse-ring 3s ease-out infinite 1s;"/>
-          <!-- Power indicator -->
-          <path d="M130 50 L140 30 L150 50 L145 50 L145 70 L135 70 L135 50 Z" fill="url(#wg1)" opacity="0.8"/>
-        </svg>
+<!-- NOSOTROS -->
+<section id="nosotros">
+  <div class="nos-grid">
+    <!-- Texto -->
+    <div class="reveal">
+      <div class="section-label">Nosotros</div>
+      <h2 class="sh">Ingeniería práctica, soluciones seguras y tableros <em>hechos para operar</em></h2>
+      <div class="about-quote" style="margin-top:24px">
+        <p>"Lo que hacemos no es solo ensamblar tableros. Diseñamos soluciones que ordenan, protegen y hacen más eficiente la operación eléctrica de cada cliente."</p>
       </div>
-      <div class="why-panel panel-float-1">
-        <div class="float-label">Efficiency</div>
-        <div class="float-value" style="color:#00d4ff">99.2%</div>
-        <div class="float-bar"><div class="float-bar-fill" style="width:99%;background:linear-gradient(90deg,#00d4ff,#7c3aed)"></div></div>
-      </div>
-      <div class="why-panel panel-float-2">
-        <div class="float-label">Load</div>
-        <div class="float-value" style="color:#f59e0b">842A</div>
-        <div class="float-bar"><div class="float-bar-fill" style="width:70%;background:linear-gradient(90deg,#f59e0b,#ef4444)"></div></div>
-      </div>
-      <div class="why-panel panel-float-3">
-        <div class="float-label">Temp</div>
-        <div class="float-value" style="color:#00ff88;font-size:1.1rem">72°F ✓</div>
+      <p style="font-size:.92rem;color:var(--muted);line-height:1.78">Industriales Eléctricos S&amp;M E.I.R.L. es una empresa peruana especializada en venta de productos eléctricos industriales, automatización y fabricación de tableros eléctricos para aplicaciones comerciales, industriales y de bombeo. Trabajamos con Schneider Electric, ABB, Siemens, General Electric, Square D, Rittal, Lovato, Steck y Chint.</p>
+      <div class="mv-grid">
+        <div class="mv-card">
+          <h4>Misión</h4>
+          <p>Brindar soluciones eléctricas confiables mediante productos de calidad, asesoría técnica y tableros adaptados a cada cliente.</p>
+        </div>
+        <div class="mv-card">
+          <h4>Visión</h4>
+          <p>Ser reconocidos en el sector eléctrico industrial por la calidad de nuestros tableros y la confianza que generamos.</p>
+        </div>
       </div>
     </div>
-    <div>
-      <div class="section-label reveal-left">Why VoltCore</div>
-      <h2 class="section-title reveal-left">Engineered for<br><em>Performance</em> & Safety</h2>
-      <p class="section-sub reveal-left" style="margin-bottom:40px">We don't just make panels. We engineer confidence — every product is designed with safety-first architecture and smart technology built in from the ground up.</p>
-      <ul class="why-list">
-        <li class="why-item reveal-left" data-delay="0">
-          <div class="why-icon blue">⚡</div>
-          <div class="why-text">
-            <h4>In-House Manufacturing</h4>
-            <p>Every component is manufactured and quality-tested at our ISO 9001-certified facility. No third-party shortcuts.</p>
+    <!-- 3D Cabinet — CSS interior, 3 layers only (no lag) -->
+    <div class="op-scene" id="opScene">
+      <div class="op-cabinet" id="opCabinet">
+        <!-- Back wall: CSS-built electrical components -->
+        <div class="op-back">
+          <!-- Gold busbar at top -->
+          <div class="op-int-bus"></div>
+          <!-- DIN Rail 1: circuit breakers -->
+          <div class="op-int-zone" style="top:20%">
+            <div class="op-int-din"></div>
+            <div class="op-int-brs">
+              <div class="op-int-br b3"></div>
+              <div class="op-int-br b3"></div>
+              <div class="op-int-br b1"></div>
+              <div class="op-int-br b1"></div>
+            </div>
           </div>
-        </li>
-        <li class="why-item reveal-left" data-delay="100">
-          <div class="why-icon purple">🔬</div>
-          <div class="why-text">
-            <h4>5-Year Parts Warranty</h4>
-            <p>We stand behind every unit with a comprehensive warranty and dedicated support team available around the clock.</p>
+          <!-- DIN Rail 2: contactors (orange = Lovato/Siemens style) -->
+          <div class="op-int-zone" style="top:54%">
+            <div class="op-int-din"></div>
+            <div class="op-int-ctrs">
+              <div class="op-int-ctr orn"></div>
+              <div class="op-int-ctr orn"></div>
+              <div class="op-int-ctr"></div>
+            </div>
           </div>
-        </li>
-        <li class="why-item reveal-left" data-delay="200">
-          <div class="why-icon gold">🏆</div>
-          <div class="why-text">
-            <h4>UL, CSA & CE Certified</h4>
-            <p>Fully compliant with North American and European electrical standards. Accepted by inspectors nationwide.</p>
+          <!-- Wire bundle at bottom -->
+          <div class="op-int-wires">
+            <div class="op-int-wire" style="height:82%;background:#c86000"></div>
+            <div class="op-int-wire" style="height:92%;background:#cc6a00"></div>
+            <div class="op-int-wire" style="height:68%;background:#1144aa"></div>
+            <div class="op-int-wire" style="height:75%;background:#1155cc"></div>
+            <div class="op-int-wire" style="height:86%;background:#22aa44"></div>
+            <div class="op-int-wire" style="height:78%;background:#229944"></div>
+            <div class="op-int-wire" style="height:70%;background:#cc2222"></div>
+            <div class="op-int-wire" style="height:62%;background:#1a1a1a;border:1px solid #444"></div>
+            <div class="op-int-wire" style="height:79%;background:#1a1a1a;border:1px solid #444"></div>
           </div>
-        </li>
-      </ul>
+          <!-- Glow overlay (animate on scroll) -->
+          <div class="op-int-glow" id="opIntGlow"></div>
+          <!-- Status LEDs -->
+          <div class="op-leds">
+            <span class="op-led g"></span>
+            <span class="op-led g"></span>
+            <span class="op-led r"></span>
+            <span class="op-led y"></span>
+          </div>
+        </div>
+        <!-- Right side face (only one needed at 18° rotation) -->
+        <div class="op-right"></div>
+        <!-- Door hinges on left, scrolls open to 110° -->
+        <div class="op-door" id="opDoor">
+          <div class="op-door-face">
+            <span class="op-bolt tl"></span>
+            <span class="op-bolt tr"></span>
+            <span class="op-bolt bl"></span>
+            <span class="op-bolt br"></span>
+            <div class="op-nameplate">S&amp;M · Tablero Industrial</div>
+            <div class="op-logo-mark">
+              <svg viewBox="0 0 50 50" width="46" height="46" xmlns="http://www.w3.org/2000/svg">
+                <polygon points="25,3 27.5,15 38,9 31,20 41,29 27.5,22 25,36 22.5,22 9,29 19,20 12,9 22.5,15" fill="rgba(201,162,39,.2)" stroke="rgba(201,162,39,.52)" stroke-width="0.9"/>
+              </svg>
+            </div>
+            <div class="op-handle"></div>
+            <div class="op-vent-slits"><span></span><span></span><span></span></div>
+            <svg class="op-door-lines" viewBox="0 0 320 450" xmlns="http://www.w3.org/2000/svg">
+              <g stroke="#c9a227" stroke-width=".65" fill="none" opacity=".26">
+                <path d="M26,80 L78,80 L78,100 L205,100"/><circle cx="78" cy="80" r="2.5" fill="#c9a227"/>
+                <path d="M26,370 L74,370 L74,348 L190,348"/><circle cx="74" cy="370" r="2.5" fill="#c9a227"/>
+                <path d="M294,152 L242,152 L242,130 L158,130"/><circle cx="242" cy="152" r="2.5" fill="#c9a227"/>
+                <path d="M294,292 L236,292 L236,314 L182,314"/><circle cx="236" cy="292" r="2.5" fill="#c9a227"/>
+              </g>
+            </svg>
+          </div>
+          <div class="op-door-inner"></div>
+        </div>
+        <!-- Gold light leak at hinge -->
+        <div class="op-leak" id="opLeak"></div>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- Process -->
-<section id="process">
-  <div class="process-header reveal">
-    <div class="section-label">How It Works</div>
-    <h2 class="section-title">From Quote to<br><em>Power-On</em> in Days</h2>
+<!-- POR QUÉ ELEGIRNOS — horizontal pinned scroll -->
+<section id="porque">
+  <div class="porque-pin" id="porquePinWrap">
+    <div class="porque-track" id="porqueTrack">
+      <!-- Intro slide -->
+      <div class="porque-intro-slide">
+        <div class="section-label">Por qué elegirnos</div>
+        <h2 class="sh">Tableros ordenados, seguros y <em>pensados para durar</em></h2>
+        <p>Correcta selección de equipos, cableado ordenado, rotulación clara y pruebas antes de cada entrega.</p>
+        <div class="scroll-hint">
+          <div class="scroll-hint-arrow"></div>
+          Sigue scrolleando
+        </div>
+      </div>
+      <!-- Cards -->
+      <div class="porque-slide ps-card">
+        <div class="ps-num">01</div>
+        <div>
+          <div class="ps-title">Asesoría técnica real</div>
+          <p class="ps-body">Acompañamos la selección de componentes y el diseño de la solución según la necesidad del proyecto. No solo vendemos materiales, definimos la mejor solución.</p>
+        </div>
+        <div class="ps-tag">Consultoría incluida</div>
+      </div>
+      <div class="porque-slide ps-card">
+        <div class="ps-num">02</div>
+        <div>
+          <div class="ps-title">Tableros limpios y ordenados</div>
+          <p class="ps-body">Priorizamos cableado organizado, rotulación clara e identificación de cada circuito. Un tablero ordenado es más seguro, más fácil de mantener y dura más.</p>
+        </div>
+        <div class="ps-tag">Cero improvisación</div>
+      </div>
+      <div class="porque-slide ps-card">
+        <div class="ps-num">03</div>
+        <div>
+          <div class="ps-title">Componentes de calidad</div>
+          <p class="ps-body">Trabajamos con Schneider Electric, ABB, Siemens, General Electric y más. Marcas reconocidas con trazabilidad y garantía de fabricante. Sin componentes de dudosa procedencia.</p>
+        </div>
+        <div class="ps-tag">Schneider · ABB · Siemens</div>
+      </div>
+      <div class="porque-slide ps-card">
+        <div class="ps-num">04</div>
+        <div>
+          <div class="ps-title">Soluciones a medida</div>
+          <p class="ps-body">Cada tablero se diseña según la potencia, tensión, aplicación y condiciones operativas reales de cada cliente. No hay tableros estándar copiados: cada uno es único.</p>
+        </div>
+        <div class="ps-tag">Diseño personalizado</div>
+      </div>
+      <div class="porque-slide ps-card">
+        <div class="ps-num">05</div>
+        <div>
+          <div class="ps-title">Pruebas antes de entrega</div>
+          <p class="ps-body">Revisamos maniobra, protecciones, lógica de control y funcionamiento básico antes de cada entrega. Sin excepciones. El tablero llega probado y listo para operar.</p>
+        </div>
+        <div class="ps-tag">Calidad verificada</div>
+      </div>
+      <div class="porque-slide ps-card">
+        <div class="ps-num">06</div>
+        <div>
+          <div class="ps-title">Cobertura nacional</div>
+          <p class="ps-body">Atendemos Lima, provincias y proyectos en todo el Perú. Coordinamos envíos, visitas técnicas y puesta en marcha según el alcance y ubicación del proyecto.</p>
+        </div>
+        <div class="ps-tag">Lima y todo el Perú</div>
+      </div>
+    </div>
+    <div class="porque-progress"><div class="porque-progress-bar" id="porqueBar"></div></div>
   </div>
-  <div class="process-steps">
-    <div class="process-step reveal" data-delay="0">
-      <div class="step-num">01</div>
-      <div class="step-title">Consultation</div>
-      <div class="step-desc">Tell us your load requirements. Our engineers assess your needs and recommend the right configuration.</div>
+</section>
+
+<!-- PROCESO -->
+<section id="proceso">
+  <div class="reveal" style="text-align:center;max-width:680px;margin:0 auto">
+    <div class="section-label" style="justify-content:center">Proceso</div>
+    <h2 class="sh">De la necesidad al <em>tablero funcionando</em></h2>
+    <p class="section-intro" style="margin:14px auto 0">Desde el diagnóstico hasta la entrega con pruebas. Sin saltar pasos, sin improvisar.</p>
+  </div>
+  <div class="process-line">
+    <div class="process-step reveal">
+      <div class="step-icon">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="22" y2="22"/></svg>
+      </div>
+      <h3>Diagnóstico técnico</h3>
+      <p>Analizamos la necesidad, potencia, tensión, aplicación y condiciones del proyecto para definir la solución correcta.</p>
     </div>
-    <div class="process-step reveal" data-delay="150">
-      <div class="step-num">02</div>
-      <div class="step-title">Custom Quote</div>
-      <div class="step-desc">Receive a detailed quote with specs, pricing, and lead time within 24 hours.</div>
+    <div class="process-step reveal">
+      <div class="step-icon">
+        <svg viewBox="0 0 24 24"><polygon points="12 2 22 8.5 12 15 2 8.5"/><polyline points="2 15 12 21.5 22 15"/></svg>
+      </div>
+      <h3>Selección de componentes</h3>
+      <p>Elegimos los equipos correctos: marcas confiables, calibres adecuados, protecciones precisas según la carga.</p>
     </div>
-    <div class="process-step reveal" data-delay="300">
-      <div class="step-num">03</div>
-      <div class="step-title">Manufacturing</div>
-      <div class="step-desc">Your panel is built and fully tested at our facility. Each unit undergoes 47-point QA inspection.</div>
+    <div class="process-step reveal">
+      <div class="step-icon">
+        <svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+      </div>
+      <h3>Ensamblaje ordenado</h3>
+      <p>Cableado limpio, rotulación clara, distribución interna técnica. Cada conductor en su lugar, sin cruces.</p>
     </div>
-    <div class="process-step reveal" data-delay="450">
-      <div class="step-num">04</div>
-      <div class="step-title">Installation</div>
-      <div class="step-desc">Our certified electricians install and commission your panel with same-day sign-off documentation.</div>
+    <div class="process-step reveal">
+      <div class="step-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+      </div>
+      <h3>Pruebas y entrega</h3>
+      <p>Revisión de maniobra, protecciones y lógica de control antes de la entrega. El tablero llega listo para operar.</p>
     </div>
   </div>
 </section>
 
-<!-- Testimonials -->
-<section id="testimonials">
-  <div class="testimonials-header reveal">
-    <div class="section-label">Testimonials</div>
-    <h2 class="section-title">Trusted by <em>Thousands</em></h2>
+<!-- SERVICIOS -->
+<section id="servicios">
+  <div class="reveal" style="max-width:680px">
+    <div class="section-label">Servicios y soluciones</div>
+    <h2 class="sh">Soluciones para <em>cada aplicación eléctrica industrial</em></h2>
+    <p class="section-intro">Tableros diseñados, ensamblados y probados para distribución, automatización, bombeo, arranque y transferencia de energía.</p>
   </div>
-  <div class="testimonials-track-wrapper" style="max-width:1200px;margin:0 auto;overflow:hidden">
-    <div class="testimonials-track" id="ttrack">
-      <div class="testimonial-card active">
-        <div class="t-stars">⭐⭐⭐⭐⭐</div>
-        <p class="t-text">"Replaced our 30-year-old panel with the Nexus 400A. The remote monitoring app alone has saved us thousands in preventive maintenance. Couldn't be happier."</p>
-        <div class="t-author">
-          <div class="t-avatar" style="background:rgba(0,212,255,0.15);color:#00d4ff">MR</div>
-          <div><div class="t-name">Marcus R.</div><div class="t-role">Facilities Manager, TechHub Austin</div></div>
-        </div>
-      </div>
-      <div class="testimonial-card">
-        <div class="t-stars">⭐⭐⭐⭐⭐</div>
-        <p class="t-text">"We spec VoltCore panels on every new build now. The install documentation is perfect for inspectors, and our electricians love how clean the wiring layout is."</p>
-        <div class="t-author">
-          <div class="t-avatar" style="background:rgba(124,58,237,0.15);color:#a78bfa">SL</div>
-          <div><div class="t-name">Sarah L.</div><div class="t-role">Project Lead, Meridian Contractors</div></div>
-        </div>
-      </div>
-      <div class="testimonial-card">
-        <div class="t-stars">⭐⭐⭐⭐⭐</div>
-        <p class="t-text">"The Titan industrial panel handled our data center's 1100A draw with zero issues. Support team walked us through commissioning and was responsive throughout."</p>
-        <div class="t-author">
-          <div class="t-avatar" style="background:rgba(245,158,11,0.15);color:#f59e0b">DJ</div>
-          <div><div class="t-name">David J.</div><div class="t-role">CTO, NorthEdge Data Systems</div></div>
-        </div>
-      </div>
-      <div class="testimonial-card">
-        <div class="t-stars">⭐⭐⭐⭐⭐</div>
-        <p class="t-text">"Added 2 EV chargers and solar with the Atlas 200A. The pre-wired EV slots made the upgrade painless. Panel is whisper quiet and the app is genuinely useful."</p>
-        <div class="t-author">
-          <div class="t-avatar" style="background:rgba(0,212,255,0.15);color:#00d4ff">AK</div>
-          <div><div class="t-name">Amy K.</div><div class="t-role">Homeowner, Phoenix AZ</div></div>
-        </div>
-      </div>
-      <div class="testimonial-card">
-        <div class="t-stars">⭐⭐⭐⭐⭐</div>
-        <p class="t-text">"After a competing brand's panel failed and caused a small fire, we replaced everything with VoltCore. The arc-fault protection gives our team real peace of mind."</p>
-        <div class="t-author">
-          <div class="t-avatar" style="background:rgba(124,58,237,0.15);color:#a78bfa">TP</div>
-          <div><div class="t-name">Thomas P.</div><div class="t-role">Safety Director, Apex Manufacturing</div></div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="t-controls" id="t-controls"></div>
-</section>
+  <div class="services-grid">
 
-<!-- CTA -->
-<section id="cta">
-  <div class="cta-content">
-    <div class="section-label reveal" style="justify-content:center">Get Started</div>
-    <h2 class="cta-title reveal">Ready to Upgrade<br>Your Power?</h2>
-    <p class="cta-sub reveal">Join 12,000+ satisfied customers. Get a free consultation and custom quote within 24 hours.</p>
-    <form class="cta-form reveal" onsubmit="handleFormSubmit(event)">
-      <input type="email" class="cta-input" placeholder="Enter your email address" required/>
-      <button type="submit" class="btn-primary">Get Free Quote</button>
-    </form>
-    <div class="cta-trust reveal">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-      No spam. No commitment. Free expert consultation.
+    <div class="service-card reveal">
+      <div class="service-img"><img src="public/images/06dee9ac-f14e-5aba-8125-661fd9d9e9c5.jpg" alt="Tablero de distribución eléctrica" loading="lazy"/></div>
+      <div class="service-base"><div class="service-tag">Distribución</div><h3>Tableros de distribución eléctrica</h3><p class="ideal">Comercial · Industrial · Edificios</p></div>
+      <div class="service-hover"><h4>Distribución eléctrica</h4><p>Distribución segura hacia fuerza, alumbrado, tomacorrientes y cargas críticas. Adaptados en capacidad y número de circuitos.</p><div class="comps"><strong>Componentes</strong>Interruptores termomagnéticos, diferenciales, barras, borneras, puesta a tierra, canaletas.</div><a href="https://wa.me/51998265837?text=Hola,%20necesito%20un%20tablero%20de%20distribuci%C3%B3n%20el%C3%A9ctrica." class="wa-link" target="_blank">Cotizar →</a></div>
     </div>
+
+    <div class="service-card reveal">
+      <div class="service-img"><img src="public/images/750f57c3-242b-5875-843e-eac571ff934e.png" alt="Tablero de transferencia automática ATS" loading="lazy"/></div>
+      <div class="service-base"><div class="service-tag">Transferencia automática</div><h3>Tableros ATS</h3><p class="ideal">Edificios · Clínicas · Industria</p></div>
+      <div class="service-hover"><h4>Transferencia automática</h4><p>Ante falla de red, arranca el grupo electrógeno y transfiere carga automáticamente. Al retornar la red, vuelve a la alimentación principal.</p><div class="comps"><strong>Componentes</strong>Contactores de fuerza, módulos ATS, relés, interruptores, pilotos, borneras.</div><a href="https://wa.me/51998265837?text=Hola,%20necesito%20un%20tablero%20ATS." class="wa-link" target="_blank">Cotizar →</a></div>
+    </div>
+
+    <div class="service-card reveal">
+      <div class="service-img"><img src="public/images/9b9aa484-4d71-5f2a-9696-9ba33a6faf59.png" alt="Tablero para bomba contra incendio" loading="lazy"/></div>
+      <div class="service-base"><div class="service-tag">Contra incendio</div><h3>Tableros para bomba contra incendio</h3><p class="ideal">Edificios · Plantas · Centros comerciales</p></div>
+      <div class="service-hover"><h4>Bomba contra incendio</h4><p>Control de bomba principal, jockey y auxiliares. Modos manual/automático, activación por presostato, alarmas y señalización.</p><div class="comps"><strong>Componentes</strong>Arrancadores, contactores, guardamotores, presostatos, selectores, pilotos.</div><a href="https://wa.me/51998265837?text=Hola,%20necesito%20un%20tablero%20para%20bomba%20contra%20incendio." class="wa-link" target="_blank">Cotizar →</a></div>
+    </div>
+
+    <div class="service-card reveal">
+      <div class="service-img"><img src="public/images/455c34c4-dee9-5b99-94c3-6d1626c32aa8.png" alt="Tablero automatizado con PLC Siemens Logo" loading="lazy"/></div>
+      <div class="service-base"><div class="service-tag">Automatización</div><h3>Tableros automatizados con PLC</h3><p class="ideal">Industria · Bombeo · Ventilación</p></div>
+      <div class="service-hover"><h4>PLC / Siemens Logo</h4><p>Lógica programada para arranques, paradas, alternancias, alarmas y monitoreo. Aplicable en bombeo, ventilación, riego y compresores.</p><div class="comps"><strong>Componentes</strong>Siemens Logo 8, PLC, relés, temporizadores, sensores, fuentes, variadores.</div><a href="https://wa.me/51998265837?text=Hola,%20necesito%20un%20tablero%20automatizado%20con%20PLC." class="wa-link" target="_blank">Cotizar →</a></div>
+    </div>
+
+    <div class="service-card reveal">
+      <div class="service-img"><img src="public/images/2b20e24f-0ac5-5d7c-b131-6638eb497ae5.png" alt="Tablero arranque estrella triángulo" loading="lazy"/></div>
+      <div class="service-base"><div class="service-tag">Arranque de motores</div><h3>Estrella-triángulo y arranque directo</h3><p class="ideal">Bombas · Ventiladores · Compresores</p></div>
+      <div class="service-hover"><h4>Arranque de motores</h4><p>Arranque directo para cargas pequeñas. Estrella-triángulo para reducir corriente. Doble estrella para configuraciones especiales.</p><div class="comps"><strong>Componentes</strong>Contactores, temporizadores, guardamotores, relés térmicos, borneras.</div><a href="https://wa.me/51998265837?text=Hola,%20necesito%20un%20tablero%20de%20arranque%20de%20motor." class="wa-link" target="_blank">Cotizar →</a></div>
+    </div>
+
+    <div class="service-card reveal">
+      <div class="service-img"><img src="public/images/722d6c7f-e8d1-56f0-aedb-1ad45da0a181.png" alt="Tablero de bombas alternadas" loading="lazy"/></div>
+      <div class="service-base"><div class="service-tag">Bombas alternadas</div><h3>Tableros de bombas alternadas</h3><p class="ideal">Cisternas · Tanques · Presurización</p></div>
+      <div class="service-hover"><h4>Bombas alternadas</h4><p>Alternancia automática para distribuir horas de operación y evitar desgaste prematuro. Modos manual/automático. Control por nivel o presostato.</p><div class="comps"><strong>Componentes</strong>Contactores, guardamotores, relés de control, selectores, pilotos.</div><a href="https://wa.me/51998265837?text=Hola,%20necesito%20un%20tablero%20de%20bombas%20alternadas." class="wa-link" target="_blank">Cotizar →</a></div>
+    </div>
+
+    <div class="service-card reveal">
+      <div class="service-img"><img src="public/images/32dc07f9-8c24-5497-8dc2-96c308f7fc24.png" alt="Tablero de presión constante" loading="lazy"/></div>
+      <div class="service-base"><div class="service-tag">Presión constante</div><h3>Tableros de presión constante</h3><p class="ideal">Edificios · Condominios · Riego</p></div>
+      <div class="service-hover"><h4>Presión constante</h4><p>Variador + transmisor de presión + lógica de control. Regula automáticamente la velocidad de la bomba según la demanda del sistema.</p><div class="comps"><strong>Componentes</strong>Variador de frecuencia, transmisor 4–20mA, Logo/PLC, contactores.</div><a href="https://wa.me/51998265837?text=Hola,%20necesito%20un%20tablero%20de%20presi%C3%B3n%20constante." class="wa-link" target="_blank">Cotizar →</a></div>
+    </div>
+
+    <div class="service-card reveal">
+      <div class="service-img"><img src="public/images/225d0f9a-bb2d-51de-a3c0-c7a5eefda3ec.png" alt="Automatización eléctrica industrial" loading="lazy"/></div>
+      <div class="service-base"><div class="service-tag">Automatización general</div><h3>Automatización eléctrica industrial</h3><p class="ideal">Industrias · Plantas · Procesos</p></div>
+      <div class="service-hover"><h4>Automatización industrial</h4><p>PLC, sensores, variadores y dispositivos de control para automatizar arranques, paradas, secuencias y alarmas en procesos eléctricos.</p><div class="comps"><strong>Componentes</strong>PLC, sensores, variadores, relés, fuentes, transmisores, pilotos.</div><a href="https://wa.me/51998265837?text=Hola,%20necesito%20una%20soluci%C3%B3n%20de%20automatizaci%C3%B3n%20el%C3%A9ctrica." class="wa-link" target="_blank">Cotizar →</a></div>
+    </div>
+
   </div>
 </section>
 
-<!-- Footer -->
+<!-- ANATOMÍA -->
+<section id="anatomia">
+  <div class="anatomy-header reveal">
+    <div class="section-label">Anatomía de un tablero bien hecho</div>
+    <h2 class="sh">Lo que diferencia un tablero de <em>calidad real</em></h2>
+    <p class="section-intro">Cada componente tiene su lugar exacto. Así se construye un tablero que dura, protege y opera sin fallas.</p>
+  </div>
+
+  <!-- Exploded assembly diagram — components fly in and assemble on scroll -->
+  <div class="asm-wrap" id="asmWrap">
+    <!-- Enclosure frame outline -->
+    <div class="asm-frame" id="asmFrame"></div>
+    <!-- Gold busbar (main conductor) -->
+    <div class="asm-busbar" id="asmBusbar">
+      <div class="asm-bar-label">Barra colectora (busbar)</div>
+    </div>
+    <!-- Main circuit breaker (top center, above busbar) -->
+    <div class="asm-main-sw" id="asmMainSw">
+      <span class="asm-msw-top"></span>
+      <span class="asm-msw-lbl">MAIN</span>
+      <span class="asm-msw-bot"></span>
+    </div>
+    <!-- Row 1: DIN rail + thermomagnetic breakers -->
+    <div class="asm-row asm-row-1" id="asmRow1">
+      <div class="asm-din-rail"></div>
+      <div class="asm-brs">
+        <div class="asm-br gd">3P</div>
+        <div class="asm-br gd">3P</div>
+        <div class="asm-br">1P</div>
+        <div class="asm-br">1P</div>
+        <div class="asm-br">1P</div>
+        <div class="asm-br">1P</div>
+      </div>
+      <div class="asm-row-label">Interruptores termomagnéticos</div>
+    </div>
+    <!-- Row 2: DIN rail + contactors / relays -->
+    <div class="asm-row asm-row-2" id="asmRow2">
+      <div class="asm-din-rail"></div>
+      <div class="asm-brs">
+        <div class="asm-br or" style="max-width:100px">CTR</div>
+        <div class="asm-br or" style="max-width:100px">CTR</div>
+        <div class="asm-br" style="max-width:100px">RLY</div>
+        <div class="asm-br" style="max-width:100px">RLY</div>
+      </div>
+      <div class="asm-row-label">Contactores · Relés de protección</div>
+    </div>
+    <!-- Row 3: DIN rail + terminal blocks -->
+    <div class="asm-row asm-row-3" id="asmRow3">
+      <div class="asm-din-rail"></div>
+      <div class="asm-terms">
+        <div class="asm-term"></div><div class="asm-term"></div>
+        <div class="asm-term"></div><div class="asm-term"></div>
+        <div class="asm-term"></div><div class="asm-term"></div>
+        <div class="asm-term"></div><div class="asm-term"></div>
+        <div class="asm-term"></div><div class="asm-term"></div>
+        <div class="asm-term"></div><div class="asm-term"></div>
+      </div>
+      <div class="asm-row-label">Bornes terminales</div>
+    </div>
+    <!-- Wiring overlay SVG — paths draw themselves on scroll -->
+    <svg class="asm-wires" id="asmWiresSvg" viewBox="0 0 700 510" xmlns="http://www.w3.org/2000/svg">
+      <!-- Phase L1 (red) busbar → row1 breaker 1 -->
+      <path id="wL1" d="M196,74 L196,162" stroke="#cc3322" stroke-width="2" fill="none"/>
+      <!-- Phase L2 (yellow) busbar → row1 breaker 2 -->
+      <path id="wL2" d="M285,74 L285,162" stroke="#cc8800" stroke-width="2" fill="none"/>
+      <!-- Phase L3 (blue) busbar → row1 breaker 3 -->
+      <path id="wL3" d="M374,74 L374,162" stroke="#2266cc" stroke-width="2" fill="none"/>
+      <!-- Earth/PE bus (green), right side vertical -->
+      <path id="wGnd" d="M600,72 L600,405" stroke="#22aa44" stroke-width="2.5" fill="none"/>
+      <path d="M585,405 L615,405" stroke="#22aa44" stroke-width="1.8" fill="none"/>
+      <path d="M591,412 L609,412" stroke="#22aa44" stroke-width="1.8" fill="none"/>
+      <path d="M598,419 L602,419" stroke="#22aa44" stroke-width="1.8" fill="none"/>
+      <!-- Inter-row jumper wires (dashed) -->
+      <path id="wConn1" d="M210,222 C210,248 175,248 175,285" stroke="#555" stroke-width="1.5" fill="none" stroke-dasharray="4,3"/>
+      <path id="wConn2" d="M440,222 C440,248 478,248 478,285" stroke="#555" stroke-width="1.5" fill="none" stroke-dasharray="4,3"/>
+    </svg>
+    <!-- Status badge — appears when fully assembled -->
+    <div class="asm-status" id="asmStatus">
+      <span class="asm-status-dot"></span>Sistema ensamblado · Listo para pruebas
+    </div>
+  </div>
+
+  <!-- 6-point grid — hover lifts 3D component toward viewer -->
+  <div class="anatomy-grid-new">
+    <!-- 01 Wire bundle — cableado ordenado -->
+    <div class="agn-point">
+      <div class="agn-icon">
+        <div class="agn-icon-inner">
+          <div class="i-wires">
+            <div class="i-w" style="height:38px;background:#c86000"></div>
+            <div class="i-w" style="height:44px;background:#cc6a00"></div>
+            <div class="i-w" style="height:30px;background:#1144aa"></div>
+            <div class="i-w" style="height:36px;background:#1155cc"></div>
+            <div class="i-w" style="height:42px;background:#22aa44"></div>
+            <div class="i-w" style="height:28px;background:#cc2222"></div>
+            <div class="i-w" style="height:34px;background:#555;border:1px solid #666"></div>
+          </div>
+        </div>
+      </div>
+      <h4 class="agn-title">Cableado ordenado</h4>
+      <p class="agn-body">Cada conductor en su canaleta, sin cruces ni tensión excesiva. Reduce fallas y facilita el mantenimiento.</p>
+    </div>
+    <!-- 02 Terminal block — identificación -->
+    <div class="agn-point">
+      <div class="agn-icon">
+        <div class="agn-icon-inner">
+          <div class="i-terms">
+            <div class="i-term lit"></div>
+            <div class="i-term"></div>
+            <div class="i-term lit"></div>
+            <div class="i-term"></div>
+            <div class="i-term lit"></div>
+            <div class="i-term"></div>
+            <div class="i-term lit"></div>
+          </div>
+        </div>
+      </div>
+      <h4 class="agn-title">Identificación de circuitos</h4>
+      <p class="agn-body">Rotulación clara en bornes, cables y dispositivos. Permite diagnóstico rápido y trabajos seguros.</p>
+    </div>
+    <!-- 03 Circuit breaker — protecciones -->
+    <div class="agn-point">
+      <div class="agn-icon">
+        <div class="agn-icon-inner">
+          <div class="i-breaker">
+            <div class="i-br-top"></div>
+            <div class="i-br-sw"></div>
+          </div>
+        </div>
+      </div>
+      <h4 class="agn-title">Protecciones adecuadas</h4>
+      <p class="agn-body">Calibres correctos, coordinación entre protecciones. El tablero protege el sistema y al personal ante fallas.</p>
+    </div>
+    <!-- 04 Contactor — componentes confiables -->
+    <div class="agn-point">
+      <div class="agn-icon">
+        <div class="agn-icon-inner">
+          <div class="i-ctr"></div>
+        </div>
+      </div>
+      <h4 class="agn-title">Componentes confiables</h4>
+      <p class="agn-body">Marcas reconocidas con trazabilidad y garantía de fabricante. Sin componentes de dudosa procedencia.</p>
+    </div>
+    <!-- 05 LED test panel — pruebas -->
+    <div class="agn-point">
+      <div class="agn-icon">
+        <div class="agn-icon-inner">
+          <div class="i-meter">
+            <div class="i-led g"></div>
+            <div class="i-led r"></div>
+            <div class="i-led y"></div>
+          </div>
+        </div>
+      </div>
+      <h4 class="agn-title">Pruebas de funcionamiento</h4>
+      <p class="agn-body">Verificación completa de maniobra, lógica de control y protecciones antes de cada entrega.</p>
+    </div>
+    <!-- 06 DIN rail with highlighted component — mantenimiento -->
+    <div class="agn-point">
+      <div class="agn-icon">
+        <div class="agn-icon-inner">
+          <div class="i-din-assy">
+            <div class="i-din"></div>
+            <div class="i-din-row">
+              <div class="i-dc"></div>
+              <div class="i-dc focus"></div>
+              <div class="i-dc"></div>
+              <div class="i-dc"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <h4 class="agn-title">Facilidad de mantenimiento</h4>
+      <p class="agn-body">Distribución interna pensada para acceso técnico. Fácil de revisar, corregir o ampliar.</p>
+    </div>
+  </div>
+</section>
+
+<!-- MARCAS -->
+<section id="marcas" style="padding:72px 5%">
+  <div class="brands-head reveal">
+    <div class="section-label" style="justify-content:center">Marcas</div>
+    <h2 class="sh" style="text-align:center">Trabajamos con marcas <em>reconocidas del sector</em></h2>
+    <p style="text-align:center;color:var(--muted);font-size:.9rem;margin-top:10px">Seleccionamos componentes confiables para protección, control, maniobra y automatización industrial.</p>
+  </div>
+  <div class="brands-row reveal">
+    <div class="brand-pill">Schneider Electric</div>
+    <div class="brand-pill">ABB</div>
+    <div class="brand-pill">Siemens</div>
+    <div class="brand-pill">General Electric</div>
+    <div class="brand-pill">Square D</div>
+    <div class="brand-pill">Rittal</div>
+    <div class="brand-pill">Lovato</div>
+    <div class="brand-pill">Steck</div>
+    <div class="brand-pill">Chint</div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="reveal" style="text-align:center;max-width:680px;margin:0 auto">
+    <div class="section-label" style="justify-content:center">Preguntas frecuentes</div>
+    <h2 class="sh">Respuestas a las dudas <em>más comunes</em></h2>
+  </div>
+  <div class="faq-wrap">
+    <div class="faq-item reveal"><button class="faq-q">¿Venden productos eléctricos industriales?<span class="faq-icon"></span></button><div class="faq-a"><p>Sí. Vendemos productos eléctricos industriales por unidad y por proyecto. Atendemos requerimientos de llaves térmicas, contactores, guardamotores, variadores de frecuencia, PLC, relés, fuentes de poder, sensores, gabinetes y borneras.</p></div></div>
+    <div class="faq-item reveal"><button class="faq-q">¿También fabrican tableros eléctricos completos?<span class="faq-icon"></span></button><div class="faq-a"><p>Sí. Diseñamos y ensamblamos tableros eléctricos completos: arranque directo, estrella-triángulo, bombas alternadas, presión constante, transferencia automática, control y fuerza, automatización con PLC.</p></div></div>
+    <div class="faq-item reveal"><button class="faq-q">¿Qué información necesitan para cotizar un tablero?<span class="faq-icon"></span></button><div class="faq-a"><p>Necesitamos: tipo de tablero, tensión de trabajo (220V / 380V / 440V), potencia del motor (HP o kW), cantidad de motores, tipo de control (manual, automático, PLC, variador), aplicación y si existe un plano, foto o lista de materiales.</p></div></div>
+    <div class="faq-item reveal"><button class="faq-q">¿Puedo enviar una foto del tablero o equipo?<span class="faq-icon"></span></button><div class="faq-a"><p>Sí. Puedes enviarnos fotos del tablero, placa del motor, componentes o instalación por WhatsApp. Con esa información podemos orientarte mejor y cotizar con mayor precisión.</p></div></div>
+    <div class="faq-item reveal"><button class="faq-q">¿Qué es un tablero de presión constante?<span class="faq-icon"></span></button><div class="faq-a"><p>Es un tablero que mantiene presión estable en una red de agua mediante variadores de frecuencia, transmisores de presión y lógica de control. Regula la velocidad de las bombas según el consumo, reduciendo arranques bruscos.</p></div></div>
+    <div class="faq-item reveal"><button class="faq-q">¿Hacen tableros con variador de frecuencia?<span class="faq-icon"></span></button><div class="faq-a"><p>Sí. Integramos variadores de frecuencia para motores, bombas y ventiladores. También configuramos rampas de aceleración, frecuencia máxima, señales de arranque, protección y control externo.</p></div></div>
+    <div class="faq-item reveal"><button class="faq-q">¿Trabajan con marcas específicas?<span class="faq-icon"></span></button><div class="faq-a"><p>Sí. Trabajamos con Schneider Electric, ABB, Siemens, General Electric, Square D y otras marcas reconocidas. La marca puede variar según requerimiento técnico, disponibilidad y presupuesto.</p></div></div>
+    <div class="faq-item reveal"><button class="faq-q">¿Puedo solicitar marca específica para mi tablero?<span class="faq-icon"></span></button><div class="faq-a"><p>Sí. El cliente puede solicitar marca específica para los componentes. También podemos proponer alternativas equivalentes según calidad, disponibilidad, plazo y presupuesto.</p></div></div>
+    <div class="faq-item reveal"><button class="faq-q">¿Los tableros se entregan cableados y probados?<span class="faq-icon"></span></button><div class="faq-a"><p>Sí. Los tableros se entregan ensamblados, cableados, rotulados y con pruebas básicas de funcionamiento. Revisamos correcta conexión, maniobra, protecciones y lógica de control antes de cada entrega.</p></div></div>
+    <div class="faq-item reveal"><button class="faq-q">¿Pueden fabricar con un plano que ya tengo?<span class="faq-icon"></span></button><div class="faq-a"><p>Sí. Podemos fabricar en base a un plano eléctrico, lista de materiales o memoria descriptiva. También podemos revisar el plano y sugerir mejoras si fuera necesario.</p></div></div>
+    <div class="faq-item reveal"><button class="faq-q">¿Hacen instalación en campo?<span class="faq-icon"></span></button><div class="faq-a"><p>Sí. Podemos realizar instalación, conexión, pruebas y puesta en marcha según el tipo de proyecto y ubicación. También podemos entregar solo el tablero para que el cliente lo instale.</p></div></div>
+    <div class="faq-item reveal"><button class="faq-q">¿Cuánto tiempo demora fabricar un tablero eléctrico?<span class="faq-icon"></span></button><div class="faq-a"><p>Depende del tipo, componentes y complejidad. Un tablero simple puede tomar menos tiempo; uno automatizado con PLC o variadores requiere mayor preparación y pruebas.</p></div></div>
+    <div class="faq-item reveal"><button class="faq-q">¿Realizan envíos a provincia?<span class="faq-icon"></span></button><div class="faq-a"><p>Sí. Coordinamos envíos según peso, volumen y agencia de transporte. También se puede coordinar recojo en tienda o entrega local en Lima.</p></div></div>
+    <div class="faq-item reveal"><button class="faq-q">¿Puedo solicitar cotización por WhatsApp?<span class="faq-icon"></span></button><div class="faq-a"><p>Sí. Envíanos tu solicitud por WhatsApp con el producto o tablero que necesitas. Con fotos, placa del motor, plano o descripción del proyecto podremos cotizar con mayor precisión.</p></div></div>
+    <div class="faq-item reveal"><button class="faq-q">¿Los productos y tableros tienen garantía?<span class="faq-icon"></span></button><div class="faq-a"><p>Sí. Cuentan con garantía según la marca y condiciones de uso. Aplica siempre que instalación, operación y mantenimiento se realicen correctamente.</p></div></div>
+    <div class="faq-item reveal"><button class="faq-q">¿Pueden mejorar o modernizar un tablero antiguo?<span class="faq-icon"></span></button><div class="faq-a"><p>Sí. Evaluamos tableros existentes para ordenar cableado, cambiar componentes deteriorados, incorporar protecciones, instalar variadores, mejorar la lógica de control o agregar automatización.</p></div></div>
+  </div>
+</section>
+
+<!-- CONTACTO -->
+<section id="contacto">
+  <div class="reveal" style="text-align:center;max-width:680px;margin:0 auto">
+    <div class="section-label" style="justify-content:center">Contacto</div>
+    <h2 class="sh">Cotiza tu tablero o <em>solución eléctrica industrial</em></h2>
+    <p class="section-intro" style="margin:14px auto 0">Envíanos una foto, plano o requerimiento y te ayudamos a cotizar mejor. Sin compromisos.</p>
+  </div>
+  <div class="contact-wrap">
+    <div class="reveal">
+      <h3>Datos de contacto</h3>
+      <div class="contact-detail">
+        <div class="cd">
+          <div class="cd-icon"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z" stroke="none" fill="#c9a227"/></svg></div>
+          <div class="cd-text"><strong>WhatsApp</strong><span>998 265 837 · 955 345 973 · 947 342 139</span></div>
+        </div>
+        <div class="cd">
+          <div class="cd-icon"><svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 4 10 9 10-9"/></svg></div>
+          <div class="cd-text"><strong>Correo</strong><span>ochoa@smindustrial.com.pe</span></div>
+        </div>
+        <div class="cd">
+          <div class="cd-icon"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+          <div class="cd-text"><strong>Dirección</strong><span>Av. Oscar R. Benavides 282<br>Cercado de Lima, Lima — Perú</span></div>
+        </div>
+        <div class="cd">
+          <div class="cd-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
+          <div class="cd-text"><strong>Horario</strong><span>Lunes a sábado · 9:00 a.m. – 6:30 p.m.</span></div>
+        </div>
+        <div class="cd">
+          <div class="cd-icon"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+          <div class="cd-text"><strong>Web</strong><span>smindustrial.com.pe</span></div>
+        </div>
+      </div>
+      <a href="https://wa.me/51998265837?text=Hola,%20vengo%20de%20la%20p%C3%A1gina%20web%20de%20Industriales%20El%C3%A9ctricos%20S%26M.%20Deseo%20solicitar%20una%20cotizaci%C3%B3n." class="btn-wa-big magnetic" target="_blank" rel="noopener">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        Solicitar cotización por WhatsApp
+      </a>
+    </div>
+    <div class="reveal">
+      <form class="contact-form" id="contact-form">
+        <div class="form-row">
+          <div class="form-group"><label for="nombre">Nombre</label><input type="text" id="nombre" placeholder="Tu nombre" required/></div>
+          <div class="form-group"><label for="empresa">Empresa</label><input type="text" id="empresa" placeholder="Nombre de empresa"/></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label for="telefono">Teléfono / WhatsApp</label><input type="tel" id="telefono" placeholder="+51 9XX XXX XXX" required/></div>
+          <div class="form-group"><label for="correo">Correo</label><input type="email" id="correo" placeholder="correo@empresa.com"/></div>
+        </div>
+        <div class="form-group">
+          <label for="servicio">Tipo de solución requerida</label>
+          <select id="servicio">
+            <option value="">Selecciona una opción</option>
+            <option>Tablero de distribución eléctrica</option>
+            <option>Tablero de transferencia automática (ATS)</option>
+            <option>Tablero para bomba contra incendio</option>
+            <option>Tablero automatizado con PLC</option>
+            <option>Tablero estrella-triángulo / arranque directo</option>
+            <option>Tablero de bombas alternadas</option>
+            <option>Tablero de presión constante</option>
+            <option>Automatización eléctrica industrial</option>
+            <option>Venta de productos eléctricos</option>
+            <option>Otro requerimiento</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="mensaje">Descripción del proyecto o requerimiento</label>
+          <textarea id="mensaje" placeholder="Describe tu proyecto: tensión, potencia, aplicación, cantidad de equipos, o cualquier detalle que nos ayude a cotizar mejor..."></textarea>
+        </div>
+        <button type="submit" class="form-submit magnetic">Enviar por WhatsApp</button>
+        <p class="form-note">Al enviar, se abrirá WhatsApp con tu consulta prearmada para una atención rápida.</p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
 <footer>
-  <div class="footer-grid">
+  <div class="footer-inner">
     <div class="footer-brand">
-      <div class="nav-logo">Volt<span>Core</span></div>
-      <p class="footer-desc">Precision-engineered electric panels for the modern world. Residential to industrial, we power what matters.</p>
-      <div class="footer-social">
-        <a class="social-btn" href="#" title="LinkedIn">in</a>
-        <a class="social-btn" href="#" title="Twitter">𝕏</a>
-        <a class="social-btn" href="#" title="YouTube">▶</a>
-        <a class="social-btn" href="#" title="Instagram">◈</a>
-      </div>
+      <a href="#inicio" style="display:inline-block">
+        <svg viewBox="0 0 120 90" style="height:38px;width:auto" xmlns="http://www.w3.org/2000/svg">
+          <text x="2" y="78" font-family="Space Grotesk,sans-serif" font-weight="700" font-size="80" fill="#1a1a1a" stroke="#404040" stroke-width="1.5">S</text>
+          <text x="60" y="78" font-family="Space Grotesk,sans-serif" font-weight="700" font-size="80" fill="#1a1a1a" stroke="#404040" stroke-width="1.5">M</text>
+          <polygon points="60,6 63.5,26 80,15 67,30 82,44 63,34 60,54 57,34 38,44 53,30 40,15 56.5,26" fill="#c9a227"/>
+        </svg>
+      </a>
+      <p>Industriales Eléctricos S&amp;M E.I.R.L. — Soluciones eléctricas industriales, automatización y tableros eléctricos a medida para empresas, industrias y proyectos técnicos en todo el Perú.</p>
+      <p style="margin-top:8px;font-size:.75rem">RUC: 20552965028 · Av. Oscar R. Benavides 282, Cercado de Lima</p>
     </div>
     <div class="footer-col">
-      <h4>Products</h4>
-      <ul class="footer-links">
-        <li><a href="#">Atlas 200A Residential</a></li>
-        <li><a href="#">Nexus 400A Commercial</a></li>
-        <li><a href="#">Titan 1200A Industrial</a></li>
-        <li><a href="#">Accessories & Parts</a></li>
-        <li><a href="#">Custom Solutions</a></li>
+      <h5>Servicios</h5>
+      <ul>
+        <li><a href="#servicios">Tableros de distribución</a></li>
+        <li><a href="#servicios">Transferencia automática</a></li>
+        <li><a href="#servicios">Bomba contra incendio</a></li>
+        <li><a href="#servicios">Automatización PLC</a></li>
+        <li><a href="#servicios">Presión constante</a></li>
+        <li><a href="#servicios">Bombas alternadas</a></li>
       </ul>
     </div>
     <div class="footer-col">
-      <h4>Company</h4>
-      <ul class="footer-links">
-        <li><a href="#">About Us</a></li>
-        <li><a href="#">Manufacturing</a></li>
-        <li><a href="#">Certifications</a></li>
-        <li><a href="#">Careers</a></li>
-        <li><a href="#">Press</a></li>
-      </ul>
-    </div>
-    <div class="footer-col">
-      <h4>Support</h4>
-      <ul class="footer-links">
-        <li><a href="#">Documentation</a></li>
-        <li><a href="#">Installation Guides</a></li>
-        <li><a href="#">Warranty Claims</a></li>
-        <li><a href="#">Find an Electrician</a></li>
-        <li><a href="#">Contact Us</a></li>
+      <h5>Contacto</h5>
+      <ul>
+        <li><a href="https://wa.me/51998265837" target="_blank">WhatsApp 998 265 837</a></li>
+        <li><a href="https://wa.me/51955345973" target="_blank">WhatsApp 955 345 973</a></li>
+        <li><a href="https://wa.me/51947342139" target="_blank">WhatsApp 947 342 139</a></li>
+        <li><a href="mailto:ochoa@smindustrial.com.pe">ochoa@smindustrial.com.pe</a></li>
+        <li><a href="#faq">Preguntas frecuentes</a></li>
       </ul>
     </div>
   </div>
   <div class="footer-bottom">
-    <span class="footer-copy">© 2026 VoltCore Industries. All rights reserved.</span>
-    <span class="footer-copy">Privacy Policy · Terms · Cookie Settings</span>
+    <p>© 2025 Industriales Eléctricos S&amp;M E.I.R.L. Todos los derechos reservados.</p>
+    <a href="https://wa.me/51998265837?text=Hola,%20vengo%20de%20la%20p%C3%A1gina%20web%20de%20Industriales%20El%C3%A9ctricos%20S%26M.%20Deseo%20solicitar%20una%20cotizaci%C3%B3n." target="_blank">Solicitar cotización →</a>
   </div>
 </footer>
 
-<style>
-  @keyframes pulse-ring {
-    0% { transform: scale(0.8); opacity: 0.5; }
-    100% { transform: scale(1.4); opacity: 0; }
-  }
-</style>
+<!-- FLOATING WA -->
+<div id="wa-float">
+  <span class="wa-label">Cotizar por WhatsApp</span>
+  <a href="https://wa.me/51998265837?text=Hola,%20vengo%20de%20la%20p%C3%A1gina%20web%20de%20Industriales%20El%C3%A9ctricos%20S%26M.%20Deseo%20solicitar%20una%20cotizaci%C3%B3n." class="wa-btn" target="_blank" rel="noopener" aria-label="WhatsApp">
+    <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+  </a>
+</div>
 
 <script>
-// ── CURSOR ──
-const cursor = document.getElementById('cursor');
-const cursorRing = document.getElementById('cursor-ring');
-let mx = 0, my = 0, rx = 0, ry = 0;
-document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
-function animateCursor() {
-  rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
-  cursor.style.left = mx + 'px'; cursor.style.top = my + 'px';
-  cursorRing.style.left = rx + 'px'; cursorRing.style.top = ry + 'px';
-  requestAnimationFrame(animateCursor);
-}
-animateCursor();
+gsap.registerPlugin(ScrollTrigger);
 
-// ── HERO CANVAS — Lightning Particle System ──
-(function() {
-  const canvas = document.getElementById('hero-canvas');
-  const ctx = canvas.getContext('2d');
-  let W, H, particles = [], bolts = [], frameCount = 0;
-
-  function resize() {
-    W = canvas.width = window.innerWidth;
-    H = canvas.height = window.innerHeight;
-  }
-  resize();
-  window.addEventListener('resize', resize);
-
-  class Particle {
-    constructor() { this.reset(); }
-    reset() {
-      this.x = Math.random() * W;
-      this.y = Math.random() * H;
-      this.vx = (Math.random() - 0.5) * 0.3;
-      this.vy = (Math.random() - 0.5) * 0.3;
-      this.r = Math.random() * 1.5 + 0.3;
-      this.alpha = Math.random() * 0.5 + 0.1;
-      this.color = Math.random() > 0.5 ? '0,212,255' : '124,58,237';
-    }
-    update() {
-      this.x += this.vx; this.y += this.vy;
-      if (this.x < 0 || this.x > W || this.y < 0 || this.y > H) this.reset();
-    }
-    draw() {
-      ctx.beginPath();
-      ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(${this.color},${this.alpha})`;
-      ctx.fill();
-    }
-  }
-
-  function makeLightning(x1, y1, x2, y2, depth) {
-    if (depth === 0) return [[x1, y1, x2, y2]];
-    const mx = (x1 + x2) / 2 + (Math.random() - 0.5) * 60 * depth;
-    const my = (y1 + y2) / 2 + (Math.random() - 0.5) * 60 * depth;
-    return [...makeLightning(x1, y1, mx, my, depth - 1), ...makeLightning(mx, my, x2, y2, depth - 1)];
-  }
-
-  class Bolt {
-    constructor() { this.reset(); }
-    reset() {
-      this.startX = Math.random() * W * 0.6 + W * 0.2;
-      this.segments = makeLightning(this.startX, 0, this.startX + (Math.random()-0.5)*300, H * 0.7, 5);
-      this.life = 1.0; this.decay = 0.04 + Math.random() * 0.06;
-      this.branches = Math.random() > 0.5 ? [makeLightning(
-        this.segments[Math.floor(this.segments.length/2)][0],
-        this.segments[Math.floor(this.segments.length/2)][1],
-        this.segments[Math.floor(this.segments.length/2)][0] + (Math.random()-0.5)*200,
-        this.segments[Math.floor(this.segments.length/2)][1] + 100 + Math.random()*100,
-        3
-      )] : [];
-    }
-    update() { this.life -= this.decay; return this.life > 0; }
-    draw() {
-      const drawSegs = (segs, alpha, width) => {
-        ctx.beginPath();
-        segs.forEach(([x1,y1,x2,y2], i) => { if (i===0) ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); });
-        ctx.strokeStyle = `rgba(0,212,255,${alpha})`;
-        ctx.lineWidth = width;
-        ctx.shadowBlur = 20; ctx.shadowColor = '#00d4ff';
-        ctx.stroke();
-        ctx.shadowBlur = 0;
-      };
-      drawSegs(this.segments, this.life * 0.6, 1.5);
-      drawSegs(this.segments, this.life * 0.2, 4);
-      this.branches.forEach(b => drawSegs(b, this.life * 0.3, 0.8));
-    }
-  }
-
-  for (let i = 0; i < 120; i++) particles.push(new Particle());
-
-  function drawConnections() {
-    for (let i = 0; i < particles.length; i++) {
-      for (let j = i + 1; j < particles.length; j++) {
-        const dx = particles[i].x - particles[j].x;
-        const dy = particles[i].y - particles[j].y;
-        const dist = Math.sqrt(dx*dx + dy*dy);
-        if (dist < 100) {
-          ctx.beginPath();
-          ctx.moveTo(particles[i].x, particles[i].y);
-          ctx.lineTo(particles[j].x, particles[j].y);
-          ctx.strokeStyle = `rgba(0,212,255,${0.06 * (1 - dist/100)})`;
-          ctx.lineWidth = 0.5; ctx.stroke();
-        }
-      }
-    }
-  }
-
-  function loop() {
-    ctx.clearRect(0, 0, W, H);
-    particles.forEach(p => { p.update(); p.draw(); });
-    drawConnections();
-    bolts = bolts.filter(b => { b.draw(); return b.update(); });
-    frameCount++;
-    if (frameCount % 90 === 0 && Math.random() > 0.3) bolts.push(new Bolt());
-    if (bolts.length === 0 && frameCount % 30 === 0 && Math.random() > 0.7) bolts.push(new Bolt());
-    requestAnimationFrame(loop);
-  }
-  loop();
-
-  // Trigger lightning on click
-  document.getElementById('hero').addEventListener('click', () => { bolts.push(new Bolt()); bolts.push(new Bolt()); });
+/* ── PANEL INTRO ── */
+(function(){
+  var intro=document.getElementById('panel-intro');
+  setTimeout(function(){
+    intro.classList.add('open');
+    setTimeout(function(){
+      intro.classList.add('gone');
+      animateCircuits();
+      animateHero();
+    },1700);
+  },500);
 })();
 
-// ── NAVBAR SCROLL ──
-const navbar = document.getElementById('navbar');
-window.addEventListener('scroll', () => {
-  navbar.classList.toggle('scrolled', window.scrollY > 60);
-});
-
-// ── GSAP REGISTER ──
-gsap.registerPlugin(ScrollTrigger, TextPlugin);
-
-// ── HERO ENTRANCE ──
-gsap.timeline()
-  .from('.hero-badge', { opacity: 0, y: 20, duration: 0.8, delay: 0.3, ease: 'power3.out' })
-  .from('.hero-title .line1', { opacity: 0, y: 60, duration: 0.9, ease: 'power4.out' }, '-=0.4')
-  .from('.hero-title .line2', { opacity: 0, y: 60, duration: 0.9, ease: 'power4.out' }, '-=0.6')
-  .from('.hero-subtitle', { opacity: 0, y: 30, duration: 0.8, ease: 'power3.out' }, '-=0.5')
-  .from('.hero-buttons', { opacity: 0, y: 20, duration: 0.7, ease: 'power3.out' }, '-=0.4')
-  .from('.hero-stat', { opacity: 0, x: 30, duration: 0.6, stagger: 0.15, ease: 'power3.out' }, '-=0.3');
-
-// ── HERO STAT COUNTERS ──
-function animateCounter(el, target, suffix, decimal) {
-  let start = 0;
-  const duration = 2000;
-  const startTime = performance.now();
-  function tick(now) {
-    const t = Math.min((now - startTime) / duration, 1);
-    const eased = 1 - Math.pow(1 - t, 3);
-    const val = start + (target - start) * eased;
-    el.textContent = decimal ? val.toFixed(1) + suffix : Math.floor(val).toLocaleString() + suffix;
-    if (t < 1) requestAnimationFrame(tick);
-  }
-  requestAnimationFrame(tick);
-}
-setTimeout(() => {
-  animateCounter(document.getElementById('hs1'), 12400, '+');
-  animateCounter(document.getElementById('hs2'), 500, 'MW');
-  animateCounter(document.getElementById('hs3'), 99, '%');
-}, 800);
-
-// ── LOGOS TRACK ──
-const brands = ['Siemens', 'Schneider Electric', 'ABB Group', 'Eaton', 'GE', 'Leviton', 'Square D', 'Hubbell', 'Legrand', 'Wago'];
-const track = document.getElementById('logos-track');
-[...brands, ...brands].forEach(b => {
-  const el = document.createElement('div');
-  el.className = 'logo-item'; el.textContent = b; track.appendChild(el);
-});
-
-// ── SCROLL REVEAL ──
-function initReveal(selector, props) {
-  document.querySelectorAll(selector).forEach(el => {
-    gsap.fromTo(el, props.from, {
-      ...props.to,
-      delay: parseFloat(el.dataset.delay || 0) / 1000,
-      scrollTrigger: { trigger: el, start: 'top 85%', toggleActions: 'play none none none' }
-    });
+/* ── CIRCUIT PATHS ── */
+function animateCircuits(){
+  ['cp1','cp2','cp3','cp4'].forEach(function(id,i){
+    var p=document.getElementById(id);
+    if(!p)return;
+    var len=600;
+    try{len=p.getTotalLength();}catch(e){}
+    gsap.to(p,{strokeDashoffset:0,duration:2.2+i*0.2,delay:i*0.3,ease:'power2.out'});
+  });
+  document.querySelectorAll('.cc').forEach(function(c,i){
+    gsap.to(c,{opacity:1,duration:0.3,delay:0.8+i*0.35,yoyo:true,repeat:-1,repeatDelay:1.8});
   });
 }
-initReveal('.reveal', { from: { opacity: 0, y: 50 }, to: { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' } });
-initReveal('.reveal-left', { from: { opacity: 0, x: -50 }, to: { opacity: 1, x: 0, duration: 0.8, ease: 'power3.out' } });
-initReveal('.reveal-right', { from: { opacity: 0, x: 50 }, to: { opacity: 1, x: 0, duration: 0.8, ease: 'power3.out' } });
 
-// ── STAT COUNTERS ──
-document.querySelectorAll('.stat-num[data-target]').forEach(el => {
-  ScrollTrigger.create({
-    trigger: el, start: 'top 80%', once: true,
-    onEnter: () => {
-      const target = parseFloat(el.dataset.target);
-      const suffix = el.dataset.suffix || '';
-      const decimal = el.dataset.decimal;
-      animateCounter(el, target, suffix, decimal);
+/* ── HERO ANIMATION ── */
+/* Ocultamos hero content SOLO vía JS (no CSS) para que nunca quede
+   permanentemente invisible si algo falla en la cadena de animación */
+gsap.set(['.hero-tag','.hero-h1','.hero-sub','.hero-btns','.hero-meta'],{opacity:0,y:20});
+function animateHero(){
+  var tl=gsap.timeline({onComplete:function(){
+    /* Fallback: garantiza visibilidad aunque algo falle */
+    gsap.set(['.hero-tag','.hero-h1','.hero-sub','.hero-btns','.hero-meta'],{clearProps:'all'});
+  }});
+  tl.to('.hero-tag',{opacity:1,y:0,duration:0.6,ease:'power2.out'})
+    .to('.hero-h1',{opacity:1,y:0,duration:0.8,ease:'power2.out'},'-=0.2')
+    .to('.hero-sub',{opacity:1,y:0,duration:0.7,ease:'power2.out'},'-=0.4')
+    .to('.hero-btns',{opacity:1,y:0,duration:0.6,ease:'power2.out'},'-=0.3')
+    .to('.hero-meta',{opacity:1,y:0,duration:0.5},'-=0.2');
+}
+
+/* ── CURSOR ── */
+var dot=document.getElementById('cursor-dot');
+var ring=document.getElementById('cursor-ring');
+var mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',function(e){
+  mx=e.clientX;my=e.clientY;
+  dot.style.left=mx+'px';dot.style.top=my+'px';
+});
+(function loop(){
+  rx+=(mx-rx)*0.12;ry+=(my-ry)*0.12;
+  ring.style.left=rx+'px';ring.style.top=ry+'px';
+  requestAnimationFrame(loop);
+})();
+document.addEventListener('mousedown',function(){ring.style.width='20px';ring.style.height='20px';});
+document.addEventListener('mouseup',function(){ring.style.width='32px';ring.style.height='32px';});
+document.querySelectorAll('a,button,.service-card,.porque-slide,.why-card,.brand-pill').forEach(function(el){
+  el.addEventListener('mouseenter',function(){ring.style.width='46px';ring.style.height='46px';ring.style.borderColor='rgba(201,162,39,.85)';});
+  el.addEventListener('mouseleave',function(){ring.style.width='32px';ring.style.height='32px';ring.style.borderColor='rgba(201,162,39,.5)';});
+});
+
+/* ── MAGNETIC BUTTONS ── */
+document.querySelectorAll('.magnetic').forEach(function(btn){
+  btn.addEventListener('mousemove',function(e){
+    var r=btn.getBoundingClientRect();
+    var x=(e.clientX-r.left-r.width/2)*0.22;
+    var y=(e.clientY-r.top-r.height/2)*0.22;
+    btn.style.transform='translate('+x+'px,'+y+'px)';
+  });
+  btn.addEventListener('mouseleave',function(){btn.style.transform='';});
+});
+
+/* ── NAV SCROLL ── */
+var nav=document.getElementById('main-nav');
+window.addEventListener('scroll',function(){
+  nav.classList.toggle('scrolled',window.scrollY>40);
+});
+
+/* ── MOBILE MENU ── */
+var burger=document.getElementById('hamburger');
+var mm=document.getElementById('mobile-menu');
+burger.addEventListener('click',function(){
+  var open=mm.style.display==='flex';
+  mm.style.display=open?'none':'flex';
+});
+document.querySelectorAll('.ml').forEach(function(l){
+  l.addEventListener('click',function(){mm.style.display='none';});
+});
+
+/* ── FAQ ACCORDION ── */
+document.querySelectorAll('.faq-q').forEach(function(btn){
+  btn.addEventListener('click',function(){
+    var item=btn.closest('.faq-item');
+    var ans=item.querySelector('.faq-a');
+    var isOpen=item.classList.contains('open');
+    document.querySelectorAll('.faq-item.open').forEach(function(o){
+      o.classList.remove('open');
+      o.querySelector('.faq-a').style.maxHeight='0';
+    });
+    if(!isOpen){
+      item.classList.add('open');
+      ans.style.maxHeight=ans.scrollHeight+'px';
     }
   });
 });
 
-// ── 3D CARD TILT ──
-document.querySelectorAll('.feature-card, .product-card').forEach(card => {
-  card.addEventListener('mousemove', e => {
-    const rect = card.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const cx = rect.width / 2, cy = rect.height / 2;
-    const rx2 = (y - cy) / cy * -8;
-    const ry2 = (x - cx) / cx * 8;
-    card.style.transform = `perspective(1000px) rotateX(${rx2}deg) rotateY(${ry2}deg) translateY(-6px)`;
-    card.style.setProperty('--mx', `${(x/rect.width)*100}%`);
-    card.style.setProperty('--my', `${(y/rect.height)*100}%`);
+/* ── 3D CABINET ANIMATION (Nosotros) ── */
+(function(){
+  var door=document.getElementById('opDoor');
+  var glow=document.getElementById('opIntGlow');
+  var leak=document.getElementById('opLeak');
+  var cab=document.getElementById('opCabinet');
+  var scene=document.getElementById('opScene');
+  if(!door||!cab)return;
+
+  var baseY=18,baseX=5;
+  var rockTween=null;
+  var isOpen=false;
+
+  function startRock(){
+    if(isOpen)return;
+    rockTween=gsap.to(cab,{
+      rotateY:baseY+10,rotateX:baseX-4,
+      duration:3.8,ease:'sine.inOut',
+      repeat:-1,yoyo:true,overwrite:'auto'
+    });
+  }
+
+  function stopRock(){
+    if(rockTween){rockTween.kill();rockTween=null;}
+  }
+
+  /* Entrance: cabinet materializes in, then starts rocking */
+  gsap.from(cab,{
+    scrollTrigger:{trigger:'#nosotros',start:'top 76%',once:true},
+    autoAlpha:0,rotateY:55,rotateX:-10,duration:1.7,ease:'power3.out',
+    onComplete:startRock
   });
-  card.addEventListener('mouseleave', () => {
-    card.style.transform = '';
+
+  /* LED blink */
+  document.querySelectorAll('.op-led.g').forEach(function(led){
+    gsap.to(led,{opacity:.3,repeat:-1,yoyo:true,duration:1.1+Math.random()*.9,ease:'sine.inOut',delay:Math.random()*1.2});
   });
-});
 
-// ── TESTIMONIALS SLIDER ──
-const ttrack = document.getElementById('ttrack');
-const tcards = ttrack.querySelectorAll('.testimonial-card');
-const controls = document.getElementById('t-controls');
-let tCurrent = 0, tTotal = Math.ceil(tcards.length / 3);
-for (let i = 0; i < tTotal; i++) {
-  const dot = document.createElement('div');
-  dot.className = 't-dot' + (i === 0 ? ' active' : '');
-  dot.addEventListener('click', () => goTo(i));
-  controls.appendChild(dot);
-}
-function goTo(n) {
-  tCurrent = n;
-  ttrack.style.transform = `translateX(calc(-${n * 100}% - ${n * 24}px))`;
-  controls.querySelectorAll('.t-dot').forEach((d, i) => d.classList.toggle('active', i === n));
-  tcards.forEach((c, i) => c.classList.toggle('active', Math.floor(i/3) === n));
-}
-let tInterval = setInterval(() => goTo((tCurrent + 1) % tTotal), 5000);
-ttrack.parentElement.addEventListener('mouseenter', () => clearInterval(tInterval));
-ttrack.parentElement.addEventListener('mouseleave', () => { tInterval = setInterval(() => goTo((tCurrent + 1) % tTotal), 5000); });
+  if(scene){
+    /* Hover to open */
+    scene.addEventListener('mouseenter',function(){
+      if(isOpen)return;
+      isOpen=true;
+      stopRock();
+      gsap.to(cab,{rotateY:baseY,rotateX:baseX,duration:0.35,ease:'power2.out'});
+      gsap.to(door,{rotateY:-108,duration:1.1,ease:'power2.inOut',delay:0.1});
+      gsap.to(glow,{opacity:1,duration:0.85,delay:0.3});
+      gsap.to(leak,{opacity:1,duration:0.85,delay:0.38});
+    });
 
-// ── NAVBAR ACTIVE LINK ──
-const sections = document.querySelectorAll('section[id]');
-const navLinks = document.querySelectorAll('.nav-links a');
-window.addEventListener('scroll', () => {
-  let cur = '';
-  sections.forEach(s => { if (window.scrollY >= s.offsetTop - 120) cur = s.id; });
-  navLinks.forEach(a => a.style.color = a.getAttribute('href') === '#' + cur ? '#fff' : '');
-});
+    /* Mouse leave → close and rock */
+    scene.addEventListener('mouseleave',function(){
+      isOpen=false;
+      gsap.to(door,{rotateY:0,duration:0.85,ease:'power2.inOut'});
+      gsap.to(glow,{opacity:0,duration:0.45});
+      gsap.to(leak,{opacity:0,duration:0.45});
+      gsap.to(cab,{rotateY:baseY,rotateX:baseX,duration:1.1,ease:'elastic.out(1,.4)',overwrite:'auto',
+        onComplete:startRock});
+    });
 
-// ── PARALLAX ORBS ──
-window.addEventListener('scroll', () => {
-  const y = window.scrollY;
-  document.querySelectorAll('.orb').forEach((o, i) => {
-    o.style.transform = `translateY(${y * (i % 2 === 0 ? 0.15 : -0.1)}px)`;
+    /* Mouse move: tilt cabinet while hovering */
+    scene.addEventListener('mousemove',function(e){
+      var r=scene.getBoundingClientRect();
+      var nx=((e.clientX-r.left)/r.width-0.5)*2;
+      var ny=((e.clientY-r.top)/r.height-0.5)*2;
+      gsap.to(cab,{rotateY:baseY+nx*9,rotateX:baseX-ny*7,duration:0.7,ease:'power2.out',overwrite:'auto'});
+    });
+  }
+})();
+
+/* ── HORIZONTAL SCROLL (Por qué elegirnos) ── */
+(function(){
+  var isMobile=window.innerWidth<=768;
+  if(isMobile)return; /* en móvil scroll nativo */
+
+  var track=document.getElementById('porqueTrack');
+  var bar=document.getElementById('porqueBar');
+  if(!track)return;
+
+  var getDistance=function(){ return track.scrollWidth - window.innerWidth; };
+
+  var scrollTween=gsap.to(track,{
+    x:function(){ return -(getDistance()); },
+    ease:'none',
+    scrollTrigger:{
+      trigger:'#porque',
+      start:'top top',
+      end:function(){ return '+=' + getDistance(); },
+      pin:true,
+      scrub:1,
+      anticipatePin:1,
+      onUpdate:function(self){
+        if(bar) bar.style.width=(self.progress*100)+'%';
+      }
+    }
   });
+
+  /* Entrada 3D de cada card al entrar al viewport horizontal */
+  gsap.utils.toArray('.ps-card').forEach(function(card,i){
+    gsap.from(card,{
+      rotateY:22,
+      x:60,
+      autoAlpha:0,
+      duration:0.75,
+      ease:'power2.out',
+      scrollTrigger:{
+        trigger:card,
+        containerAnimation:scrollTween,
+        start:'left 95%',
+        once:true
+      }
+    });
+  });
+})();
+
+/* ── GSAP SCROLL ANIMATIONS (resto de secciones) ── */
+gsap.utils.toArray('.process-step').forEach(function(s,i){
+  gsap.from(s,{scrollTrigger:{trigger:s,start:'top 90%',once:true},autoAlpha:0,y:24,duration:0.65,delay:i*0.12,ease:'power2.out'});
+});
+gsap.utils.toArray('.service-card').forEach(function(c,i){
+  gsap.from(c,{scrollTrigger:{trigger:c,start:'top 93%',once:true},autoAlpha:0,y:24,duration:0.55,delay:(i%4)*0.08,ease:'power2.out'});
+});
+/* ── ASSEMBLY ANIMATION (Anatomía) ── */
+(function(){
+  var wrap=document.getElementById('asmWrap');
+  if(!wrap)return;
+
+  /* Exploded starting positions — all outside the canvas bounds */
+  gsap.set('#asmFrame',{autoAlpha:0,scale:.88});
+  gsap.set('#asmBusbar',{x:260,autoAlpha:0});
+  gsap.set('#asmMainSw',{y:-160,autoAlpha:0});
+  gsap.set('#asmRow1',{x:-300,autoAlpha:0});
+  gsap.set('#asmRow2',{x:300,autoAlpha:0});
+  gsap.set('#asmRow3',{y:200,autoAlpha:0});
+  gsap.set('#asmStatus',{autoAlpha:0,y:16});
+
+  /* Wire paths: set up stroke-dashoffset for drawing animation */
+  var wirePaths=wrap.querySelectorAll('#asmWiresSvg path');
+  wirePaths.forEach(function(p){
+    try{
+      var len=p.getTotalLength();
+      p.style.strokeDasharray=len;
+      p.style.strokeDashoffset=len;
+    }catch(e){}
+  });
+  gsap.set(wirePaths,{autoAlpha:0});
+
+  /* Main assembly timeline — scrubbed with scroll */
+  var tl=gsap.timeline({
+    scrollTrigger:{trigger:'#anatomia',start:'top 65%',end:'center 22%',scrub:1.8}
+  });
+
+  tl
+    .to('#asmFrame',{autoAlpha:1,scale:1,duration:.22,ease:'power2.out'},0)
+    .to('#asmMainSw',{y:0,autoAlpha:1,duration:.28,ease:'power3.out'},0.1)
+    .to('#asmBusbar',{x:0,autoAlpha:1,duration:.28,ease:'power3.out'},0.16)
+    .to('#asmRow1',{x:0,autoAlpha:1,duration:.32,ease:'power3.out'},0.26)
+    .to('#asmRow2',{x:0,autoAlpha:1,duration:.32,ease:'power3.out'},0.37)
+    .to('#asmRow3',{y:0,autoAlpha:1,duration:.32,ease:'power3.out'},0.48)
+    .to(wirePaths,{autoAlpha:1,strokeDashoffset:0,duration:.3,stagger:.04,ease:'none'},0.58)
+    .to('#asmStatus',{autoAlpha:1,y:0,duration:.22},0.82);
+})();
+gsap.utils.toArray('.agn-point').forEach(function(p,i){
+  gsap.from(p,{scrollTrigger:{trigger:p,start:'top 92%',once:true},autoAlpha:0,y:28,duration:0.65,delay:i*0.07,ease:'power2.out'});
+});
+/* Reveal general */
+gsap.utils.toArray('.reveal').forEach(function(el){
+  var skip=['.process-step','.service-card','.anatomy-point'];
+  var handled=skip.some(function(s){return el.matches(s);});
+  if(!handled){
+    gsap.from(el,{scrollTrigger:{trigger:el,start:'top 88%',once:true},autoAlpha:0,y:22,duration:0.7,ease:'power2.out'});
+  }
 });
 
-// ── WHY PANEL FLOAT ANIMATION ──
-gsap.to('.panel-float-1', { y: -15, repeat: -1, yoyo: true, duration: 3, ease: 'power1.inOut' });
-gsap.to('.panel-float-2', { y: 12, repeat: -1, yoyo: true, duration: 3.5, ease: 'power1.inOut', delay: 0.8 });
-gsap.to('.panel-float-3', { y: -10, repeat: -1, yoyo: true, duration: 2.8, ease: 'power1.inOut', delay: 1.4 });
-
-// ── PROCESS STEP HOVER ──
-document.querySelectorAll('.process-step').forEach(step => {
-  step.addEventListener('mouseenter', () => gsap.to(step.querySelector('.step-num'), { scale: 1.12, duration: 0.3 }));
-  step.addEventListener('mouseleave', () => gsap.to(step.querySelector('.step-num'), { scale: 1, duration: 0.3 }));
-});
-
-// ── FORM SUBMIT ──
-function handleFormSubmit(e) {
+/* ── CONTACT FORM → WHATSAPP ── */
+document.getElementById('contact-form').addEventListener('submit',function(e){
   e.preventDefault();
-  const btn = e.target.querySelector('button');
-  const orig = btn.textContent;
-  btn.textContent = 'Sent! ✓'; btn.style.background = '#00cc88';
-  setTimeout(() => { btn.textContent = orig; btn.style.background = ''; e.target.reset(); }, 3000);
-}
-
-// ── GLOWING NAV CTA on hover ──
-document.querySelector('.nav-cta').addEventListener('mouseenter', function() {
-  gsap.to(this, { boxShadow: '0 0 40px rgba(0,212,255,0.5)', duration: 0.3 });
+  var n=document.getElementById('nombre').value||'';
+  var emp=document.getElementById('empresa').value||'';
+  var tel=document.getElementById('telefono').value||'';
+  var srv=document.getElementById('servicio').value||'';
+  var msg=document.getElementById('mensaje').value||'';
+  var txt='Hola, vengo de la página web de Industriales Eléctricos S&M.\n\n';
+  txt+='*Nombre:* '+n+'\n';
+  if(emp)txt+='*Empresa:* '+emp+'\n';
+  if(tel)txt+='*Teléfono:* '+tel+'\n';
+  if(srv)txt+='*Servicio requerido:* '+srv+'\n';
+  if(msg)txt+='\n*Detalle:* '+msg;
+  window.open('https://wa.me/51998265837?text='+encodeURIComponent(txt),'_blank');
 });
-document.querySelector('.nav-cta').addEventListener('mouseleave', function() {
-  gsap.to(this, { boxShadow: '0 0 0px rgba(0,212,255,0)', duration: 0.3 });
-});
 
-// ── SCROLL PROGRESS LINE ──
-const progressBar = document.createElement('div');
-progressBar.style.cssText = 'position:fixed;top:0;left:0;height:2px;background:linear-gradient(90deg,#00d4ff,#7c3aed);z-index:9999;transition:width 0.1s;pointer-events:none;';
-document.body.appendChild(progressBar);
-window.addEventListener('scroll', () => {
-  const pct = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
-  progressBar.style.width = pct + '%';
+/* ── SMOOTH ANCHOR SCROLL ── */
+document.querySelectorAll('a[href^="#"]').forEach(function(a){
+  a.addEventListener('click',function(e){
+    var t=document.querySelector(this.getAttribute('href'));
+    if(t){e.preventDefault();t.scrollIntoView({behavior:'smooth',block:'start'});}
+  });
 });
 </script>
 </body>
