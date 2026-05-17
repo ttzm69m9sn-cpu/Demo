@@ -1351,7 +1351,7 @@ document.querySelectorAll('.faq-q').forEach(function(btn){
 
   /* Scroll-driven door open: swings to ~108° so interior is fully visible */
   gsap.timeline({
-    scrollTrigger:{trigger:'#nosotros',start:'top 50%',end:'bottom 18%',scrub:1.5}
+    scrollTrigger:{trigger:'#nosotros',start:'top 85%',end:'center 20%',scrub:0.6}
   })
   .to(door,{rotateY:-108,ease:'none'},0)
   .to(glow,{opacity:1,ease:'none'},0)
