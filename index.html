@@ -142,11 +142,13 @@ h2.sh em{font-style:normal;color:var(--gold)}
 .why-card p{font-size:.85rem;color:var(--muted);line-height:1.65}
 
 /* PROCESS */
-#proceso{background:var(--bg)}
+#proceso{background:var(--bg);background-image:radial-gradient(ellipse 75% 55% at 50% 35%,rgba(201,162,39,.09) 0%,transparent 68%),radial-gradient(ellipse 35% 25% at 15% 85%,rgba(201,162,39,.05) 0%,transparent 60%),radial-gradient(ellipse 35% 25% at 85% 85%,rgba(201,162,39,.05) 0%,transparent 60%);position:relative;overflow:hidden}
+#proceso::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:260px;height:1px;background:linear-gradient(90deg,transparent,rgba(201,162,39,.55),transparent)}
 .process-line{display:flex;gap:0;margin-top:64px;position:relative}
 .process-line::before{content:'';position:absolute;top:27px;left:60px;right:60px;height:1px;background:linear-gradient(90deg,var(--gold),rgba(201,162,39,.3),transparent);z-index:0}
 .process-step{flex:1;position:relative;z-index:1;padding:0 24px;text-align:center}
-.step-num{width:54px;height:54px;border:1.5px solid var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-head);font-weight:700;font-size:1.05rem;color:var(--gold);margin:0 auto 22px;background:var(--bg)}
+.step-icon{width:56px;height:56px;border:1.5px solid var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 22px;background:rgba(201,162,39,.07)}
+.step-icon svg{width:22px;height:22px;stroke:var(--gold);fill:none;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
 .process-step h3{font-family:var(--font-head);font-size:.95rem;font-weight:700;color:#fff;margin-bottom:8px}
 .process-step p{font-size:.82rem;color:var(--muted);line-height:1.65}
 
@@ -793,22 +795,30 @@ footer{background:#060606;border-top:1px solid var(--border);padding:48px 5% 26p
   </div>
   <div class="process-line">
     <div class="process-step reveal">
-      <div class="step-num">01</div>
+      <div class="step-icon">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="22" y2="22"/></svg>
+      </div>
       <h3>Diagnóstico técnico</h3>
       <p>Analizamos la necesidad, potencia, tensión, aplicación y condiciones del proyecto para definir la solución correcta.</p>
     </div>
     <div class="process-step reveal">
-      <div class="step-num">02</div>
+      <div class="step-icon">
+        <svg viewBox="0 0 24 24"><polygon points="12 2 22 8.5 12 15 2 8.5"/><polyline points="2 15 12 21.5 22 15"/></svg>
+      </div>
       <h3>Selección de componentes</h3>
       <p>Elegimos los equipos correctos: marcas confiables, calibres adecuados, protecciones precisas según la carga.</p>
     </div>
     <div class="process-step reveal">
-      <div class="step-num">03</div>
+      <div class="step-icon">
+        <svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+      </div>
       <h3>Ensamblaje ordenado</h3>
       <p>Cableado limpio, rotulación clara, distribución interna técnica. Cada conductor en su lugar, sin cruces.</p>
     </div>
     <div class="process-step reveal">
-      <div class="step-num">04</div>
+      <div class="step-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+      </div>
       <h3>Pruebas y entrega</h3>
       <p>Revisión de maniobra, protecciones y lógica de control antes de la entrega. El tablero llega listo para operar.</p>
     </div>
@@ -1343,35 +1353,63 @@ document.querySelectorAll('.faq-q').forEach(function(btn){
   var scene=document.getElementById('opScene');
   if(!door||!cab)return;
 
-  /* Entrance: cabinet materializes in from flat angle */
+  var baseY=18,baseX=5;
+  var rockTween=null;
+  var isOpen=false;
+
+  function startRock(){
+    if(isOpen)return;
+    rockTween=gsap.to(cab,{
+      rotateY:baseY+10,rotateX:baseX-4,
+      duration:3.8,ease:'sine.inOut',
+      repeat:-1,yoyo:true,overwrite:'auto'
+    });
+  }
+
+  function stopRock(){
+    if(rockTween){rockTween.kill();rockTween=null;}
+  }
+
+  /* Entrance: cabinet materializes in, then starts rocking */
   gsap.from(cab,{
     scrollTrigger:{trigger:'#nosotros',start:'top 76%',once:true},
-    autoAlpha:0,rotateY:55,rotateX:-10,duration:1.7,ease:'power3.out'
+    autoAlpha:0,rotateY:55,rotateX:-10,duration:1.7,ease:'power3.out',
+    onComplete:startRock
   });
 
-  /* Scroll-driven door open: swings to ~108° so interior is fully visible */
-  gsap.timeline({
-    scrollTrigger:{trigger:'#nosotros',start:'top 85%',end:'center 20%',scrub:0.6}
-  })
-  .to(door,{rotateY:-108,ease:'none'},0)
-  .to(glow,{opacity:1,ease:'none'},0)
-  .to(leak,{opacity:1,ease:'none'},'<0.08');
-
-  /* LED blink on LEDs inside back wall */
+  /* LED blink */
   document.querySelectorAll('.op-led.g').forEach(function(led){
     gsap.to(led,{opacity:.3,repeat:-1,yoyo:true,duration:1.1+Math.random()*.9,ease:'sine.inOut',delay:Math.random()*1.2});
   });
 
-  /* Mouse parallax on cabinet */
   if(scene){
+    /* Hover to open */
+    scene.addEventListener('mouseenter',function(){
+      if(isOpen)return;
+      isOpen=true;
+      stopRock();
+      gsap.to(cab,{rotateY:baseY,rotateX:baseX,duration:0.35,ease:'power2.out'});
+      gsap.to(door,{rotateY:-108,duration:1.1,ease:'power2.inOut',delay:0.1});
+      gsap.to(glow,{opacity:1,duration:0.85,delay:0.3});
+      gsap.to(leak,{opacity:1,duration:0.85,delay:0.38});
+    });
+
+    /* Mouse leave → close and rock */
+    scene.addEventListener('mouseleave',function(){
+      isOpen=false;
+      gsap.to(door,{rotateY:0,duration:0.85,ease:'power2.inOut'});
+      gsap.to(glow,{opacity:0,duration:0.45});
+      gsap.to(leak,{opacity:0,duration:0.45});
+      gsap.to(cab,{rotateY:baseY,rotateX:baseX,duration:1.1,ease:'elastic.out(1,.4)',overwrite:'auto',
+        onComplete:startRock});
+    });
+
+    /* Mouse move: tilt cabinet while hovering */
     scene.addEventListener('mousemove',function(e){
       var r=scene.getBoundingClientRect();
       var nx=((e.clientX-r.left)/r.width-0.5)*2;
       var ny=((e.clientY-r.top)/r.height-0.5)*2;
-      gsap.to(cab,{rotateY:18+nx*8,rotateX:5-ny*6,duration:0.75,ease:'power2.out',overwrite:'auto'});
-    });
-    scene.addEventListener('mouseleave',function(){
-      gsap.to(cab,{rotateY:18,rotateX:5,duration:1.3,ease:'elastic.out(1,.4)',overwrite:'auto'});
+      gsap.to(cab,{rotateY:baseY+nx*9,rotateX:baseX-ny*7,duration:0.7,ease:'power2.out',overwrite:'auto'});
     });
   }
 })();
