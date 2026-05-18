@@ -15,6 +15,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 :root{
@@ -108,16 +109,27 @@ nav{position:fixed;top:18px;left:50%;transform:translateX(-50%);z-index:200;padd
 #mobile-menu{display:none;position:fixed;inset:0;z-index:199;background:rgba(7,7,10,.97);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);flex-direction:column;align-items:center;justify-content:center;gap:32px}
 #mobile-menu a{font-family:var(--font-display);font-size:2.4rem;font-style:italic;color:var(--text)}
 
-/* ── HERO ── */
-#hero{position:relative;min-height:100vh;padding:140px 5% 70px;display:flex;align-items:center;overflow:hidden;isolation:isolate}
-.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:80px;align-items:center;max-width:1480px;margin:0 auto;width:100%;position:relative;z-index:2}
-.hero-left .eyebrow{margin-bottom:24px}
-.hero-h1{font-size:clamp(2.6rem,5.6vw,5rem);font-weight:400;letter-spacing:-.035em;line-height:1;margin-bottom:30px;color:var(--text)}
-.hero-h1 .line{display:block;overflow:hidden}
+/* ── HERO (pinned WebGL showcase) ── */
+#hero{position:relative;height:100vh;overflow:hidden;isolation:isolate;background:#06060a}
+#hero-canvas{position:absolute;inset:0;width:100%;height:100%;z-index:1;display:block}
+.hero-vignette{position:absolute;inset:0;z-index:2;pointer-events:none;background:radial-gradient(ellipse 90% 70% at 50% 50%,transparent 30%,rgba(6,6,10,.4) 70%,rgba(6,6,10,.9) 100%)}
+.hero-grid-bg{position:absolute;inset:0;z-index:1;pointer-events:none;background-image:linear-gradient(rgba(245,210,124,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(245,210,124,.025) 1px,transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 70% 60% at 50% 50%,#000 0%,transparent 80%);-webkit-mask-image:radial-gradient(ellipse 70% 60% at 50% 50%,#000 0%,transparent 80%)}
+.hero-layer{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;justify-content:space-between;padding:120px 5% 50px;pointer-events:none}
+.hero-layer>*{pointer-events:auto}
+.hero-top{display:flex;justify-content:space-between;align-items:flex-start;gap:30px}
+.hero-top .eyebrow{margin-bottom:0}
+.hero-bar{display:flex;gap:14px;align-items:center;font-family:var(--font-mono);font-size:.62rem;letter-spacing:.18em;color:var(--muted);text-transform:uppercase}
+.hero-bar .sep{width:14px;height:1px;background:rgba(245,210,124,.4)}
+.hero-bar b{color:var(--gold-2);font-weight:500}
+.hero-center{display:flex;align-items:center;flex:1;min-height:0;margin:24px 0}
+.hero-h1{font-size:clamp(2.4rem,5.6vw,5.2rem);font-weight:400;letter-spacing:-.035em;line-height:.98;color:var(--text);max-width:780px}
+.hero-h1 .line{display:block;overflow:hidden;padding:.06em 0}
 .hero-h1 .line .word{display:inline-block;will-change:transform}
 .hero-h1 em{font-family:var(--font-display);font-style:italic;font-weight:400;background:var(--grad-warm);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-.02em;padding-right:.05em}
-.hero-sub{font-size:1.04rem;color:var(--text-2);max-width:560px;margin-bottom:38px;line-height:1.7}
-.hero-cta-row{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-bottom:50px}
+.hero-foot{display:grid;grid-template-columns:1.2fr 1fr;gap:50px;align-items:end}
+.hero-sub{font-size:1rem;color:var(--text-2);max-width:520px;line-height:1.65}
+.hero-cta-col{display:flex;flex-direction:column;gap:14px;align-items:flex-end}
+.hero-cta-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:flex-end}
 .btn{display:inline-flex;align-items:center;gap:9px;padding:14px 22px;font-size:.86rem;font-weight:600;border-radius:99px;transition:transform .3s var(--easing),box-shadow .3s,background .3s,border-color .3s,color .3s;position:relative;overflow:hidden;letter-spacing:-.005em}
 .btn-primary{background:var(--grad-warm);color:#0a0a0a;box-shadow:0 10px 30px rgba(212,164,55,.3),inset 0 1px 0 rgba(255,255,255,.35)}
 .btn-primary:hover{transform:translateY(-2px);box-shadow:0 16px 40px rgba(212,164,55,.5),inset 0 1px 0 rgba(255,255,255,.45)}
@@ -133,35 +145,35 @@ nav{position:fixed;top:18px;left:50%;transform:translateX(-50%);z-index:200;padd
 .hero-meta .v{font-size:.92rem;font-weight:500;color:var(--text);letter-spacing:-.01em}
 .hero-meta .v b{font-weight:500;background:var(--grad-warm);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 
-/* Hero RIGHT — 3D panel showcase */
-.hero-stage{position:relative;height:600px;perspective:1800px;perspective-origin:center center}
-.hero-stage .stage-inner{position:absolute;inset:0;transform-style:preserve-3d;will-change:transform;animation:floatY 6s ease-in-out infinite}
-@keyframes floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
-.panel-card{position:absolute;border-radius:14px;overflow:hidden;box-shadow:0 30px 60px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.05),inset 0 1px 0 rgba(255,255,255,.06);background:#0d0d12;transform-style:preserve-3d;will-change:transform}
-.panel-card img{width:100%;height:100%;object-fit:cover;display:block}
-.panel-card::after{content:'';position:absolute;inset:0;background:linear-gradient(160deg,rgba(255,255,255,.08) 0%,rgba(255,255,255,0) 30%,rgba(0,0,0,.4) 100%);pointer-events:none}
-.panel-card.p1{top:8%;left:18%;width:54%;height:74%;transform:rotateY(-14deg) rotateX(6deg) translateZ(60px);z-index:3}
-.panel-card.p2{top:0;right:0;width:42%;height:54%;transform:rotateY(-22deg) rotateX(2deg) translateZ(-40px);z-index:2;opacity:.85}
-.panel-card.p3{bottom:0;left:0;width:38%;height:48%;transform:rotateY(-8deg) rotateX(-6deg) translateZ(-80px);z-index:1;opacity:.72}
-/* Floating HUD chips around panel */
-.hud-chip{position:absolute;z-index:5;background:rgba(13,13,18,.85);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(245,210,124,.18);border-radius:12px;padding:10px 14px;font-family:var(--font-mono);font-size:.66rem;letter-spacing:.05em;color:var(--text);box-shadow:0 14px 30px rgba(0,0,0,.5);display:flex;align-items:center;gap:10px;animation:hudfloat 5s ease-in-out infinite}
-@keyframes hudfloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
-.hud-chip .dot{width:6px;height:6px;border-radius:50%;background:var(--green-led);box-shadow:0 0 8px var(--green-led)}
-.hud-chip .ico{width:22px;height:22px;border-radius:6px;background:var(--grad-warm-soft);border:1px solid rgba(245,210,124,.25);display:flex;align-items:center;justify-content:center;color:var(--gold-2)}
+/* Floating HUD chips around 3D scene */
+.hud-chip{position:absolute;z-index:4;background:rgba(13,13,18,.78);backdrop-filter:blur(16px) saturate(1.3);-webkit-backdrop-filter:blur(16px) saturate(1.3);border:1px solid rgba(245,210,124,.22);border-radius:14px;padding:11px 15px;font-family:var(--font-mono);font-size:.66rem;letter-spacing:.05em;color:var(--text);box-shadow:0 18px 40px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.04);display:flex;align-items:center;gap:11px;will-change:transform,opacity}
+.hud-chip::before{content:'';position:absolute;top:-1px;left:14px;right:14px;height:1px;background:linear-gradient(90deg,transparent,rgba(245,210,124,.7),transparent)}
+.hud-chip .dot{width:6px;height:6px;border-radius:50%;background:var(--green-led);box-shadow:0 0 10px var(--green-led);animation:pulse 1.8s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.hud-chip .ico{width:26px;height:26px;border-radius:7px;background:linear-gradient(135deg,rgba(245,210,124,.18),rgba(255,106,31,.12));border:1px solid rgba(245,210,124,.3);display:flex;align-items:center;justify-content:center;color:var(--gold-2);flex-shrink:0}
 .hud-chip .ico svg{width:13px;height:13px}
 .hud-chip b{font-weight:600;color:var(--gold-2)}
-.hud-chip .lbl{font-size:.58rem;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);display:block}
-.hud-chip .val{font-size:.84rem;color:var(--text);font-weight:500;display:block}
-.hud-1{top:6%;right:-2%;animation-delay:.2s}
-.hud-2{bottom:18%;right:6%;animation-delay:1.4s}
-.hud-3{top:46%;left:-6%;animation-delay:.8s}
-.hud-4{bottom:2%;left:30%;animation-delay:2.1s}
+.hud-chip .lbl{font-size:.58rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:2px}
+.hud-chip .val{font-size:.82rem;color:var(--text);font-weight:500;display:block;letter-spacing:-.005em}
+.hud-1{top:24%;right:5%}
+.hud-2{bottom:28%;right:8%}
+.hud-3{top:38%;left:4%}
+.hud-4{bottom:22%;left:6%}
 
-/* Hero scroll indicator */
-.scroll-cue{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);z-index:5;display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--muted);font-family:var(--font-mono);font-size:.6rem;letter-spacing:.3em;text-transform:uppercase}
-.scroll-cue .ln{width:1px;height:40px;background:linear-gradient(180deg,transparent,var(--gold-2));position:relative;overflow:hidden}
-.scroll-cue .ln::after{content:'';position:absolute;top:-40%;width:1px;height:40%;background:var(--gold-2);box-shadow:0 0 8px var(--gold-2);animation:cuerun 2.2s ease-in-out infinite}
-@keyframes cuerun{0%{top:-40%}100%{top:100%}}
+/* Hero progress indicator (replaces scroll cue, lives inside hero) */
+.hero-prog{position:absolute;left:5%;bottom:30px;z-index:5;display:flex;align-items:center;gap:14px;font-family:var(--font-mono);font-size:.6rem;letter-spacing:.22em;color:var(--muted);text-transform:uppercase}
+.hero-prog .num{color:var(--gold-2);font-weight:500}
+.hero-prog .ln{width:180px;height:1px;background:rgba(245,210,124,.15);position:relative;overflow:hidden}
+.hero-prog .ln i{position:absolute;left:0;top:-1px;bottom:-1px;width:0;background:var(--grad-warm);box-shadow:0 0 8px rgba(245,210,124,.8)}
+
+/* Tag floating in scene */
+.scene-tag{position:absolute;z-index:4;font-family:var(--font-mono);font-size:.58rem;letter-spacing:.22em;color:rgba(245,210,124,.6);text-transform:uppercase;display:flex;align-items:center;gap:10px;pointer-events:none}
+.scene-tag::before{content:'';width:14px;height:1px;background:var(--gold-2)}
+.scene-tag.st-1{top:50%;left:50%;transform:translate(-50%,-180px)}
+.scene-tag.st-2{bottom:18%;right:50%;transform:translate(50%,0)}
+
+.hero-meta-strip{position:absolute;right:5%;bottom:30px;z-index:5;display:flex;gap:24px;align-items:center;font-family:var(--font-mono);font-size:.62rem;letter-spacing:.18em;color:var(--muted);text-transform:uppercase}
+.hero-meta-strip span b{color:var(--gold-2);font-weight:500}
 
 /* ── MARQUEE STRIP ── */
 .marquee{padding:18px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:rgba(13,13,18,.6);overflow:hidden;position:relative;z-index:2}
@@ -190,14 +202,18 @@ section{padding:140px 5%;position:relative}
 .about-stats .st:last-child{border-right:none;padding-right:0}
 .about-stats .num{font-family:var(--font-display);font-size:2.6rem;font-weight:400;background:var(--grad-warm);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-.02em;line-height:1;margin-bottom:8px}
 .about-stats .lbl{font-family:var(--font-mono);font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
-.about-visual{position:relative;height:600px;border-radius:14px;overflow:hidden;border:1px solid var(--border)}
-.about-visual img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:saturate(.9) brightness(.85);transition:transform 1.2s var(--easing)}
-.about-visual:hover img{transform:scale(1.04)}
-.about-visual::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(7,7,10,.75) 100%)}
-.about-visual .caption{position:absolute;left:24px;right:24px;bottom:24px;z-index:2;display:flex;justify-content:space-between;align-items:flex-end;gap:20px}
-.about-visual .caption .l{font-family:var(--font-mono);font-size:.6rem;letter-spacing:.2em;color:rgba(245,210,124,.7);text-transform:uppercase;margin-bottom:6px}
-.about-visual .caption .t{font-size:1rem;font-weight:500;color:var(--text);letter-spacing:-.005em;line-height:1.3}
-.about-visual .badge{padding:7px 14px;background:rgba(7,7,10,.7);backdrop-filter:blur(10px);border:1px solid rgba(245,210,124,.3);border-radius:99px;font-family:var(--font-mono);font-size:.6rem;letter-spacing:.18em;color:var(--gold-2);text-transform:uppercase;flex-shrink:0}
+.about-3d{position:relative;height:620px;border-radius:14px;overflow:hidden;border:1px solid var(--border);background:radial-gradient(ellipse at center,#161620 0%,#06060a 75%);isolation:isolate}
+#about-canvas{position:absolute;inset:0;width:100%;height:100%;z-index:1}
+.about-3d::after{content:'';position:absolute;inset:0;pointer-events:none;z-index:2;background:radial-gradient(ellipse 80% 70% at 50% 50%,transparent 40%,rgba(7,7,10,.5) 80%,rgba(7,7,10,.9) 100%)}
+.about-3d-caption{position:absolute;left:24px;bottom:24px;z-index:3;max-width:60%}
+.about-3d-caption .l{font-family:var(--font-mono);font-size:.58rem;letter-spacing:.2em;color:rgba(245,210,124,.6);text-transform:uppercase;margin-bottom:6px}
+.about-3d-caption .t{font-size:.95rem;font-weight:500;color:var(--text);letter-spacing:-.005em;line-height:1.35}
+.about-3d-badge{position:absolute;top:24px;right:24px;z-index:3;padding:7px 14px;background:rgba(7,7,10,.7);backdrop-filter:blur(10px);border:1px solid rgba(245,210,124,.3);border-radius:99px;font-family:var(--font-mono);font-size:.6rem;letter-spacing:.18em;color:var(--gold-2);text-transform:uppercase}
+.about-3d-marker{position:absolute;z-index:3;display:flex;align-items:center;gap:8px;padding:6px 12px;background:rgba(13,13,18,.8);backdrop-filter:blur(10px);border:1px solid rgba(245,210,124,.15);border-radius:99px;font-family:var(--font-mono);font-size:.62rem;letter-spacing:.04em;color:var(--text-2);will-change:transform,opacity}
+.about-3d-marker .dot{width:6px;height:6px;border-radius:50%;background:var(--green-led);box-shadow:0 0 8px var(--green-led);flex-shrink:0}
+.about-3d-marker.m-1{top:18%;right:6%}
+.about-3d-marker.m-2{top:42%;left:4%}
+.about-3d-marker.m-3{top:66%;right:8%}
 .mv-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:32px}
 .mv-card{padding:24px;background:var(--card);border:1px solid var(--border);border-radius:14px;position:relative;overflow:hidden;transition:border-color .3s,transform .35s var(--easing)}
 .mv-card:hover{border-color:rgba(245,210,124,.2);transform:translateY(-3px)}
@@ -243,106 +259,114 @@ section{padding:140px 5%;position:relative}
 .proc-step .body .deli{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
 .proc-step .body .deli span{font-family:var(--font-mono);font-size:.62rem;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;padding:5px 12px;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:99px}
 
-/* ── SERVICES — Bento Grid ── */
+/* ── SERVICES — Industrial 4-column grid ── */
 #servicios{background:linear-gradient(180deg,var(--bg) 0%,var(--bg-2) 100%);overflow:hidden}
-.bento{display:grid;grid-template-columns:repeat(6,1fr);grid-auto-rows:minmax(220px,auto);gap:14px}
-.bento-card{position:relative;background:var(--card);border:1px solid var(--border);border-radius:20px;overflow:hidden;transition:transform .45s var(--easing),border-color .3s;display:flex;flex-direction:column;justify-content:flex-end;padding:28px;min-height:240px}
-.bento-card:hover{transform:translateY(-4px);border-color:rgba(245,210,124,.2)}
-.bento-card .bg-img{position:absolute;inset:0;z-index:0}
-.bento-card .bg-img img{width:100%;height:100%;object-fit:cover;filter:brightness(.3) saturate(.7);transition:transform .8s var(--easing),filter .5s}
-.bento-card:hover .bg-img img{transform:scale(1.08);filter:brightness(.4) saturate(.85)}
-.bento-card .veil{position:absolute;inset:0;z-index:1;background:linear-gradient(0deg,rgba(7,7,10,.95) 0%,rgba(7,7,10,.4) 50%,rgba(7,7,10,.6) 100%)}
-.bento-card>.content{position:relative;z-index:2}
-.bento-card .ic{width:42px;height:42px;border-radius:12px;background:rgba(245,210,124,.1);border:1px solid rgba(245,210,124,.22);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;color:var(--gold-2);margin-bottom:18px}
-.bento-card .ic svg{width:22px;height:22px}
-.bento-card .tag{font-family:var(--font-mono);font-size:.6rem;letter-spacing:.18em;color:var(--gold-2);text-transform:uppercase;margin-bottom:6px}
-.bento-card h3{font-size:1.2rem;font-weight:500;letter-spacing:-.015em;color:#fff;line-height:1.2;margin-bottom:8px}
-.bento-card p{font-size:.85rem;color:var(--text-2);line-height:1.55;max-width:480px}
-.bento-card .meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
-.bento-card .meta span{font-family:var(--font-mono);font-size:.58rem;letter-spacing:.1em;color:var(--text-2);text-transform:uppercase;padding:4px 9px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:99px}
-/* bento layouts */
-.bento-card.b1{grid-column:span 3;grid-row:span 2;min-height:480px}
-.bento-card.b2{grid-column:span 3;min-height:240px}
-.bento-card.b3{grid-column:span 3;min-height:240px}
-.bento-card.b4{grid-column:span 2;min-height:280px}
-.bento-card.b5{grid-column:span 2;min-height:280px}
-.bento-card.b6{grid-column:span 2;min-height:280px}
-.bento-card .arrow{position:absolute;top:24px;right:24px;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.06);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;color:var(--text);transition:background .3s,color .3s,transform .3s var(--easing);z-index:3}
-.bento-card:hover .arrow{background:var(--grad-warm);color:#000;transform:rotate(-45deg)}
-.bento-card .arrow svg{width:14px;height:14px}
+.services-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;margin-top:40px;background:var(--border);border:1px solid var(--border);border-radius:18px;overflow:hidden}
+.service-card{position:relative;overflow:hidden;background:var(--card);aspect-ratio:.78;transition:background .3s}
+.service-card:hover{background:var(--card-2)}
+.service-img{position:absolute;inset:0;z-index:0}
+.service-img img{width:100%;height:100%;object-fit:cover;filter:brightness(.35) saturate(.7);transition:filter .5s,transform .8s var(--easing)}
+.service-card:hover .service-img img{filter:brightness(.22) saturate(.5);transform:scale(1.08)}
+.service-img::after{content:'';position:absolute;inset:0;background:linear-gradient(0deg,rgba(7,7,10,.96) 0%,rgba(7,7,10,.3) 55%,rgba(7,7,10,.5) 100%)}
+.service-base{position:absolute;bottom:0;left:0;right:0;padding:24px 22px;z-index:2}
+.service-icon{width:38px;height:38px;border-radius:10px;background:rgba(245,210,124,.1);border:1px solid rgba(245,210,124,.2);display:flex;align-items:center;justify-content:center;color:var(--gold-2);margin-bottom:14px;transition:background .3s,transform .35s var(--easing)}
+.service-card:hover .service-icon{background:var(--grad-warm);color:#000;transform:rotate(-6deg)}
+.service-icon svg{width:18px;height:18px}
+.service-tag{font-family:var(--font-mono);font-size:.58rem;letter-spacing:.2em;color:var(--gold-2);text-transform:uppercase;margin-bottom:6px;display:block}
+.service-card h3{font-size:1.05rem;font-weight:500;letter-spacing:-.015em;color:#fff;line-height:1.25;margin-bottom:6px}
+.service-card .ideal{font-size:.78rem;color:var(--muted);letter-spacing:-.005em}
+.service-hover{position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,8,12,.95) 0%,rgba(8,8,12,.99) 100%);backdrop-filter:blur(2px);z-index:3;padding:26px 22px;display:flex;flex-direction:column;justify-content:flex-end;transform:translateY(100%);transition:transform .45s var(--easing)}
+.service-card:hover .service-hover{transform:translateY(0)}
+.service-hover h4{font-family:var(--font-mono);font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.18em;color:var(--gold-2);margin-bottom:10px}
+.service-hover p{font-size:.84rem;color:var(--text-2);line-height:1.6;margin-bottom:16px}
+.service-hover .comps{font-size:.74rem;color:var(--muted);line-height:1.55;border-top:1px solid var(--border);padding-top:12px;margin-top:auto}
+.service-hover .comps strong{color:var(--gold-2);display:block;margin-bottom:4px;font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;font-family:var(--font-mono);font-weight:500}
+.service-hover .wa-link{margin-top:14px;color:var(--gold-2);font-size:.78rem;font-weight:500;display:flex;align-items:center;gap:6px}
 
-/* ── ANATOMY — Interactive 3D exploded panel ── */
+/* ── ANATOMY — door always open, dense components ── */
 #anatomia{background:var(--bg-2);position:relative;overflow:hidden}
-.ana-wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:60px;align-items:center;margin-top:30px}
-.ana-3d{position:relative;height:560px;perspective:1600px}
-.ana-scene{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .6s var(--easing);will-change:transform}
-.ana-part{position:absolute;border-radius:8px;transform-style:preserve-3d;will-change:transform;transition:transform .8s var(--easing),box-shadow .4s}
-.ana-cab{left:50%;top:50%;width:320px;height:440px;margin:-220px 0 0 -160px;background:linear-gradient(160deg,#e8e8e6 0%,#d0d0ce 60%,#b8b8b6 100%);box-shadow:0 30px 80px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.4);transform:rotateX(8deg) rotateY(-18deg) translateZ(-180px)}
-.ana-cab::before{content:'';position:absolute;inset:20px;border:2px solid rgba(0,0,0,.06);border-radius:4px}
-.ana-back{left:50%;top:50%;width:280px;height:400px;margin:-200px 0 0 -140px;background:linear-gradient(150deg,#ff6a1f 0%,#e23a1a 70%);box-shadow:0 26px 60px rgba(226,58,26,.4),inset 0 1px 0 rgba(255,255,255,.15);transform:rotateX(8deg) rotateY(-18deg) translateZ(-100px)}
-.ana-busbar{left:50%;top:50%;width:240px;height:30px;margin:-160px 0 0 -120px;background:linear-gradient(90deg,#f5d27c 0%,#d4a437 50%,#9c7a1f 100%);box-shadow:0 0 18px rgba(245,210,124,.6),0 8px 20px rgba(0,0,0,.5);border-radius:3px;transform:rotateX(8deg) rotateY(-18deg) translateZ(-40px)}
-.ana-breakers{left:50%;top:50%;width:240px;height:50px;margin:-110px 0 0 -120px;display:grid;grid-template-columns:repeat(8,1fr);gap:3px;transform:rotateX(8deg) rotateY(-18deg) translateZ(0)}
-.ana-breakers .br{background:linear-gradient(180deg,#f5f5f3 0%,#d0d0ce 100%);border-radius:2px;box-shadow:0 4px 10px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.5);position:relative}
-.ana-breakers .br::before{content:'';position:absolute;left:50%;top:8px;width:6px;height:14px;background:#222;border-radius:1px;transform:translateX(-50%)}
-.ana-contactors{left:50%;top:50%;width:240px;height:90px;margin:-30px 0 0 -120px;display:grid;grid-template-columns:repeat(3,1fr);gap:6px;transform:rotateX(8deg) rotateY(-18deg) translateZ(40px)}
-.ana-contactors .ct{background:linear-gradient(180deg,#333 0%,#1a1a1a 100%);border-radius:3px;box-shadow:0 6px 14px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.1);position:relative;overflow:hidden}
-.ana-contactors .ct::after{content:'';position:absolute;left:8px;right:8px;top:30%;bottom:30%;background:linear-gradient(180deg,#888,#444);border-radius:2px}
-.ana-door{left:50%;top:50%;width:280px;height:400px;margin:-200px 0 0 -140px;background:linear-gradient(160deg,#e8e8e6 0%,#c8c8c6 100%);box-shadow:0 22px 50px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.3);transform-origin:left center;transform:rotateX(8deg) rotateY(-18deg) translateZ(80px) translateX(-130px)}
-.ana-door::before{content:'';position:absolute;inset:24px;border:1px solid rgba(0,0,0,.1);border-radius:3px}
-.ana-door::after{content:'S&M';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-family:var(--font-display);font-style:italic;font-size:2.6rem;background:var(--grad-warm);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;opacity:.5}
-/* exploded state */
-.ana-scene.explode .ana-cab{transform:rotateX(8deg) rotateY(-18deg) translateZ(-240px)}
-.ana-scene.explode .ana-back{transform:rotateX(8deg) rotateY(-18deg) translateZ(-100px) translateX(0)}
-.ana-scene.explode .ana-busbar{transform:rotateX(8deg) rotateY(-18deg) translateZ(-20px) translateY(-30px)}
-.ana-scene.explode .ana-breakers{transform:rotateX(8deg) rotateY(-18deg) translateZ(40px) translateY(-10px)}
-.ana-scene.explode .ana-contactors{transform:rotateX(8deg) rotateY(-18deg) translateZ(100px) translateY(40px)}
-.ana-scene.explode .ana-door{transform:rotateX(8deg) rotateY(60deg) translateZ(80px) translateX(-180px)}
+.ana-wrap{display:grid;grid-template-columns:1.05fr .95fr;gap:60px;align-items:center;margin-top:30px}
+.ana-3d{position:relative;height:620px;perspective:1800px;perspective-origin:55% 50%}
+.ana-scene{position:absolute;inset:0;transform-style:preserve-3d;will-change:transform;transform:rotateX(6deg) rotateY(-20deg)}
+.ana-part{position:absolute;transform-style:preserve-3d;will-change:transform,filter;transition:filter .4s ease,box-shadow .4s ease}
+/* Door (locked open at ~95°, on the left) */
+.ana-door{left:50%;top:50%;width:280px;height:440px;margin:-220px 0 0 -140px;background:linear-gradient(160deg,#e8e8e6 0%,#c8c8c6 60%,#b0b0ae 100%);box-shadow:0 30px 60px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.4);transform-origin:left center;transform:translateZ(80px) translateX(-260px) rotateY(78deg);border-radius:4px}
+.ana-door::before{content:'';position:absolute;inset:18px;border:1px solid rgba(0,0,0,.1);border-radius:3px}
+.ana-door::after{content:'S&M';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-family:var(--font-display);font-style:italic;font-size:2.6rem;background:var(--grad-warm);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;opacity:.4}
+/* Door indicators (selectors + LEDs) */
+.ana-door-ind{position:absolute;top:18px;left:50%;transform:translateX(-50%);display:flex;gap:8px}
+.ana-door-ind span{width:10px;height:10px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#444,#1a1a1a);border:1px solid rgba(0,0,0,.2)}
+.ana-door-ind span.led{background:radial-gradient(circle at 30% 30%,#7fffaa,#34d97b);box-shadow:0 0 8px rgba(52,217,123,.7)}
+.ana-door-ind span.led.r{background:radial-gradient(circle at 30% 30%,#ff7878,#e63333);box-shadow:0 0 8px rgba(230,51,51,.6)}
+.ana-door-sel{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);display:flex;gap:14px}
+.ana-door-sel span{width:14px;height:14px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#2a2a2a,#0d0d0d);border:1px solid rgba(255,255,255,.08);position:relative}
+.ana-door-sel span::after{content:'';position:absolute;left:50%;top:2px;width:2px;height:5px;background:#888;transform:translateX(-50%);border-radius:1px}
+/* Cabinet body */
+.ana-cab{left:50%;top:50%;width:340px;height:460px;margin:-230px 0 0 -170px;background:linear-gradient(165deg,#d8d8d4 0%,#c0c0bc 50%,#a8a8a4 100%);box-shadow:0 30px 80px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.4),inset 0 -2px 6px rgba(0,0,0,.1);transform:translateZ(-180px);border-radius:5px}
+.ana-cab::before{content:'';position:absolute;inset:18px;background:linear-gradient(180deg,rgba(0,0,0,.04),rgba(0,0,0,.12));border-radius:3px}
+/* Orange backplate */
+.ana-back{left:50%;top:50%;width:280px;height:400px;margin:-200px 0 0 -140px;background:linear-gradient(150deg,#ff7d3a 0%,#ff6a1f 40%,#e23a1a 90%);box-shadow:0 26px 60px rgba(226,58,26,.35),inset 0 1px 0 rgba(255,255,255,.18),inset 0 -2px 8px rgba(0,0,0,.15);transform:translateZ(-100px);border-radius:3px}
+.ana-back::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(180deg,transparent,transparent 22px,rgba(0,0,0,.05) 22px,rgba(0,0,0,.05) 23px);border-radius:3px}
+/* Top: incoming main switch */
+.ana-mainsw{left:50%;top:50%;width:80px;height:60px;margin:-178px 0 0 -40px;background:linear-gradient(180deg,#2a2a2a 0%,#0e0e0e 100%);border-radius:4px;box-shadow:0 8px 18px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.12);transform:translateZ(-50px);position:absolute}
+.ana-mainsw::after{content:'';position:absolute;left:50%;top:50%;width:36px;height:18px;background:linear-gradient(180deg,#666,#222);transform:translate(-50%,-50%);border-radius:2px}
+/* Gold busbar 1 (top) */
+.ana-busbar{left:50%;top:50%;width:240px;height:14px;margin:-110px 0 0 -120px;background:linear-gradient(90deg,#9c7a1f 0%,#d4a437 20%,#f5d27c 50%,#d4a437 80%,#9c7a1f 100%);box-shadow:0 0 22px rgba(245,210,124,.6),0 6px 14px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.4);border-radius:2px;transform:translateZ(-40px)}
+/* Bottom busbar (cool blue distribution rail) */
+.ana-busbar-2{left:50%;top:50%;width:240px;height:8px;margin:130px 0 0 -120px;background:linear-gradient(90deg,#444,#888 30%,#aaa 50%,#888 70%,#444);box-shadow:0 4px 10px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.2);border-radius:1px;transform:translateZ(-40px)}
+/* Breakers row */
+.ana-breakers{left:50%;top:50%;width:240px;height:60px;margin:-80px 0 0 -120px;display:grid;grid-template-columns:repeat(10,1fr);gap:2px;transform:translateZ(0)}
+.ana-breakers .br{background:linear-gradient(180deg,#fafaf8 0%,#dededa 40%,#bcbcb8 100%);border-radius:1.5px;box-shadow:0 5px 12px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.6),inset 0 -1px 0 rgba(0,0,0,.15);position:relative}
+.ana-breakers .br::before{content:'';position:absolute;left:50%;top:9px;width:5px;height:18px;background:linear-gradient(180deg,#444,#1a1a1a);border-radius:1px;transform:translateX(-50%);box-shadow:0 1px 1px rgba(0,0,0,.4)}
+.ana-breakers .br::after{content:'';position:absolute;left:2px;right:2px;bottom:4px;height:6px;background:linear-gradient(180deg,#5a8fd9 0%,#3a6cb0 100%);border-radius:1px;opacity:.7}
+.ana-breakers .br:nth-child(odd)::after{background:linear-gradient(180deg,#22ab5e,#168842)}
+/* DIN rail under breakers */
+.ana-din-1{left:50%;top:50%;width:240px;height:4px;margin:-22px 0 0 -120px;background:linear-gradient(180deg,#888,#444);box-shadow:0 2px 4px rgba(0,0,0,.6);transform:translateZ(0)}
+/* Contactors row */
+.ana-contactors{left:50%;top:50%;width:240px;height:100px;margin:8px 0 0 -120px;display:grid;grid-template-columns:repeat(4,1fr);gap:5px;transform:translateZ(40px)}
+.ana-contactors .ct{background:linear-gradient(180deg,#3a3a3a 0%,#1a1a1a 60%,#0a0a0a 100%);border-radius:3px;box-shadow:0 8px 16px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.12);position:relative;overflow:hidden}
+.ana-contactors .ct::before{content:'';position:absolute;left:6px;right:6px;top:6px;height:14px;background:linear-gradient(180deg,#888,#444);border-radius:1px;box-shadow:inset 0 1px 0 rgba(255,255,255,.2)}
+.ana-contactors .ct::after{content:'';position:absolute;left:10px;right:10px;top:30%;bottom:18%;background:linear-gradient(180deg,#999 0%,#666 50%,#444 100%);border-radius:1px}
+.ana-contactors .ct .terms{position:absolute;left:4px;right:4px;bottom:4px;display:flex;justify-content:space-around;gap:2px}
+.ana-contactors .ct .terms span{width:4px;height:8px;background:linear-gradient(180deg,#c9a437,#7a5e18);border-radius:1px;box-shadow:0 0 3px rgba(245,210,124,.3)}
+/* Wires (curved CSS) */
+.ana-wires{left:50%;top:50%;width:280px;height:400px;margin:-200px 0 0 -140px;pointer-events:none;transform:translateZ(20px)}
+.ana-wires svg{width:100%;height:100%;overflow:visible}
+.ana-wires path{fill:none;stroke-width:2;stroke-linecap:round}
+/* Terminals at bottom */
+.ana-terminals{left:50%;top:50%;width:240px;height:24px;margin:120px 0 0 -120px;display:grid;grid-template-columns:repeat(12,1fr);gap:2px;transform:translateZ(0)}
+.ana-terminals span{background:linear-gradient(180deg,#dededa,#888);border-radius:1px;box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 2px 4px rgba(0,0,0,.4);position:relative}
+.ana-terminals span::after{content:'';position:absolute;left:50%;top:50%;width:2px;height:6px;background:#c9a437;transform:translate(-50%,-50%);border-radius:0.5px}
+/* Voltmeter (small round gauge) */
+.ana-vmeter{left:50%;top:50%;width:40px;height:40px;margin:-170px 0 0 80px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#1a1a1a,#000);box-shadow:0 4px 10px rgba(0,0,0,.6),inset 0 1px 2px rgba(255,255,255,.1),inset 0 -2px 4px rgba(0,0,0,.5);transform:translateZ(60px);border:2px solid #444}
+.ana-vmeter::before{content:'';position:absolute;left:50%;top:50%;width:14px;height:1.5px;background:var(--gold-2);transform-origin:left center;transform:translate(0,-50%) rotate(35deg);border-radius:1px;box-shadow:0 0 4px rgba(245,210,124,.8)}
+.ana-vmeter::after{content:'';position:absolute;left:50%;top:50%;width:3px;height:3px;background:var(--gold-2);border-radius:50%;transform:translate(-50%,-50%)}
+/* Highlight on hover */
+.ana-scene[data-focus] .ana-part{filter:brightness(.4) saturate(.5)}
+.ana-scene[data-focus="door"] .ana-door,
+.ana-scene[data-focus="cab"] .ana-cab,
+.ana-scene[data-focus="back"] .ana-back,
+.ana-scene[data-focus="bus"] .ana-busbar,
+.ana-scene[data-focus="bus"] .ana-busbar-2,
+.ana-scene[data-focus="mainsw"] .ana-mainsw,
+.ana-scene[data-focus="brk"] .ana-breakers,
+.ana-scene[data-focus="ct"] .ana-contactors,
+.ana-scene[data-focus="wires"] .ana-wires,
+.ana-scene[data-focus="vmeter"] .ana-vmeter,
+.ana-scene[data-focus="term"] .ana-terminals{filter:brightness(1) saturate(1) drop-shadow(0 0 18px rgba(245,210,124,.55))}
 
-.ana-side .ana-list{display:flex;flex-direction:column;gap:10px;margin-top:24px}
-.ana-row{padding:18px 22px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:grid;grid-template-columns:34px 1fr auto;gap:18px;align-items:center;cursor:none;transition:border-color .3s,background .3s;position:relative}
+.ana-side .ana-list{display:flex;flex-direction:column;gap:8px;margin-top:24px;max-height:540px;overflow-y:auto;padding-right:4px}
+.ana-side .ana-list::-webkit-scrollbar{width:4px}
+.ana-side .ana-list::-webkit-scrollbar-thumb{background:rgba(245,210,124,.2);border-radius:2px}
+.ana-row{padding:16px 20px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:grid;grid-template-columns:32px 1fr auto;gap:16px;align-items:center;cursor:none;transition:border-color .3s,background .3s;position:relative}
 .ana-row:hover{border-color:rgba(245,210,124,.25);background:var(--card-2)}
 .ana-row.on{border-color:rgba(245,210,124,.4)}
 .ana-row.on::before{content:'';position:absolute;left:0;top:14px;bottom:14px;width:2px;background:var(--grad-warm);border-radius:0 2px 2px 0}
-.ana-row .ix{font-family:var(--font-mono);font-size:.72rem;color:var(--gold-2);font-weight:500}
-.ana-row .tx h4{font-size:.94rem;font-weight:500;color:var(--text);letter-spacing:-.01em;margin-bottom:3px}
-.ana-row .tx p{font-size:.8rem;color:var(--muted);line-height:1.5}
+.ana-row .ix{font-family:var(--font-mono);font-size:.7rem;color:var(--gold-2);font-weight:500}
+.ana-row .tx h4{font-size:.9rem;font-weight:500;color:var(--text);letter-spacing:-.01em;margin-bottom:2px}
+.ana-row .tx p{font-size:.76rem;color:var(--muted);line-height:1.45}
 .ana-row .chev{color:var(--muted);transition:color .3s,transform .3s}
 .ana-row:hover .chev{color:var(--gold-2);transform:translateX(3px)}
-.ana-toggle{margin-top:24px;display:inline-flex;align-items:center;gap:10px;padding:11px 18px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:99px;font-family:var(--font-mono);font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--text);transition:background .3s,border-color .3s}
-.ana-toggle:hover{background:var(--grad-warm);color:#000;border-color:transparent}
-.ana-toggle svg{width:14px;height:14px}
-
-/* ── GALLERY ── */
-#trabajos{background:var(--bg);position:relative}
-.gal-row{display:grid;grid-template-columns:repeat(12,1fr);gap:12px;grid-auto-rows:140px;margin-top:30px}
-.gal-cell{position:relative;border-radius:16px;overflow:hidden;border:1px solid var(--border);background:var(--card);cursor:none;transition:transform .5s var(--easing),border-color .3s}
-.gal-cell:hover{transform:translateY(-4px);border-color:rgba(245,210,124,.25)}
-.gal-cell img{width:100%;height:100%;object-fit:cover;transition:transform 1s var(--easing),filter .5s;filter:saturate(.85) brightness(.92)}
-.gal-cell:hover img{transform:scale(1.06);filter:saturate(1.05) brightness(1)}
-.gal-cell .ov{position:absolute;inset:0;background:linear-gradient(0deg,rgba(7,7,10,.9) 0%,transparent 50%);display:flex;flex-direction:column;justify-content:flex-end;padding:20px;opacity:0;transition:opacity .35s}
-.gal-cell:hover .ov{opacity:1}
-.gal-cell .ov .l{font-family:var(--font-mono);font-size:.58rem;letter-spacing:.18em;color:var(--gold-2);text-transform:uppercase;margin-bottom:4px}
-.gal-cell .ov .t{font-size:.92rem;font-weight:500;color:var(--text);letter-spacing:-.005em;line-height:1.3}
-.gal-cell .frame{position:absolute;top:14px;left:14px;font-family:var(--font-mono);font-size:.58rem;letter-spacing:.18em;color:rgba(255,255,255,.55);text-transform:uppercase;padding:5px 10px;background:rgba(7,7,10,.65);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.06);border-radius:99px;z-index:2}
-/* layout cells */
-.g1{grid-column:span 5;grid-row:span 3}
-.g2{grid-column:span 4;grid-row:span 2}
-.g3{grid-column:span 3;grid-row:span 2}
-.g4{grid-column:span 3;grid-row:span 2}
-.g5{grid-column:span 4;grid-row:span 2}
-.g6{grid-column:span 5;grid-row:span 2}
-.g7{grid-column:span 4;grid-row:span 2}
-.g8{grid-column:span 4;grid-row:span 2}
-.g9{grid-column:span 4;grid-row:span 2}
-
-/* Lightbox */
-#lb{position:fixed;inset:0;z-index:9500;background:rgba(7,7,10,.96);backdrop-filter:blur(20px);display:none;align-items:center;justify-content:center;padding:5vh 5vw}
-#lb.on{display:flex;animation:fadein .35s ease-out}
-@keyframes fadein{from{opacity:0}to{opacity:1}}
-#lb img{max-width:100%;max-height:90vh;border-radius:14px;box-shadow:0 30px 90px rgba(0,0,0,.7),0 0 0 1px rgba(255,255,255,.08)}
-#lb .close{position:absolute;top:24px;right:24px;width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.06);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;color:var(--text);border:1px solid var(--border);font-size:1.2rem}
-#lb .arr{position:absolute;top:50%;transform:translateY(-50%);width:50px;height:50px;border-radius:50%;background:rgba(255,255,255,.06);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;color:var(--text);border:1px solid var(--border)}
-#lb .arr.prev{left:24px}#lb .arr.next{right:24px}
 
 /* ── BRANDS ── */
 #marcas{background:var(--bg);padding:90px 5%;border-top:1px solid var(--border);border-bottom:1px solid var(--border);overflow:hidden}
@@ -420,14 +444,14 @@ footer{padding:70px 5% 40px;background:#000;border-top:1px solid var(--border);p
 
 /* ── RESPONSIVE ── */
 @media(max-width:1100px){
-  .hero-grid,.about-wrap,.ana-wrap,.contact-wrap{grid-template-columns:1fr;gap:48px}
-  .hero-stage{height:480px;max-width:560px;margin:0 auto}
+  .about-wrap,.ana-wrap,.contact-wrap{grid-template-columns:1fr;gap:48px}
+  .hero-foot{grid-template-columns:1fr;gap:24px}
+  .hero-cta-col{align-items:flex-start}
+  .hero-cta-row{justify-content:flex-start}
   .about-visual{height:480px}
-  .bento{grid-template-columns:repeat(4,1fr)}
-  .bento-card.b1{grid-column:span 4;min-height:380px}
-  .bento-card.b2,.bento-card.b3{grid-column:span 2}
-  .bento-card.b4,.bento-card.b5,.bento-card.b6{grid-column:span 2;min-height:240px}
+  .services-grid{grid-template-columns:repeat(2,1fr)}
   .foot-grid{grid-template-columns:1fr 1fr;gap:40px}
+  .hud-1,.hud-3{display:none}
 }
 @media(max-width:768px){
   body{cursor:auto}
@@ -439,29 +463,32 @@ footer{padding:70px 5% 40px;background:#000;border-top:1px solid var(--border);p
   .hamburger{display:flex}
   section{padding:90px 5%}
   .sec-head{margin-bottom:50px}
-  .hero-grid{gap:30px}
-  .hero-stage{height:380px}
-  .hero-meta{gap:8px}
-  .hero-meta div{flex:none;width:48%;padding:14px 12px;border:1px solid var(--border);border-radius:10px}
+  #hero{height:auto;min-height:100vh}
+  .hero-layer{padding:110px 5% 70px;position:static}
+  #hero-canvas{position:absolute;height:100vh}
+  .hud-chip{display:none}
+  .hero-meta-strip,.hero-prog,.scene-tag{display:none}
+  .hero-foot{gap:18px}
+  .hero-cta-col{align-items:flex-start}
+  .hero-cta-row{justify-content:flex-start}
   .why-grid{grid-template-columns:1fr}
-  .bento{grid-template-columns:1fr}
-  .bento-card.b1,.bento-card.b2,.bento-card.b3,.bento-card.b4,.bento-card.b5,.bento-card.b6{grid-column:span 1;min-height:240px}
-  .gal-row{grid-template-columns:repeat(2,1fr);grid-auto-rows:120px}
-  .g1,.g2,.g3,.g4,.g5,.g6,.g7,.g8,.g9{grid-column:span 1;grid-row:span 1}
-  .g1{grid-column:span 2;grid-row:span 2}
+  .services-grid{grid-template-columns:1fr}
+  .service-card{aspect-ratio:1.4}
   .proc-list{padding-left:60px}
   .proc-step{grid-template-columns:1fr;gap:14px}
   .proc-step .icl{width:80px;height:80px}
   .proc-step .icl svg{width:32px;height:32px}
   .proc-step .nub{left:-44px;width:46px;height:46px;font-size:.68rem;top:24px}
   .proc-list::before,.proc-list .proc-line{left:23px}
-  .about-stats{grid-template-columns:1fr;gap:14px;padding-top:24px}
-  .about-stats .st{border-right:none;border-bottom:1px solid var(--border);padding:0 0 14px}
   .mv-row{grid-template-columns:1fr}
-  .ana-3d{height:420px}
-  .ana-cab,.ana-back,.ana-door{width:240px;height:340px;margin:-170px 0 0 -120px}
+  .ana-3d{height:480px;perspective:1100px}
+  .ana-cab{width:260px;height:360px;margin:-180px 0 0 -130px}
   .ana-back{width:210px;height:300px;margin:-150px 0 0 -105px}
-  .ana-door{width:210px;height:300px;margin:-150px 0 0 -105px}
+  .ana-door{width:210px;height:300px;margin:-150px 0 0 -105px;transform:translateZ(60px) translateX(-200px) rotateY(78deg)}
+  .ana-breakers{width:200px;margin:-60px 0 0 -100px}
+  .ana-contactors{width:200px;margin:0 0 0 -100px}
+  .ana-busbar,.ana-busbar-2,.ana-terminals,.ana-din-1{width:200px;margin-left:-100px}
+  .ana-wires{width:240px;height:340px;margin:-170px 0 0 -120px}
   .foot-grid{grid-template-columns:1fr;gap:32px}
   .foot-mark{font-size:7rem}
 }
@@ -508,7 +535,7 @@ footer{padding:70px 5% 40px;background:#000;border-top:1px solid var(--border);p
       <li><a href="#nosotros" data-hover>Nosotros</a></li>
       <li><a href="#servicios" data-hover>Servicios</a></li>
       <li><a href="#proceso" data-hover>Proceso</a></li>
-      <li><a href="#trabajos" data-hover>Trabajos</a></li>
+      <li><a href="#anatomia" data-hover>Tablero</a></li>
       <li><a href="#faq" data-hover>FAQ</a></li>
     </ul>
     <div class="nav-cta">
@@ -524,67 +551,80 @@ footer{padding:70px 5% 40px;background:#000;border-top:1px solid var(--border);p
   <a href="#nosotros" class="ml">Nosotros</a>
   <a href="#servicios" class="ml">Servicios</a>
   <a href="#proceso" class="ml">Proceso</a>
-  <a href="#trabajos" class="ml">Trabajos</a>
+  <a href="#anatomia" class="ml">Tablero 3D</a>
   <a href="#faq" class="ml">FAQ</a>
   <a href="#contacto" class="ml">Contacto</a>
 </div>
 
-<!-- HERO -->
+<!-- HERO — WebGL 3D showcase -->
 <section id="hero">
-  <div class="mesh-bg"><span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span></div>
-  <div class="hero-grid">
-    <div class="hero-left">
+  <canvas id="hero-canvas"></canvas>
+  <div class="hero-grid-bg"></div>
+  <div class="hero-vignette"></div>
+
+  <div class="hud-chip hud-1">
+    <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></span>
+    <span><span class="lbl">Estado</span><span class="val">Operando</span></span>
+    <span class="dot"></span>
+  </div>
+  <div class="hud-chip hud-2">
+    <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+    <span><span class="lbl">Voltaje</span><span class="val">220 V <b>· 60 Hz</b></span></span>
+  </div>
+  <div class="hud-chip hud-3">
+    <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 12h3l3-9 6 18 3-9h3"/></svg></span>
+    <span><span class="lbl">Carga</span><span class="val">18.4 A · <b>78%</b></span></span>
+  </div>
+  <div class="hud-chip hud-4">
+    <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></span>
+    <span><span class="lbl">QA</span><span class="val">Pruebas <b>OK</b></span></span>
+  </div>
+
+  <div class="scene-tag st-1">Tablero S&M · Modelo TDN</div>
+
+  <div class="hero-layer">
+    <div class="hero-top">
       <span class="eyebrow">Lima, Perú · Soluciones Eléctricas Industriales</span>
+      <div class="hero-bar">
+        <span><b>S&M</b> Industriales Eléctricos</span>
+        <span class="sep"></span>
+        <span>RUC <b>20552965028</b></span>
+      </div>
+    </div>
+
+    <div class="hero-center">
       <h1 class="hero-h1">
         <span class="line"><span class="word">Tableros</span> <span class="word">eléctricos</span></span>
-        <span class="line"><span class="word">diseñados</span> <span class="word">según la</span></span>
+        <span class="line"><span class="word">diseñados</span> <span class="word">según</span> <span class="word">la</span></span>
         <span class="line"><em>operación real</em></span>
         <span class="line"><span class="word">de</span> <span class="word">tu</span> <span class="word">proyecto.</span></span>
       </h1>
-      <p class="hero-sub">Distribución, automatización, arranque de motores, presión constante, transferencia automática y tableros eléctricos a medida para empresas, industrias y proyectos técnicos en todo el Perú.</p>
-      <div class="hero-cta-row">
-        <a href="https://wa.me/51998265837?text=Hola,%20vengo%20de%20la%20p%C3%A1gina%20web%20de%20Industriales%20El%C3%A9ctricos%20S%26M.%20Deseo%20solicitar%20una%20cotizaci%C3%B3n." class="btn btn-primary" target="_blank" rel="noopener" data-hover>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-          Solicitar cotización
-        </a>
-        <a href="#servicios" class="btn btn-ghost" data-hover>Ver servicios</a>
-        <a href="tel:+51998265837" class="btn-link" data-hover>+51 998 265 837 →</a>
-      </div>
-      <div class="hero-meta">
-        <div><div class="k">Horario</div><div class="v">Lun–Sáb · <b>9–18:30</b></div></div>
-        <div><div class="k">Cobertura</div><div class="v">Todo el <b>Perú</b></div></div>
-        <div><div class="k">RUC</div><div class="v"><b>20552965028</b></div></div>
-        <div><div class="k">Marcas</div><div class="v">Schneider · ABB · <b>+7</b></div></div>
-      </div>
     </div>
-    <div class="hero-right">
-      <div class="hero-stage" id="heroStage">
-        <div class="stage-inner" id="stageInner">
-          <div class="panel-card p1"><img src="public/images/06dee9ac-f14e-5aba-8125-661fd9d9e9c5.jpg" alt="Tablero de distribución TDN-2P.1"/></div>
-          <div class="panel-card p2"><img src="public/images/2b20e24f-0ac5-5d7c-b131-6638eb497ae5.png" alt="Tablero ATS rojo"/></div>
-          <div class="panel-card p3"><img src="public/images/722d6c7f-e8d1-56f0-aedb-1ad45da0a181.png" alt="Tablero de arranque"/></div>
-        </div>
-        <div class="hud-chip hud-1">
-          <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></span>
-          <span><span class="lbl">Estado</span><span class="val">Operando</span></span>
-          <span class="dot"></span>
-        </div>
-        <div class="hud-chip hud-2">
-          <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
-          <span><span class="lbl">Voltaje</span><span class="val">220 V <b>· 60 Hz</b></span></span>
-        </div>
-        <div class="hud-chip hud-3">
-          <span><span class="lbl">Carga</span><span class="val">18.4 A</span></span>
-          <span class="dot"></span>
-        </div>
-        <div class="hud-chip hud-4">
-          <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 12l2 2 4-4M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></span>
-          <span>Pruebas <b>OK</b></span>
+
+    <div class="hero-foot">
+      <p class="hero-sub">Distribución, automatización, arranque de motores, presión constante, transferencia automática y tableros a medida para empresas, industrias y proyectos técnicos en todo el Perú.</p>
+      <div class="hero-cta-col">
+        <div class="hero-cta-row">
+          <a href="#servicios" class="btn btn-ghost" data-hover>Ver servicios</a>
+          <a href="https://wa.me/51998265837?text=Hola,%20vengo%20de%20la%20p%C3%A1gina%20web%20de%20Industriales%20El%C3%A9ctricos%20S%26M.%20Deseo%20solicitar%20una%20cotizaci%C3%B3n." class="btn btn-primary" target="_blank" rel="noopener" data-hover>
+            Solicitar cotización
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
         </div>
       </div>
     </div>
   </div>
-  <a href="#nosotros" class="scroll-cue" data-hover>Scroll<span class="ln"></span></a>
+
+  <div class="hero-prog">
+    <span class="num" id="heroProgNum">00</span>
+    <span class="ln"><i id="heroProgBar"></i></span>
+    <span>Hero · Showcase</span>
+  </div>
+  <div class="hero-meta-strip">
+    <span>Lun–Sáb · <b>9–18:30</b></span>
+    <span>Cobertura · <b>Todo el Perú</b></span>
+    <span>Schneider · ABB · <b>+7 marcas</b></span>
+  </div>
 </section>
 
 <!-- MARQUEE -->
@@ -624,21 +664,17 @@ footer{padding:70px 5% 40px;background:#000;border-top:1px solid var(--border);p
             <p>Ser reconocidos en el sector eléctrico industrial por la calidad de nuestros tableros y la confianza que generamos.</p>
           </div>
         </div>
-        <div class="about-stats">
-          <div class="st"><div class="num" data-count="10">0</div><div class="lbl">Años de operación</div></div>
-          <div class="st"><div class="num" data-count="350" data-suf="+">0</div><div class="lbl">Tableros entregados</div></div>
-          <div class="st"><div class="num" data-count="24">0</div><div class="lbl">Regiones del Perú</div></div>
-        </div>
       </div>
-      <div class="about-visual" data-hover>
-        <img src="public/images/455c34c4-dee9-5b99-94c3-6d1626c32aa8.png" alt="Tablero de control con selectores"/>
-        <div class="caption">
-          <div>
-            <div class="l">Proyecto · Control de fuerza</div>
-            <div class="t">Tablero industrial con selectores y mando manual/automático</div>
-          </div>
-          <div class="badge">Caso 2025</div>
+      <div class="about-3d" id="about3D">
+        <canvas id="about-canvas"></canvas>
+        <div class="about-3d-caption">
+          <div class="l">360° · Tablero S&M</div>
+          <div class="t">Vista interactiva — pasa el cursor para girar</div>
         </div>
+        <div class="about-3d-badge">Vista 3D</div>
+        <div class="about-3d-marker m-1"><span class="dot"></span><span>Backplate naranja</span></div>
+        <div class="about-3d-marker m-2"><span class="dot"></span><span>Busbar Cu/Au</span></div>
+        <div class="about-3d-marker m-3"><span class="dot"></span><span>Componentes Schneider · ABB</span></div>
       </div>
     </div>
   </div>
@@ -759,82 +795,144 @@ footer{padding:70px 5% 40px;background:#000;border-top:1px solid var(--border);p
   </div>
 </section>
 
-<!-- SERVICES — Bento -->
+<!-- SERVICES — Industrial 4-column grid -->
 <section id="servicios">
   <div class="sec-wrap">
     <div class="sec-head">
       <span class="eyebrow">Servicios y soluciones</span>
-      <h2 class="sec-h">Tableros pensados para<br>cada <em>aplicación real.</em></h2>
-      <p class="sec-intro">Distribución, automatización, bombeo, arranque, transferencia. Cada solución diseñada según las condiciones reales de tu operación.</p>
+      <h2 class="sec-h">Tableros diseñados,<br>ensamblados y probados para <em>cada aplicación</em>.</h2>
+      <p class="sec-intro">Distribución, automatización, bombeo, arranque y transferencia. Cada solución pensada según las condiciones reales de tu operación.</p>
     </div>
-    <div class="bento">
-      <div class="bento-card b1" data-hover>
-        <div class="bg-img"><img src="public/images/06dee9ac-f14e-5aba-8125-661fd9d9e9c5.jpg" alt="Tablero de distribución TDN-2P.1"/></div>
-        <div class="veil"></div>
-        <div class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M7 7h10v10"/></svg></div>
-        <div class="content">
-          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M3 9h18M3 15h18M15 3v18"/></svg></div>
-          <div class="tag">Distribución</div>
+    <div class="services-grid">
+
+      <div class="service-card" data-hover>
+        <div class="service-img"><img src="public/images/06dee9ac-f14e-5aba-8125-661fd9d9e9c5.jpg" alt="Tablero de distribución"/></div>
+        <div class="service-base">
+          <div class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M3 9h18M3 15h18M15 3v18"/></svg></div>
+          <div class="service-tag">Distribución</div>
           <h3>Tableros de distribución eléctrica</h3>
+          <div class="ideal">Ideal para edificios e industrias</div>
+        </div>
+        <div class="service-hover">
+          <h4>Distribución eléctrica</h4>
           <p>Tableros generales (TG), de transferencia y subtableros para edificios comerciales, industriales y residenciales. Diseño según carga real y condiciones de la instalación.</p>
-          <div class="meta"><span>TG / TD</span><span>Trifásicos</span><span>Hasta 800A</span><span>IP55</span></div>
+          <div class="comps"><strong>Componentes típicos</strong>Termomagnéticos, diferenciales, busbars de cobre, gabinete IP44/IP55, voltímetro y amperímetro.</div>
+          <a href="https://wa.me/51998265837" target="_blank" rel="noopener" class="wa-link">Cotizar →</a>
         </div>
       </div>
-      <div class="bento-card b2" data-hover>
-        <div class="bg-img"><img src="public/images/2b20e24f-0ac5-5d7c-b131-6638eb497ae5.png" alt="Tablero ATS"/></div>
-        <div class="veil"></div>
-        <div class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M7 7h10v10"/></svg></div>
-        <div class="content">
-          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
-          <div class="tag">Respaldo</div>
+
+      <div class="service-card" data-hover>
+        <div class="service-img"><img src="public/images/2b20e24f-0ac5-5d7c-b131-6638eb497ae5.png" alt="Tablero ATS"/></div>
+        <div class="service-base">
+          <div class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+          <div class="service-tag">Respaldo</div>
           <h3>Transferencia automática ATS</h3>
-          <p>Sistemas de conmutación red/grupo electrógeno con tiempos de transferencia configurables.</p>
+          <div class="ideal">Para grupos electrógenos</div>
+        </div>
+        <div class="service-hover">
+          <h4>Tableros ATS</h4>
+          <p>Sistemas de conmutación red/grupo electrógeno con tiempos de transferencia configurables y prioridad de fuente.</p>
+          <div class="comps"><strong>Componentes típicos</strong>Contactores con enclavamiento, controlador ATS, retardo de transferencia, temporizadores Schneider/ABB.</div>
+          <a href="https://wa.me/51998265837" target="_blank" rel="noopener" class="wa-link">Cotizar →</a>
         </div>
       </div>
-      <div class="bento-card b3" data-hover>
-        <div class="bg-img"><img src="public/images/722d6c7f-e8d1-56f0-aedb-1ad45da0a181.png" alt="Tablero arranque motores"/></div>
-        <div class="veil"></div>
-        <div class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M7 7h10v10"/></svg></div>
-        <div class="content">
-          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v6M12 17v6M4.22 4.22l4.24 4.24M15.54 15.54l4.24 4.24M1 12h6M17 12h6M4.22 19.78l4.24-4.24M15.54 8.46l4.24-4.24"/></svg></div>
-          <div class="tag">Arranque</div>
+
+      <div class="service-card" data-hover>
+        <div class="service-img"><img src="public/images/722d6c7f-e8d1-56f0-aedb-1ad45da0a181.png" alt="Tablero arranque motores"/></div>
+        <div class="service-base">
+          <div class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v6M12 17v6M4.22 4.22l4.24 4.24M15.54 15.54l4.24 4.24M1 12h6M17 12h6M4.22 19.78l4.24-4.24M15.54 8.46l4.24-4.24"/></svg></div>
+          <div class="service-tag">Arranque</div>
           <h3>Arranque de motores</h3>
-          <p>Directo, estrella-triángulo, suave (soft-starter) o con variador, según la carga del motor.</p>
+          <div class="ideal">Estrella-triángulo · directo · variador</div>
+        </div>
+        <div class="service-hover">
+          <h4>Tableros de arranque</h4>
+          <p>Directo, estrella-triángulo, soft-starter o con variador de frecuencia, según la carga del motor y tipo de operación.</p>
+          <div class="comps"><strong>Componentes típicos</strong>Contactor, relé térmico, temporizador, guardamotor, variadores Schneider Altivar o ABB.</div>
+          <a href="https://wa.me/51998265837" target="_blank" rel="noopener" class="wa-link">Cotizar →</a>
         </div>
       </div>
-      <div class="bento-card b4" data-hover>
-        <div class="bg-img"><img src="public/images/32dc07f9-8c24-5497-8dc2-96c308f7fc24.png" alt="Tablero automatización PLC"/></div>
-        <div class="veil"></div>
-        <div class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M7 7h10v10"/></svg></div>
-        <div class="content">
-          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 9h6v6H9zM4 9h2M4 15h2M18 9h2M18 15h2M9 4v2M15 4v2M9 18v2M15 18v2"/></svg></div>
-          <div class="tag">Automatización</div>
-          <h3>PLC / Siemens Logo</h3>
-          <p>Lógicas programadas para procesos industriales y secuencias de arranque.</p>
+
+      <div class="service-card" data-hover>
+        <div class="service-img"><img src="public/images/32dc07f9-8c24-5497-8dc2-96c308f7fc24.png" alt="Automatización PLC"/></div>
+        <div class="service-base">
+          <div class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 9h6v6H9zM4 9h2M4 15h2M18 9h2M18 15h2M9 4v2M15 4v2M9 18v2M15 18v2"/></svg></div>
+          <div class="service-tag">Automatización</div>
+          <h3>PLC y Siemens Logo</h3>
+          <div class="ideal">Procesos industriales</div>
+        </div>
+        <div class="service-hover">
+          <h4>Automatización industrial</h4>
+          <p>Lógicas programadas para procesos industriales, secuencias de arranque, control por sensores y comunicación con HMI.</p>
+          <div class="comps"><strong>Componentes típicos</strong>Siemens Logo, PLC S7-1200, módulos analógicos, HMI, fuentes 24VDC, relés interfaz.</div>
+          <a href="https://wa.me/51998265837" target="_blank" rel="noopener" class="wa-link">Cotizar →</a>
         </div>
       </div>
-      <div class="bento-card b5" data-hover>
-        <div class="bg-img"><img src="public/images/9b9aa484-4d71-5f2a-9696-9ba33a6faf59.png" alt="Tablero bombas contra incendio"/></div>
-        <div class="veil"></div>
-        <div class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M7 7h10v10"/></svg></div>
-        <div class="content">
-          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c0 5-5 5-5 11a5 5 0 0010 0c0-6-5-6-5-11z"/></svg></div>
-          <div class="tag">Bombeo</div>
+
+      <div class="service-card" data-hover>
+        <div class="service-img"><img src="public/images/9b9aa484-4d71-5f2a-9696-9ba33a6faf59.png" alt="Bombas contra incendio"/></div>
+        <div class="service-base">
+          <div class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c0 5-5 5-5 11a5 5 0 0010 0c0-6-5-6-5-11z"/></svg></div>
+          <div class="service-tag">Bombeo</div>
           <h3>Bombas contra incendio</h3>
-          <p>Tableros para sistemas eléctricos y diesel, jockey y principal.</p>
+          <div class="ideal">Principal · Jockey · Diesel</div>
+        </div>
+        <div class="service-hover">
+          <h4>Tableros NFPA 20</h4>
+          <p>Tableros para sistemas eléctricos y diesel, jockey y principal. Diseñados según norma NFPA 20 y exigencias municipales.</p>
+          <div class="comps"><strong>Componentes típicos</strong>Arrancador estrella-triángulo, presostato, temporizador, indicador de fallas, batería de respaldo.</div>
+          <a href="https://wa.me/51998265837" target="_blank" rel="noopener" class="wa-link">Cotizar →</a>
         </div>
       </div>
-      <div class="bento-card b6" data-hover>
-        <div class="bg-img"><img src="public/images/750f57c3-242b-5875-843e-eac571ff934e.png" alt="Tablero presión constante"/></div>
-        <div class="veil"></div>
-        <div class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M7 7h10v10"/></svg></div>
-        <div class="content">
-          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
-          <div class="tag">Bombeo</div>
+
+      <div class="service-card" data-hover>
+        <div class="service-img"><img src="public/images/750f57c3-242b-5875-843e-eac571ff934e.png" alt="Presión constante"/></div>
+        <div class="service-base">
+          <div class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
+          <div class="service-tag">Bombeo</div>
           <h3>Presión constante con variador</h3>
-          <p>Bombas alternadas con VFD para sistemas hidroneumáticos.</p>
+          <div class="ideal">Sistemas hidroneumáticos</div>
+        </div>
+        <div class="service-hover">
+          <h4>Presión constante</h4>
+          <p>Bombas alternadas con variador de frecuencia (VFD) para sistemas hidroneumáticos. Control por sensor de presión y caudal variable.</p>
+          <div class="comps"><strong>Componentes típicos</strong>Variador VFD, sensor de presión 4-20mA, contactor de bypass, controlador secuencial.</div>
+          <a href="https://wa.me/51998265837" target="_blank" rel="noopener" class="wa-link">Cotizar →</a>
         </div>
       </div>
+
+      <div class="service-card" data-hover>
+        <div class="service-img"><img src="public/images/455c34c4-dee9-5b99-94c3-6d1626c32aa8.png" alt="Tablero con selectores"/></div>
+        <div class="service-base">
+          <div class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/></svg></div>
+          <div class="service-tag">Control</div>
+          <h3>Tableros de control y fuerza</h3>
+          <div class="ideal">Mando manual y automático</div>
+        </div>
+        <div class="service-hover">
+          <h4>Control de fuerza</h4>
+          <p>Tableros con selectores frontales, mando manual/automático, indicadores LED, voltímetros y amperímetros analógicos o digitales.</p>
+          <div class="comps"><strong>Componentes típicos</strong>Selectores Schneider, LEDs piloto, voltímetro/amperímetro, pulsadores, paro de emergencia.</div>
+          <a href="https://wa.me/51998265837" target="_blank" rel="noopener" class="wa-link">Cotizar →</a>
+        </div>
+      </div>
+
+      <div class="service-card" data-hover>
+        <div class="service-img"><img src="public/images/16f7053c-5a69-57e6-b185-4a409ffc726f.png" alt="Tablero a medida"/></div>
+        <div class="service-base">
+          <div class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg></div>
+          <div class="service-tag">A medida</div>
+          <h3>Tableros a medida</h3>
+          <div class="ideal">Diseño según especificaciones</div>
+        </div>
+        <div class="service-hover">
+          <h4>Tableros a medida</h4>
+          <p>Cuando tu proyecto no encaja en lo estándar: diseñamos desde cero según unifilar, cargas y normativa específica del cliente.</p>
+          <div class="comps"><strong>Incluye</strong>Diagrama unifilar, BOM, planos mecánicos, etiquetado interno, dossier de pruebas y entrega.</div>
+          <a href="https://wa.me/51998265837" target="_blank" rel="noopener" class="wa-link">Cotizar →</a>
+        </div>
+      </div>
+
     </div>
   </div>
 </section>
@@ -851,55 +949,70 @@ footer{padding:70px 5% 40px;background:#000;border-top:1px solid var(--border);p
     <div class="ana-wrap">
       <div class="ana-3d" id="ana3D">
         <div class="ana-scene" id="anaScene">
+          <!-- Cabinet body -->
           <div class="ana-part ana-cab" data-part="cab"></div>
+          <!-- Orange backplate -->
           <div class="ana-part ana-back" data-part="back"></div>
+          <!-- Top: main switch -->
+          <div class="ana-part ana-mainsw" data-part="mainsw"></div>
+          <!-- Busbars -->
           <div class="ana-part ana-busbar" data-part="bus"></div>
+          <div class="ana-part ana-busbar-2" data-part="bus"></div>
+          <!-- Breakers row -->
           <div class="ana-part ana-breakers" data-part="brk">
-            <div class="br"></div><div class="br"></div><div class="br"></div><div class="br"></div>
-            <div class="br"></div><div class="br"></div><div class="br"></div><div class="br"></div>
+            <div class="br"></div><div class="br"></div><div class="br"></div><div class="br"></div><div class="br"></div>
+            <div class="br"></div><div class="br"></div><div class="br"></div><div class="br"></div><div class="br"></div>
           </div>
+          <!-- DIN rail under breakers -->
+          <div class="ana-part ana-din-1" data-part="brk"></div>
+          <!-- Contactors row -->
           <div class="ana-part ana-contactors" data-part="ct">
-            <div class="ct"></div><div class="ct"></div><div class="ct"></div>
+            <div class="ct"><span class="terms"><span></span><span></span><span></span></span></div>
+            <div class="ct"><span class="terms"><span></span><span></span><span></span></span></div>
+            <div class="ct"><span class="terms"><span></span><span></span><span></span></span></div>
+            <div class="ct"><span class="terms"><span></span><span></span><span></span></span></div>
           </div>
-          <div class="ana-part ana-door" data-part="door"></div>
+          <!-- Wires (SVG) -->
+          <div class="ana-part ana-wires" data-part="wires">
+            <svg viewBox="0 0 280 400" preserveAspectRatio="none">
+              <path d="M70 30 C 70 60, 60 80, 70 100" stroke="#e23a1a"/>
+              <path d="M140 30 C 140 50, 130 70, 140 100" stroke="#1a78d9"/>
+              <path d="M210 30 C 210 50, 220 70, 210 100" stroke="#222"/>
+              <path d="M50 200 C 50 230, 40 250, 50 280" stroke="#e23a1a"/>
+              <path d="M90 200 C 90 220, 80 250, 90 280" stroke="#1a78d9"/>
+              <path d="M130 200 C 130 220, 140 250, 130 280" stroke="#e2a31a"/>
+              <path d="M170 200 C 170 240, 180 260, 170 280" stroke="#222"/>
+              <path d="M210 200 C 210 230, 200 260, 210 280" stroke="#1a78d9"/>
+            </svg>
+          </div>
+          <!-- Terminal block bottom -->
+          <div class="ana-part ana-terminals" data-part="term">
+            <span></span><span></span><span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span><span></span><span></span>
+          </div>
+          <!-- Voltmeter on door -->
+          <div class="ana-part ana-vmeter" data-part="vmeter"></div>
+          <!-- Door (locked open) -->
+          <div class="ana-part ana-door" data-part="door">
+            <div class="ana-door-ind"><span class="led"></span><span class="led r"></span><span></span></div>
+            <div class="ana-door-sel"><span></span><span></span><span></span></div>
+          </div>
         </div>
       </div>
       <div class="ana-side">
         <div class="ana-list" id="anaList">
-          <div class="ana-row" data-target="cab"><div class="ix">01</div><div class="tx"><h4>Gabinete metálico</h4><p>Chasis con grado de protección IP según el ambiente</p></div><div class="chev">→</div></div>
-          <div class="ana-row" data-target="back"><div class="ix">02</div><div class="tx"><h4>Backplate</h4><p>Lámina de soporte pintada al horno, perforada para riel DIN</p></div><div class="chev">→</div></div>
-          <div class="ana-row" data-target="bus"><div class="ix">03</div><div class="tx"><h4>Busbar principal</h4><p>Barra de cobre dimensionada según corriente nominal</p></div><div class="chev">→</div></div>
-          <div class="ana-row" data-target="brk"><div class="ix">04</div><div class="tx"><h4>Interruptores</h4><p>Termomagnéticos y diferenciales Schneider / ABB</p></div><div class="chev">→</div></div>
-          <div class="ana-row" data-target="ct"><div class="ix">05</div><div class="tx"><h4>Contactores</h4><p>Para circuitos de fuerza, arranque y maniobra</p></div><div class="chev">→</div></div>
-          <div class="ana-row" data-target="door"><div class="ix">06</div><div class="tx"><h4>Puerta + indicadores</h4><p>LEDs, voltímetros y selectores en frontal</p></div><div class="chev">→</div></div>
+          <div class="ana-row" data-target="cab"><div class="ix">01</div><div class="tx"><h4>Gabinete metálico</h4><p>Chasis IP44/IP55 con bisagras reforzadas y cerradura</p></div><div class="chev">→</div></div>
+          <div class="ana-row" data-target="back"><div class="ix">02</div><div class="tx"><h4>Backplate naranja</h4><p>Lámina pintada al horno con perforaciones para riel DIN</p></div><div class="chev">→</div></div>
+          <div class="ana-row" data-target="mainsw"><div class="ix">03</div><div class="tx"><h4>Interruptor principal</h4><p>Termomagnético tripolar Schneider / ABB de cabecera</p></div><div class="chev">→</div></div>
+          <div class="ana-row" data-target="bus"><div class="ix">04</div><div class="tx"><h4>Busbars de cobre</h4><p>Barras dimensionadas según corriente nominal con cubierta dieléctrica</p></div><div class="chev">→</div></div>
+          <div class="ana-row" data-target="brk"><div class="ix">05</div><div class="tx"><h4>Interruptores derivados</h4><p>Termomagnéticos y diferenciales por circuito</p></div><div class="chev">→</div></div>
+          <div class="ana-row" data-target="ct"><div class="ix">06</div><div class="tx"><h4>Contactores</h4><p>Para circuitos de fuerza, arranque y maniobra de motores</p></div><div class="chev">→</div></div>
+          <div class="ana-row" data-target="wires"><div class="ix">07</div><div class="tx"><h4>Cableado peinado</h4><p>Cables H07V-K, identificados por color y etiquetados</p></div><div class="chev">→</div></div>
+          <div class="ana-row" data-target="term"><div class="ix">08</div><div class="tx"><h4>Bornera de salidas</h4><p>Bornes Lovato/Steck para conexión a circuitos externos</p></div><div class="chev">→</div></div>
+          <div class="ana-row" data-target="vmeter"><div class="ix">09</div><div class="tx"><h4>Voltímetro / amperímetro</h4><p>Indicación analógica o digital de la operación</p></div><div class="chev">→</div></div>
+          <div class="ana-row" data-target="door"><div class="ix">10</div><div class="tx"><h4>Puerta con HMI frontal</h4><p>LEDs piloto, selectores y botón de paro de emergencia</p></div><div class="chev">→</div></div>
         </div>
-        <button class="ana-toggle" id="anaToggle" data-hover>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M12 5v14"/></svg>
-          Ver vista explosionada
-        </button>
       </div>
-    </div>
-  </div>
-</section>
-
-<!-- GALLERY -->
-<section id="trabajos">
-  <div class="sec-wrap">
-    <div class="sec-head">
-      <span class="eyebrow">Trabajos · Galería</span>
-      <h2 class="sec-h">Tableros reales,<br><em>entregados y operando.</em></h2>
-      <p class="sec-intro">Una muestra de proyectos recientes — tableros de distribución, control de fuerza, ATS, bombeo y automatización.</p>
-    </div>
-    <div class="gal-row" id="gallery">
-      <div class="gal-cell g1" data-src="public/images/25b2bf54-9ce9-5c84-adbe-16b9ec4980c1.png" data-hover><img src="public/images/25b2bf54-9ce9-5c84-adbe-16b9ec4980c1.png" alt="Tableros eléctricos"/><div class="frame">01 / 09</div><div class="ov"><div class="l">Featured</div><div class="t">Línea completa de tableros · backplate naranja</div></div></div>
-      <div class="gal-cell g2" data-src="public/images/06dee9ac-f14e-5aba-8125-661fd9d9e9c5.jpg" data-hover><img src="public/images/06dee9ac-f14e-5aba-8125-661fd9d9e9c5.jpg" alt="TDN-2P.1"/><div class="frame">02 / 09</div><div class="ov"><div class="l">Distribución · 380V</div><div class="t">TDN-2P.1 Nivel 02 — Trifásico 60Hz</div></div></div>
-      <div class="gal-cell g3" data-src="public/images/2b20e24f-0ac5-5d7c-b131-6638eb497ae5.png" data-hover><img src="public/images/2b20e24f-0ac5-5d7c-b131-6638eb497ae5.png" alt="Tablero ATS rojo"/><div class="frame">03 / 09</div><div class="ov"><div class="l">Contactores · Fuerza</div><div class="t">Tablero rojo con 3 contactores y termomagnéticos</div></div></div>
-      <div class="gal-cell g4" data-src="public/images/16f7053c-5a69-57e6-b185-4a409ffc726f.png" data-hover><img src="public/images/16f7053c-5a69-57e6-b185-4a409ffc726f.png" alt="Tablero distribución"/><div class="frame">04 / 09</div><div class="ov"><div class="l">Distribución</div><div class="t">Tablero TDN con peinado lateral</div></div></div>
-      <div class="gal-cell g5" data-src="public/images/722d6c7f-e8d1-56f0-aedb-1ad45da0a181.png" data-hover><img src="public/images/722d6c7f-e8d1-56f0-aedb-1ad45da0a181.png" alt="Tablero arranque"/><div class="frame">05 / 09</div><div class="ov"><div class="l">Arranque motor</div><div class="t">Tablero con contactor y relé térmico</div></div></div>
-      <div class="gal-cell g6" data-src="public/images/9b9aa484-4d71-5f2a-9696-9ba33a6faf59.png" data-hover><img src="public/images/9b9aa484-4d71-5f2a-9696-9ba33a6faf59.png" alt="Tablero control"/><div class="frame">06 / 09</div><div class="ov"><div class="l">Control</div><div class="t">Tablero naranja con bornera y prensaestopas</div></div></div>
-      <div class="gal-cell g7" data-src="public/images/750f57c3-242b-5875-843e-eac571ff934e.png" data-hover><img src="public/images/750f57c3-242b-5875-843e-eac571ff934e.png" alt="Tablero presión constante"/><div class="frame">07 / 09</div><div class="ov"><div class="l">Presión constante</div><div class="t">Tablero Schneider para sistema hidroneumático</div></div></div>
-      <div class="gal-cell g8" data-src="public/images/32dc07f9-8c24-5497-8dc2-96c308f7fc24.png" data-hover><img src="public/images/32dc07f9-8c24-5497-8dc2-96c308f7fc24.png" alt="Tablero automatización"/><div class="frame">08 / 09</div><div class="ov"><div class="l">Automatización</div><div class="t">Tablero con interruptor Schneider y bornera</div></div></div>
-      <div class="gal-cell g9" data-src="public/images/455c34c4-dee9-5b99-94c3-6d1626c32aa8.png" data-hover><img src="public/images/455c34c4-dee9-5b99-94c3-6d1626c32aa8.png" alt="Tablero con selectores"/><div class="frame">09 / 09</div><div class="ov"><div class="l">Selectores · HMI</div><div class="t">Tablero con múltiples selectores y mando frontal</div></div></div>
     </div>
   </div>
 </section>
@@ -954,6 +1067,38 @@ footer{padding:70px 5% 40px;background:#000;border-top:1px solid var(--border);p
       <div class="faq-item">
         <button class="faq-q" data-hover>¿Dan respaldo después de la entrega?<span class="pl">+</span></button>
         <div class="faq-a"><div class="faq-a-inner">Sí. Acompañamos arranque, ampliaciones y mantenimiento. Si necesitas modificar un tablero existente, también lo hacemos.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" data-hover>¿Hacen mantenimiento de tableros existentes?<span class="pl">+</span></button>
+        <div class="faq-a"><div class="faq-a-inner">Sí. Servicio de mantenimiento preventivo y correctivo: limpieza, reajuste de borneras, termografía, recambio de componentes con desgaste y pruebas funcionales. Aplica a tableros propios o de otros fabricantes.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" data-hover>¿Pueden modificar o ampliar un tablero antiguo?<span class="pl">+</span></button>
+        <div class="faq-a"><div class="faq-a-inner">Por supuesto. Hacemos retrofits: agregar circuitos derivados, cambiar interruptor principal, integrar ATS, sumar variadores o convertir un tablero manual en automático. Te entregamos unifilar actualizado.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" data-hover>¿Cuáles son las formas de pago?<span class="pl">+</span></button>
+        <div class="faq-a"><div class="faq-a-inner">Trabajamos con transferencia bancaria, depósito y financiamiento en proyectos grandes. Por lo general 50% para iniciar (aprovisionamiento) y 50% contra entrega con pruebas aprobadas. En proyectos de obra coordinamos según valorizaciones.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" data-hover>¿Emiten factura electrónica?<span class="pl">+</span></button>
+        <div class="faq-a"><div class="faq-a-inner">Sí. Emitimos factura electrónica con RUC 20552965028. Ideal para constructoras, mineras, industrias y empresas que requieran respaldo tributario y crédito fiscal.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" data-hover>¿Trabajan para constructoras y obras civiles?<span class="pl">+</span></button>
+        <div class="faq-a"><div class="faq-a-inner">Sí, atendemos directamente al contratista eléctrico o a la constructora. Coordinamos con cronograma de obra, certificados de calidad y entrega en sitio. También apoyamos en supervisión y arranque.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" data-hover>¿Sus tableros cumplen con normativa?<span class="pl">+</span></button>
+        <div class="faq-a"><div class="faq-a-inner">Sí. Diseñamos según el Código Nacional de Electricidad (CNE-Utilización) y normas IEC 61439 para tableros de baja tensión. Para bombas contra incendio aplicamos NFPA 20.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" data-hover>¿Garantía sobre los tableros?<span class="pl">+</span></button>
+        <div class="faq-a"><div class="faq-a-inner">12 meses sobre fabricación y cableado. Los componentes (Schneider, ABB, Siemens, etc.) mantienen su garantía propia del fabricante, que generalmente es de 1 a 2 años según marca y línea.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" data-hover>¿Pueden venir a hacer una visita técnica?<span class="pl">+</span></button>
+        <div class="faq-a"><div class="faq-a-inner">Sí. Coordinamos visitas técnicas en Lima sin costo para levantamiento de cargas, evaluación del tablero existente o medición de espacios. En provincias se evalúa según ubicación.</div></div>
       </div>
     </div>
   </div>
@@ -1053,7 +1198,7 @@ footer{padding:70px 5% 40px;background:#000;border-top:1px solid var(--border);p
       <ul>
         <li><a href="#nosotros" data-hover>Nosotros</a></li>
         <li><a href="#proceso" data-hover>Proceso</a></li>
-        <li><a href="#trabajos" data-hover>Trabajos</a></li>
+        <li><a href="#anatomia" data-hover>Anatomía 3D</a></li>
         <li><a href="#faq" data-hover>FAQ</a></li>
         <li><a href="#contacto" data-hover>Contacto</a></li>
       </ul>
@@ -1079,14 +1224,6 @@ footer{padding:70px 5% 40px;background:#000;border-top:1px solid var(--border);p
 <a href="https://wa.me/51998265837?text=Hola,%20vengo%20de%20la%20p%C3%A1gina%20web%20de%20Industriales%20El%C3%A9ctricos%20S%26M." class="wa-float" target="_blank" rel="noopener" aria-label="WhatsApp" data-hover>
   <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
 </a>
-
-<!-- LIGHTBOX -->
-<div id="lb">
-  <button class="close" id="lbClose" data-hover>✕</button>
-  <button class="arr prev" id="lbPrev" data-hover>‹</button>
-  <button class="arr next" id="lbNext" data-hover>›</button>
-  <img id="lbImg" alt="Tablero ampliado"/>
-</div>
 
 <script>
 gsap.registerPlugin(ScrollTrigger);
@@ -1175,60 +1312,384 @@ document.querySelectorAll('a[href^="#"]').forEach(function(a){
   });
 })();
 
-/* ── HERO ENTRANCE ── */
-gsap.set('.hero-h1 .word',{y:'110%'});
-gsap.set('.hero-sub, .hero-cta-row, .hero-meta, .hero-left .eyebrow, .scroll-cue',{opacity:0,y:24});
-gsap.set('.hero-stage',{opacity:0,scale:.95});
-gsap.set('.hud-chip',{opacity:0,scale:.8});
+/* ── THREE.JS — Cabinet builder (reusable) ── */
+function buildCabinet(THREE, opts){
+  opts = opts || {};
+  var g = new THREE.Group();
+  // Materials
+  var shellMat = new THREE.MeshStandardMaterial({color:0xd2d2ce,metalness:.35,roughness:.5});
+  var shellInsideMat = new THREE.MeshStandardMaterial({color:0x0f0f12,metalness:.1,roughness:.85});
+  var backMat = new THREE.MeshStandardMaterial({color:0xff6a1f,metalness:.25,roughness:.45,emissive:0xff3a08,emissiveIntensity:.08});
+  var goldMat = new THREE.MeshStandardMaterial({color:0xd4a437,metalness:.95,roughness:.18,emissive:0xd4a437,emissiveIntensity:.18});
+  var whiteMat = new THREE.MeshStandardMaterial({color:0xf5f5f3,metalness:.1,roughness:.45});
+  var blackMat = new THREE.MeshStandardMaterial({color:0x1a1a1a,metalness:.4,roughness:.35});
+  var darkMat = new THREE.MeshStandardMaterial({color:0x262626,metalness:.6,roughness:.3});
+  var greyMat = new THREE.MeshStandardMaterial({color:0x7a7a7a,metalness:.6,roughness:.4});
+  var redMat = new THREE.MeshStandardMaterial({color:0xc73020,metalness:.1,roughness:.55});
+  var blueMat = new THREE.MeshStandardMaterial({color:0x1a64c2,metalness:.1,roughness:.55});
 
-function startHero(){
-  var tl=gsap.timeline({defaults:{ease:'power3.out'}});
-  tl.to('.hero-left .eyebrow',{opacity:1,y:0,duration:.6},.05)
-    .to('.hero-h1 .word',{y:'0%',duration:.95,stagger:.045,ease:'power4.out'},.1)
-    .to('.hero-sub',{opacity:1,y:0,duration:.7},'-=.55')
-    .to('.hero-cta-row',{opacity:1,y:0,duration:.65},'-=.45')
-    .to('.hero-meta',{opacity:1,y:0,duration:.6},'-=.4')
-    .to('.scroll-cue',{opacity:1,y:0,duration:.5},'-=.3')
-    .to('.hero-stage',{opacity:1,scale:1,duration:1.1,ease:'power3.out'},.2)
-    .to('.hud-chip',{opacity:1,scale:1,duration:.6,stagger:.12,ease:'back.out(1.6)'},'-=.5');
+  // Cabinet shell — 5 walls (back + 4 sides)
+  var W=3.0, H=4.0, D=1.0, T=0.06;
+  function wall(w,h,d,x,y,z){var m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),shellMat);m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;g.add(m);return m;}
+  wall(W, T, D, 0, H/2, 0);            // top
+  wall(W, T, D, 0,-H/2, 0);            // bottom
+  wall(T, H, D,-W/2, 0, 0);            // left
+  wall(T, H, D, W/2, 0, 0);            // right
+  wall(W, H, T, 0, 0,-D/2);            // back
+  // Interior backing (dark)
+  var insideBack = new THREE.Mesh(new THREE.PlaneGeometry(W-2*T, H-2*T), shellInsideMat);
+  insideBack.position.set(0,0,-D/2+T*0.6);
+  insideBack.receiveShadow = true;
+  g.add(insideBack);
+
+  // Orange backplate
+  var back = new THREE.Mesh(new THREE.BoxGeometry(W*.86, H*.9, .04), backMat);
+  back.position.set(0,0,-D/2+0.14);
+  back.castShadow=true; back.receiveShadow=true;
+  g.add(back);
+
+  // Top: main switch
+  var mainSw = new THREE.Mesh(new THREE.BoxGeometry(0.6,0.4,0.32), darkMat);
+  mainSw.position.set(0, H/2-.45, -.18);
+  mainSw.castShadow=true;
+  g.add(mainSw);
+  var mainSwLever = new THREE.Mesh(new THREE.BoxGeometry(0.18,0.14,0.04), greyMat);
+  mainSwLever.position.set(0, H/2-.45, 0);
+  g.add(mainSwLever);
+
+  // Gold busbar top
+  var bus = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.15, 0.15), goldMat);
+  bus.position.set(0, H/2-1.05, -.22);
+  bus.castShadow=true;
+  g.add(bus);
+  // Bus secondary
+  var bus2 = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.08, 0.08), greyMat);
+  bus2.position.set(0, -H/2+1.0, -.22);
+  g.add(bus2);
+
+  // Breakers row (10 units)
+  var brkGroup = new THREE.Group(); g.add(brkGroup);
+  for(var i=0;i<10;i++){
+    var brk = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.55, 0.4), whiteMat);
+    brk.position.set(-1.1 + i*0.245, H/2-1.6, -.12);
+    brk.castShadow=true;
+    brkGroup.add(brk);
+    var lever = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.18, 0.04), blackMat);
+    lever.position.set(brk.position.x, brk.position.y+0.22, brk.position.z+0.22);
+    brkGroup.add(lever);
+  }
+  // DIN rail under breakers
+  var din1 = new THREE.Mesh(new THREE.BoxGeometry(2.5, 0.04, 0.1), greyMat);
+  din1.position.set(0, H/2-1.93, -.18);
+  g.add(din1);
+
+  // Contactors row (3 + 1 small)
+  for(var j=0;j<3;j++){
+    var ct = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.65, 0.45), blackMat);
+    ct.position.set(-0.55 + j*0.55, -0.2, -.1);
+    ct.castShadow=true;
+    g.add(ct);
+    var ctTop = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.12, 0.36), greyMat);
+    ctTop.position.set(ct.position.x, ct.position.y+0.34, ct.position.z+0.04);
+    g.add(ctTop);
+    // contactor coil indicator (gold band)
+    var coil = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.08, 0.42), goldMat);
+    coil.position.set(ct.position.x, ct.position.y-0.05, ct.position.z);
+    g.add(coil);
+  }
+  // Small auxiliary contactor
+  var aux = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.5, 0.32), blackMat);
+  aux.position.set(1.15, -0.25, -.15);
+  aux.castShadow=true;
+  g.add(aux);
+
+  // Bottom terminal block
+  var termGroup = new THREE.Group(); g.add(termGroup);
+  for(var k=0;k<14;k++){
+    var t = new THREE.Mesh(new THREE.BoxGeometry(0.13, 0.18, 0.18), whiteMat);
+    t.position.set(-1.1 + k*0.17, -H/2+0.6, -.16);
+    t.castShadow=true;
+    termGroup.add(t);
+    var tScrew = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.08, 0.08), goldMat);
+    tScrew.position.set(t.position.x, t.position.y, t.position.z+0.1);
+    termGroup.add(tScrew);
+  }
+
+  // Wires (tube geometry — curved cables)
+  function wire(p0, p1, color){
+    var mid = new THREE.Vector3((p0.x+p1.x)/2, (p0.y+p1.y)/2-0.15, (p0.z+p1.z)/2+0.18);
+    var curve = new THREE.CatmullRomCurve3([p0, mid, p1]);
+    var tg = new THREE.TubeGeometry(curve, 18, 0.022, 8, false);
+    var mat = new THREE.MeshStandardMaterial({color:color,metalness:.05,roughness:.6});
+    var m = new THREE.Mesh(tg, mat);
+    m.castShadow=true;
+    g.add(m);
+  }
+  // busbar -> breakers
+  wire(new THREE.Vector3(-1.1, H/2-1.05, -.16), new THREE.Vector3(-1.1, H/2-1.6, -.06), 0xc73020);
+  wire(new THREE.Vector3(-0.5, H/2-1.05, -.16), new THREE.Vector3(-0.5, H/2-1.6, -.06), 0x1a64c2);
+  wire(new THREE.Vector3(0.3, H/2-1.05, -.16), new THREE.Vector3(0.3, H/2-1.6, -.06), 0x1a1a1a);
+  wire(new THREE.Vector3(1.0, H/2-1.05, -.16), new THREE.Vector3(1.0, H/2-1.6, -.06), 0xd4a437);
+  // breakers -> contactors
+  wire(new THREE.Vector3(-0.55, H/2-2.05, -.06), new THREE.Vector3(-0.55, 0.15, -.05), 0xc73020);
+  wire(new THREE.Vector3(0, H/2-2.05, -.06), new THREE.Vector3(0, 0.15, -.05), 0x1a64c2);
+  wire(new THREE.Vector3(0.55, H/2-2.05, -.06), new THREE.Vector3(0.55, 0.15, -.05), 0x1a1a1a);
+  // contactors -> terminals
+  wire(new THREE.Vector3(-0.55, -0.55, -.05), new THREE.Vector3(-0.5, -H/2+0.75, -.1), 0xc73020);
+  wire(new THREE.Vector3(0, -0.55, -.05), new THREE.Vector3(0.1, -H/2+0.75, -.1), 0x1a64c2);
+  wire(new THREE.Vector3(0.55, -0.55, -.05), new THREE.Vector3(0.7, -H/2+0.75, -.1), 0x1a1a1a);
+
+  // LEDs on backplate
+  var ledMatG = new THREE.MeshStandardMaterial({color:0x34d97b,emissive:0x34d97b,emissiveIntensity:1.6});
+  var ledMatR = new THREE.MeshStandardMaterial({color:0xff5050,emissive:0xff3030,emissiveIntensity:1.2});
+  var ledMatY = new THREE.MeshStandardMaterial({color:0xffd870,emissive:0xffc848,emissiveIntensity:1.4});
+  var leds = [];
+  function led(x,y,m){var s=new THREE.Mesh(new THREE.SphereGeometry(0.04,12,12),m);s.position.set(x,y,-.08);g.add(s);leds.push(s);return s;}
+  led(1.25, 1.6, ledMatG);
+  led(1.25, 1.45, ledMatR);
+  led(1.25, 1.3, ledMatY);
+
+  // Door (hinged on left, open ~95°)
+  var doorPivot = new THREE.Group();
+  doorPivot.position.set(-W/2, 0, D/2);
+  g.add(doorPivot);
+  var doorMat = new THREE.MeshStandardMaterial({color:0xd2d2ce,metalness:.35,roughness:.45});
+  var door = new THREE.Mesh(new THREE.BoxGeometry(W, H, T), doorMat);
+  door.position.set(W/2, 0, 0);
+  door.castShadow=true; door.receiveShadow=true;
+  doorPivot.add(door);
+  // Door interior recess
+  var doorInner = new THREE.Mesh(new THREE.BoxGeometry(W*.85, H*.9, T*0.5), shellInsideMat);
+  doorInner.position.set(W/2, 0, T*0.6);
+  doorPivot.add(doorInner);
+  // Door handle
+  var handle = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.5, 0.08), darkMat);
+  handle.position.set(W-0.18, 0, T*1.5);
+  doorPivot.add(handle);
+  // Lock the door open
+  doorPivot.rotation.y = -Math.PI/2 + 0.18;
+
+  // Floor catcher (shadow only)
+  var floor = new THREE.Mesh(new THREE.PlaneGeometry(20,20), new THREE.ShadowMaterial({opacity:.5}));
+  floor.rotation.x = -Math.PI/2;
+  floor.position.y = -H/2 - 0.02;
+  floor.receiveShadow = true;
+  g.add(floor);
+
+  return {group:g, leds:leds, door:doorPivot};
 }
 
-/* ── HERO 3D STAGE — mouse parallax ── */
-(function(){
-  var stage=document.getElementById('heroStage');
-  var inner=document.getElementById('stageInner');
-  if(!stage||!inner) return;
-  var rx=0,ry=0,trx=0,try_=0;
-  stage.addEventListener('mousemove',function(e){
-    var r=stage.getBoundingClientRect();
-    trx=((e.clientX-r.left)/r.width-.5);
-    try_=((e.clientY-r.top)/r.height-.5);
-  });
-  stage.addEventListener('mouseleave',function(){trx=0;try_=0;});
-  (function loop(){
-    rx+=(trx-rx)*0.06;ry+=(try_-ry)*0.06;
-    inner.style.transform='rotateY('+(rx*16)+'deg) rotateX('+(-ry*10)+'deg)';
-    requestAnimationFrame(loop);
-  })();
-})();
+/* ── HERO Three.js Scene ── */
+var heroScene = null;
+function initHeroScene(){
+  var canvas = document.getElementById('hero-canvas');
+  if(!canvas || !window.THREE) return;
+  var THREE = window.THREE;
+  var scene = new THREE.Scene();
+  scene.fog = new THREE.Fog(0x06060a, 11, 22);
+  var W = canvas.clientWidth, H = canvas.clientHeight;
+  var camera = new THREE.PerspectiveCamera(34, W/H, 0.1, 60);
+  camera.position.set(5.2, 1.4, 7.4);
+  camera.lookAt(0.3, -0.2, 0);
 
-/* ── ABOUT STATS COUNTER ── */
-gsap.utils.toArray('.about-stats .num').forEach(function(el){
-  var target=parseInt(el.getAttribute('data-count'),10);
-  var suf=el.getAttribute('data-suf')||'';
+  var renderer = new THREE.WebGLRenderer({canvas:canvas, antialias:true, alpha:true, powerPreference:'high-performance'});
+  renderer.setPixelRatio(Math.min(2, window.devicePixelRatio));
+  renderer.setSize(W, H, false);
+  renderer.outputEncoding = THREE.sRGBEncoding;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.18;
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+  // Lights — cinematic three-point
+  scene.add(new THREE.HemisphereLight(0xffe5c0, 0x181820, 0.28));
+  var key = new THREE.DirectionalLight(0xfff0d4, 1.6);
+  key.position.set(5, 8, 6);
+  key.castShadow = true;
+  key.shadow.mapSize.set(1024, 1024);
+  key.shadow.camera.near=1; key.shadow.camera.far=24;
+  key.shadow.camera.left=-6; key.shadow.camera.right=6;
+  key.shadow.camera.top=6; key.shadow.camera.bottom=-6;
+  key.shadow.bias=-0.0004;
+  scene.add(key);
+  var fill = new THREE.DirectionalLight(0x7a98ff, 0.4);
+  fill.position.set(-6, 2, -3);
+  scene.add(fill);
+  var rim = new THREE.DirectionalLight(0xffc080, 0.7);
+  rim.position.set(-3, 4, -6);
+  scene.add(rim);
+  var top = new THREE.SpotLight(0xffe9a8, 1.4, 18, Math.PI/5, 0.5, 1);
+  top.position.set(2, 7, 4);
+  scene.add(top);
+  // Subtle point light inside cabinet (gold glow)
+  var inner = new THREE.PointLight(0xd4a437, 0.5, 8, 1.6);
+  inner.position.set(0, 0.3, -0.1);
+  scene.add(inner);
+
+  var built = buildCabinet(THREE);
+  var cabinet = built.group;
+  cabinet.rotation.y = -0.22;
+  scene.add(cabinet);
+
+  // Mouse parallax
+  var mx=0, my=0, tmx=0, tmy=0;
+  canvas.parentElement.addEventListener('mousemove', function(e){
+    var r = canvas.getBoundingClientRect();
+    tmx = ((e.clientX-r.left)/r.width-.5);
+    tmy = ((e.clientY-r.top)/r.height-.5);
+  });
+  canvas.parentElement.addEventListener('mouseleave', function(){tmx=0;tmy=0;});
+
+  function onResize(){
+    var w=canvas.clientWidth, h=canvas.clientHeight;
+    renderer.setSize(w,h,false);
+    camera.aspect=w/h;
+    camera.updateProjectionMatrix();
+  }
+  window.addEventListener('resize', onResize);
+
+  var clock = new THREE.Clock();
+  var visible = true;
+  function tick(){
+    if(!visible){ requestAnimationFrame(tick); return; }
+    var t = clock.getElapsedTime();
+    mx += (tmx-mx)*0.05;
+    my += (tmy-my)*0.05;
+    cabinet.rotation.y = -0.22 + Math.sin(t*0.25)*0.06 + mx*0.45;
+    cabinet.rotation.x = -0.02 + my*0.18;
+    cabinet.position.y = Math.sin(t*0.6)*0.06;
+    // LEDs pulse
+    built.leds.forEach(function(l,i){
+      l.material.emissiveIntensity = 1.0 + Math.sin(t*2 + i*1.7)*0.5;
+    });
+    renderer.render(scene, camera);
+    requestAnimationFrame(tick);
+  }
+  tick();
+
+  // Pause when off-screen
+  if(window.IntersectionObserver){
+    new IntersectionObserver(function(es){visible=es[0].isIntersecting;},{threshold:.05}).observe(canvas);
+  }
+
+  return {scene:scene, camera:camera, cabinet:cabinet};
+}
+
+/* ── ABOUT Three.js Scene — slow 360° rotation ── */
+function initAboutScene(){
+  var canvas = document.getElementById('about-canvas');
+  if(!canvas || !window.THREE) return;
+  var THREE = window.THREE;
+  var scene = new THREE.Scene();
+  scene.fog = new THREE.Fog(0x0c0c12, 10, 20);
+  var W = canvas.clientWidth, H = canvas.clientHeight;
+  var camera = new THREE.PerspectiveCamera(32, W/H, 0.1, 60);
+  camera.position.set(0, 0.3, 8.5);
+  camera.lookAt(0, 0, 0);
+
+  var renderer = new THREE.WebGLRenderer({canvas:canvas, antialias:true, alpha:true, powerPreference:'low-power'});
+  renderer.setPixelRatio(Math.min(2, window.devicePixelRatio));
+  renderer.setSize(W, H, false);
+  renderer.outputEncoding = THREE.sRGBEncoding;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.1;
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+  scene.add(new THREE.HemisphereLight(0xffe5c0, 0x181820, 0.32));
+  var key = new THREE.DirectionalLight(0xfff0d4, 1.3);
+  key.position.set(4, 7, 6); key.castShadow=true;
+  key.shadow.mapSize.set(1024,1024); key.shadow.bias=-0.0004;
+  scene.add(key);
+  var fill = new THREE.DirectionalLight(0x7a98ff, 0.35);
+  fill.position.set(-5,2,-3);
+  scene.add(fill);
+  var rim = new THREE.DirectionalLight(0xffc080, 0.6);
+  rim.position.set(-3,4,-5);
+  scene.add(rim);
+
+  var built = buildCabinet(THREE);
+  scene.add(built.group);
+  built.group.position.y = -0.2;
+
+  var tmx=0,tmy=0,mx=0,my=0;
+  canvas.parentElement.addEventListener('mousemove',function(e){
+    var r=canvas.getBoundingClientRect();
+    tmx=((e.clientX-r.left)/r.width-.5);
+    tmy=((e.clientY-r.top)/r.height-.5);
+  });
+  canvas.parentElement.addEventListener('mouseleave',function(){tmx=0;tmy=0;});
+
+  window.addEventListener('resize',function(){
+    var w=canvas.clientWidth, h=canvas.clientHeight;
+    renderer.setSize(w,h,false);
+    camera.aspect=w/h; camera.updateProjectionMatrix();
+  });
+
+  var clock = new THREE.Clock();
+  var visible = true, autoSpeed=0.25;
+  function tick(){
+    if(!visible){ requestAnimationFrame(tick); return; }
+    var t=clock.getElapsedTime();
+    mx+=(tmx-mx)*0.04;
+    my+=(tmy-my)*0.04;
+    // Continuous slow rotation + mouse offset
+    built.group.rotation.y = t*autoSpeed + mx*0.7;
+    built.group.rotation.x = my*0.2;
+    built.leds.forEach(function(l,i){
+      l.material.emissiveIntensity = 1.0 + Math.sin(t*2 + i*1.7)*0.5;
+    });
+    renderer.render(scene, camera);
+    requestAnimationFrame(tick);
+  }
+  tick();
+
+  if(window.IntersectionObserver){
+    new IntersectionObserver(function(es){visible=es[0].isIntersecting;},{threshold:.05}).observe(canvas);
+  }
+}
+
+/* ── HERO ENTRANCE + scroll-driven reveal ── */
+gsap.set('.hero-h1 .word',{y:'110%'});
+gsap.set('.hero-top .eyebrow, .hero-bar, .hero-sub, .hero-cta-col, .hero-meta-strip, .hero-prog, .scene-tag',{opacity:0,y:18});
+gsap.set('.hud-chip',{opacity:0,scale:.85});
+
+function startHero(){
+  // First a quick entrance (no scroll required) — eyebrow + first line of headline + canvas
+  var tl=gsap.timeline({defaults:{ease:'power3.out'}});
+  tl.to('.hero-top .eyebrow',{opacity:1,y:0,duration:.7},.05)
+    .to('.hero-bar',{opacity:1,y:0,duration:.6},'-=.5')
+    .to('.scene-tag.st-1',{opacity:1,y:0,duration:.6},'-=.4')
+    .to('.hero-h1 .word',{y:'0%',duration:1.1,stagger:.04,ease:'power4.out'},.25)
+    .to('.hero-sub',{opacity:1,y:0,duration:.7},'-=.6')
+    .to('.hero-cta-col',{opacity:1,y:0,duration:.65},'-=.5')
+    .to('.hud-chip',{opacity:1,scale:1,duration:.6,stagger:.1,ease:'back.out(1.5)'},'-=.55')
+    .to('.hero-meta-strip',{opacity:1,y:0,duration:.55},'-=.4')
+    .to('.hero-prog',{opacity:1,y:0,duration:.5},'-=.3');
+
+  // Init Three.js scenes after entrance starts
+  initHeroScene();
+  initAboutScene();
+
+  // Scroll-driven enhancement: hero canvas zooms slightly & fades on scroll out
   ScrollTrigger.create({
-    trigger:el,start:'top 85%',once:true,
-    onEnter:function(){
-      var t0=performance.now();
-      (function step(){
-        var p=Math.min(1,(performance.now()-t0)/1400);
-        var e=1-Math.pow(1-p,3);
-        el.textContent=Math.round(target*e)+suf;
-        if(p<1) requestAnimationFrame(step);
-      })();
+    trigger:'#hero',
+    start:'top top',
+    end:'bottom top',
+    scrub:true,
+    onUpdate:function(self){
+      var canvas = document.getElementById('hero-canvas');
+      var bar = document.getElementById('heroProgBar');
+      var num = document.getElementById('heroProgNum');
+      if(canvas){
+        canvas.style.transform = 'scale('+(1 + self.progress*0.25)+')';
+        canvas.style.opacity = String(1 - self.progress*0.7);
+      }
+      if(bar) bar.style.width = (self.progress*100)+'%';
+      if(num) num.textContent = String(Math.round(self.progress*99)).padStart(2,'0');
     }
   });
-});
+}
 
 /* ── SECTION REVEALS ── */
 gsap.utils.toArray('.sec-head').forEach(function(el){
@@ -1237,22 +1698,20 @@ gsap.utils.toArray('.sec-head').forEach(function(el){
 gsap.utils.toArray('.why-card').forEach(function(el,i){
   gsap.from(el,{opacity:0,y:40,duration:.7,delay:(i%3)*.08,ease:'power3.out',scrollTrigger:{trigger:el,start:'top 88%',once:true}});
 });
-gsap.utils.toArray('.bento-card').forEach(function(el,i){
-  gsap.from(el,{opacity:0,y:40,scale:.96,duration:.8,delay:(i%3)*.08,ease:'power3.out',scrollTrigger:{trigger:el,start:'top 90%',once:true}});
-});
-gsap.utils.toArray('.gal-cell').forEach(function(el,i){
-  gsap.from(el,{opacity:0,y:30,scale:.96,duration:.7,delay:(i%3)*.06,ease:'power3.out',scrollTrigger:{trigger:el,start:'top 92%',once:true}});
+gsap.utils.toArray('.service-card').forEach(function(el,i){
+  gsap.from(el,{opacity:0,y:30,duration:.7,delay:(i%4)*.07,ease:'power3.out',scrollTrigger:{trigger:el,start:'top 92%',once:true}});
 });
 gsap.utils.toArray('.brand-chip').forEach(function(el,i){
   gsap.from(el,{opacity:0,y:14,duration:.5,delay:i*.04,ease:'power2.out',scrollTrigger:{trigger:'.brand-strip',start:'top 88%',once:true}});
 });
 gsap.utils.toArray('.faq-item').forEach(function(el,i){
-  gsap.from(el,{opacity:0,y:18,duration:.55,delay:i*.06,ease:'power2.out',scrollTrigger:{trigger:el,start:'top 92%',once:true}});
+  gsap.from(el,{opacity:0,y:18,duration:.55,delay:(i%4)*.06,ease:'power2.out',scrollTrigger:{trigger:el,start:'top 94%',once:true}});
 });
-gsap.from('.about-visual',{opacity:0,x:60,duration:1.1,ease:'power3.out',scrollTrigger:{trigger:'#nosotros',start:'top 70%',once:true}});
+gsap.from('.about-3d',{opacity:0,x:60,duration:1.1,ease:'power3.out',scrollTrigger:{trigger:'#nosotros',start:'top 70%',once:true}});
 gsap.from('.about-quote',{opacity:0,y:24,duration:.8,ease:'power3.out',scrollTrigger:{trigger:'.about-quote',start:'top 88%',once:true}});
 gsap.from('.mv-card',{opacity:0,y:24,duration:.7,stagger:.1,ease:'power3.out',scrollTrigger:{trigger:'.mv-row',start:'top 88%',once:true}});
 gsap.from('.contact-form',{opacity:0,y:40,duration:1,ease:'power3.out',scrollTrigger:{trigger:'.contact-form',start:'top 85%',once:true}});
+gsap.from('.about-3d-marker',{opacity:0,scale:.7,duration:.6,stagger:.15,ease:'back.out(1.6)',scrollTrigger:{trigger:'.about-3d',start:'top 70%',once:true}});
 
 /* ── PROCESS — vertical scroll-driven timeline ── */
 (function(){
@@ -1277,41 +1736,29 @@ gsap.from('.contact-form',{opacity:0,y:40,duration:1,ease:'power3.out',scrollTri
   });
 })();
 
-/* ── ANATOMY ── */
+/* ── ANATOMY — door always open, hover-isolate via data-focus + gentle mouse parallax ── */
 (function(){
   var scene=document.getElementById('anaScene');
   var rows=document.querySelectorAll('.ana-row');
-  var toggle=document.getElementById('anaToggle');
   if(!scene) return;
+  function setFocus(t){
+    if(t) scene.setAttribute('data-focus',t);
+    else scene.removeAttribute('data-focus');
+  }
   rows.forEach(function(r){
     r.addEventListener('mouseenter',function(){
       rows.forEach(function(x){x.classList.remove('on');});
       r.classList.add('on');
-      var t=r.getAttribute('data-target');
-      scene.querySelectorAll('.ana-part').forEach(function(p){
-        if(p.getAttribute('data-part')===t){
-          p.style.filter='drop-shadow(0 0 24px rgba(245,210,124,.6))';
-          p.style.transition='filter .35s';
-        } else {
-          p.style.filter='brightness(.5)';
-          p.style.transition='filter .35s';
-        }
-      });
+      setFocus(r.getAttribute('data-target'));
     });
     r.addEventListener('mouseleave',function(){
       r.classList.remove('on');
-      scene.querySelectorAll('.ana-part').forEach(function(p){p.style.filter='';});
+      setFocus(null);
     });
   });
-  var exploded=false;
-  if(toggle){
-    toggle.addEventListener('click',function(){
-      exploded=!exploded;
-      scene.classList.toggle('explode',exploded);
-      toggle.innerHTML=(exploded?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"/></svg> Ver vista compacta':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M12 5v14"/></svg> Ver vista explosionada');
-    });
-  }
-  /* Mouse parallax on scene */
+  /* Reveal parts in stagger on scroll-in */
+  gsap.from('.ana-part',{opacity:0,scale:.9,duration:.8,stagger:.06,ease:'power3.out',scrollTrigger:{trigger:'#anatomia',start:'top 65%',once:true}});
+  /* Gentle mouse parallax on the whole scene */
   var ana3D=document.getElementById('ana3D');
   if(ana3D){
     var trx=0,try_=0,rx=0,ry=0;
@@ -1322,45 +1769,11 @@ gsap.from('.contact-form',{opacity:0,y:40,duration:1,ease:'power3.out',scrollTri
     });
     ana3D.addEventListener('mouseleave',function(){trx=0;try_=0;});
     (function loop(){
-      rx+=(trx-rx)*0.05;ry+=(try_-ry)*0.05;
-      scene.style.transform='rotateY('+(rx*10)+'deg) rotateX('+(-ry*6)+'deg)';
+      rx+=(trx-rx)*0.04;ry+=(try_-ry)*0.04;
+      scene.style.transform='rotateX('+(6-ry*4)+'deg) rotateY('+(-20+rx*8)+'deg)';
       requestAnimationFrame(loop);
     })();
   }
-  /* Scrub explode on scroll */
-  ScrollTrigger.create({
-    trigger:'#anatomia',start:'top 60%',end:'center 30%',
-    onEnter:function(){scene.classList.add('explode');exploded=true;if(toggle)toggle.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"/></svg> Ver vista compacta';},
-    onLeaveBack:function(){scene.classList.remove('explode');exploded=false;if(toggle)toggle.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M12 5v14"/></svg> Ver vista explosionada';}
-  });
-})();
-
-/* ── GALLERY LIGHTBOX ── */
-(function(){
-  var cells=document.querySelectorAll('.gal-cell');
-  var lb=document.getElementById('lb');
-  var lbImg=document.getElementById('lbImg');
-  var close=document.getElementById('lbClose');
-  var prev=document.getElementById('lbPrev');
-  var next=document.getElementById('lbNext');
-  var i=0;
-  var srcs=Array.prototype.map.call(cells,function(c){return c.getAttribute('data-src');});
-  function show(idx){
-    i=(idx+srcs.length)%srcs.length;
-    lbImg.src=srcs[i];
-    lb.classList.add('on');
-  }
-  cells.forEach(function(c,idx){c.addEventListener('click',function(){show(idx);});});
-  close.addEventListener('click',function(){lb.classList.remove('on');});
-  prev.addEventListener('click',function(){show(i-1);});
-  next.addEventListener('click',function(){show(i+1);});
-  lb.addEventListener('click',function(e){if(e.target===lb)lb.classList.remove('on');});
-  document.addEventListener('keydown',function(e){
-    if(!lb.classList.contains('on'))return;
-    if(e.key==='Escape')lb.classList.remove('on');
-    if(e.key==='ArrowLeft')show(i-1);
-    if(e.key==='ArrowRight')show(i+1);
-  });
 })();
 
 /* ── FAQ ── */
